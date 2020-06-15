@@ -17,7 +17,7 @@ use Spryker\Zed\Kernel\Container;
  */
 class AgentDependencyProvider extends AbstractBundleDependencyProvider
 {
-    public const PROPEEL_QUERY_USER = 'PROPEL_QUERY_USER';
+    public const PROPEL_QUERY_USER = 'PROPEL_QUERY_USER';
     public const PROPEL_QUERY_CUSTOMER = 'PROPEL_QUERY_CUSTOMER';
 
     /**

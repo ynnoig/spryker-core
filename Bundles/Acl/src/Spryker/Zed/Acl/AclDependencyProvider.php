@@ -20,7 +20,7 @@ class AclDependencyProvider extends AbstractBundleDependencyProvider
     public const FACADE_ACL = 'acl facade';
     public const QUERY_CONTAINER_USER = 'user query container';
     public const QUERY_CONTAINER_ACL = 'acl query container';
-    public const SERVICEE_DATE_FORMATTER = 'date formatter service';
+    public const SERVICE_DATE_FORMATTER = 'date formatter service';
 
     /**
      * @param \Spryker\Zed\Kernel\Container $container
