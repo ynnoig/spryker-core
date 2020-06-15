@@ -11,7 +11,6 @@ use Codeception\Test\Unit;
 use ReflectionClass;
 use Spryker\Shared\Kernel\ClassResolver\ClassInfo;
 use Spryker\Zed\Kernel\Business\AbstractFacade;
-use Spryker\Zed\Kernel\ClassResolver\Facade\FacadeNotFoundException;
 use Spryker\Zed\Kernel\ClassResolver\QueryContainer\QueryContainerNotFoundException;
 use Spryker\Zed\Kernel\ClassResolver\QueryContainer\QueryContainerResolver;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
@@ -20,6 +19,7 @@ use SprykerTest\Zed\Kernel\Communication\Fixtures\AbstractPlugin\Plugin\FooPlugi
 
 /**
  * Auto-generated group annotations
+ *
  * @group SprykerTest
  * @group Zed
  * @group Kernel
@@ -32,7 +32,7 @@ class AbstractPluginTest extends Unit
     /**
      * @return void
      */
-    public function testGetCommunicationFactoryShouldReturnInstanceIfExists()
+    public function testGetCommunicationFactoryShouldReturnInstanceIfExists(): void
     {
         $plugin = new FooPlugin();
 
@@ -50,18 +50,7 @@ class AbstractPluginTest extends Unit
     /**
      * @return void
      */
-    public function testGetFacadeShouldThrowExceptionIfFacadeNotFound()
-    {
-        $this->expectException(FacadeNotFoundException::class);
-
-        $plugin = new FooPlugin();
-        $plugin->getFacade();
-    }
-
-    /**
-     * @return void
-     */
-    public function testGetFacadeShouldReturnInstanceIfExists()
+    public function testGetFacadeShouldReturnInstanceIfExists(): void
     {
         $plugin = new FooPlugin();
 
@@ -79,7 +68,7 @@ class AbstractPluginTest extends Unit
     /**
      * @return void
      */
-    public function testGetQueryContainerThrowExceptionIfQueryContainerNotFound()
+    public function testGetQueryContainerThrowExceptionIfQueryContainerNotFound(): void
     {
         $this->expectException(QueryContainerNotFoundException::class);
 
@@ -103,7 +92,7 @@ class AbstractPluginTest extends Unit
     /**
      * @return void
      */
-    public function testGetQueryContainerShouldReturnInstanceIfQueryContainerIfExists()
+    public function testGetQueryContainerShouldReturnInstanceIfQueryContainerIfExists(): void
     {
         $plugin = new FooPlugin();
 

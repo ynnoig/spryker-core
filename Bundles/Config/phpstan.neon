@@ -1,3 +1,5 @@
 parameters:
+    dynamicConstantNames:
+        - APPLICATION_CODE_BUCKET
     ignoreErrors:
-    - "#Call to function array_key_exists.+ with string and ArrayObject.+ will always evaluate to false#"
+        - '#Unsafe usage of new static\(\)#'

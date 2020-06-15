@@ -11,14 +11,14 @@ use Spryker\Yves\Currency\Dependency\CurrencyPostChangePluginInterface;
 use Spryker\Yves\Kernel\AbstractPlugin;
 
 /**
- * @deprecated Use \Spryker\Client\CartCurrencyConnector\CurrencyChange\CartUpdateCurrencyOnCurrencyChangePlugin instead.
+ * @deprecated Use {@link \Spryker\Client\CartCurrencyConnector\CurrencyChange\CartUpdateCurrencyOnCurrencyChangePlugin} instead.
  *
  * @method \Spryker\Yves\CartCurrencyConnector\CartCurrencyConnectorFactory getFactory()
  */
 class RebuildCartOnCurrencyChangePlugin extends AbstractPlugin implements CurrencyPostChangePluginInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

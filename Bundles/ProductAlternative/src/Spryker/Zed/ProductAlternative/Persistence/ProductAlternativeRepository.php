@@ -83,9 +83,7 @@ class ProductAlternativeRepository extends AbstractRepository implements Product
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @api
+     * {@inheritDoc}
      *
      * @param int $idProductAbstract
      * @param \Generated\Shared\Transfer\LocaleTransfer $localeTransfer
@@ -232,8 +230,10 @@ class ProductAlternativeRepository extends AbstractRepository implements Product
      *
      * @return \Orm\Zed\Product\Persistence\SpyProductAbstractQuery
      */
-    protected function addCategoriesToProductAbstractQuery(SpyProductAbstractQuery $productAbstractQuery, LocaleTransfer $localeTransfer): SpyProductAbstractQuery
-    {
+    protected function addCategoriesToProductAbstractQuery(
+        SpyProductAbstractQuery $productAbstractQuery,
+        LocaleTransfer $localeTransfer
+    ): SpyProductAbstractQuery {
         $productAbstractQuery
             ->useSpyProductCategoryQuery(null, Criteria::LEFT_JOIN)
                 ->useSpyCategoryQuery(null, Criteria::LEFT_JOIN)

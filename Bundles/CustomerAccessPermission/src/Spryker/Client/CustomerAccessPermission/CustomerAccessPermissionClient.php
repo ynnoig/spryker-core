@@ -15,11 +15,11 @@ use Spryker\Client\Kernel\AbstractClient;
 class CustomerAccessPermissionClient extends AbstractClient implements CustomerAccessPermissionClientInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @deprecated Use \Spryker\Client\CustomerAccessPermission\Plugin\CustomerSecuredPatternPermissionPlugin plugin instead.
+     * @deprecated Use {@link \Spryker\Client\CustomerAccessPermission\Plugin\CustomerSecuredPatternPermissionPlugin} plugin instead.
      *
      * @return string
      */

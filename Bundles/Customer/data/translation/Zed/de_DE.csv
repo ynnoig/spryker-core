@@ -18,14 +18,16 @@ Country,Land
 "Customer was not created.","Kunde wurde nicht erstellt."
 "Customer was not updated.","Kunde wurde nicht aktualisiert."
 "Customer was updated successfully.","Kunde wurde erfolgreich aktualisiert."
+"Customer with id `%s` does not exist","Die Kunde mit der ID `%s` ist nicht vorhanden"
 "Date of birth",Geburtsdatum
 Delete,Löschen
 "Delete account","Konto löschen"
 "Edit Address","Adresse bearbeiten"
 "Edit Customer","Kunde bearbeiten"
 Email,E-Mail
-"First name",Vorname
 "First Name",Vorname
+"First name",Vorname
+"Form was not submitted.","Der Formular wurde nicht eingereicht."
 Gender,Geschlecht
 "Last name",Nachname
 "List Customers","Liste der Kunden"

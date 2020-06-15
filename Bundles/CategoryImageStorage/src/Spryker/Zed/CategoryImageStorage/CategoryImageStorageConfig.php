@@ -12,9 +12,23 @@ use Spryker\Zed\Kernel\AbstractBundleConfig;
 class CategoryImageStorageConfig extends AbstractBundleConfig
 {
     /**
+     * @api
+     *
+     * @deprecated Use {@link \Spryker\Zed\CategoryImageStorage\CategoryImageStorageConfig::getCategoryImageSynchronizationPoolName()} instead.
+     *
      * @return string|null
      */
     public function getProductImageSynchronizationPoolName(): ?string
+    {
+        return $this->getCategoryImageSynchronizationPoolName();
+    }
+
+    /**
+     * @api
+     *
+     * @return string|null
+     */
+    public function getCategoryImageSynchronizationPoolName(): ?string
     {
         return null;
     }

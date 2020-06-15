@@ -13,17 +13,21 @@ use Generated\Shared\Transfer\ProductConcretePageSearchTransfer;
 use Generated\Shared\Transfer\ProductConcreteTransfer;
 use Generated\Shared\Transfer\StoreTransfer;
 use Spryker\Shared\ProductPageSearch\ProductPageSearchConstants;
+use Spryker\Zed\Kernel\Persistence\EntityManager\InstancePoolingTrait;
 use Spryker\Zed\Kernel\Persistence\EntityManager\TransactionTrait;
+use Spryker\Zed\ProductPageSearch\Business\DataMapper\AbstractProductSearchDataMapper;
 use Spryker\Zed\ProductPageSearch\Business\Exception\ProductConcretePageSearchNotFoundException;
 use Spryker\Zed\ProductPageSearch\Business\ProductConcretePageSearchReader\ProductConcretePageSearchReaderInterface;
 use Spryker\Zed\ProductPageSearch\Business\ProductConcretePageSearchWriter\ProductConcretePageSearchWriterInterface;
 use Spryker\Zed\ProductPageSearch\Dependency\Facade\ProductPageSearchToProductInterface;
-use Spryker\Zed\ProductPageSearch\Dependency\Facade\ProductPageSearchToSearchInterface;
+use Spryker\Zed\ProductPageSearch\Dependency\Facade\ProductPageSearchToStoreFacadeInterface;
 use Spryker\Zed\ProductPageSearch\Dependency\Service\ProductPageSearchToUtilEncodingInterface;
+use Spryker\Zed\ProductPageSearch\ProductPageSearchConfig;
 
 class ProductConcretePageSearchPublisher implements ProductConcretePageSearchPublisherInterface
 {
     use TransactionTrait;
+    use InstancePoolingTrait;
 
     protected const IDENTIFIER_PRODUCT_CONCRETE_PAGE_SEARCH = 'id_product_concrete_page_search';
     protected const IDENTIFIER_STRUCTURED_DATA = 'structured_data';
@@ -49,9 +53,19 @@ class ProductConcretePageSearchPublisher implements ProductConcretePageSearchPub
     protected $utilEncoding;
 
     /**
-     * @var \Spryker\Zed\ProductPageSearch\Dependency\Facade\ProductPageSearchToSearchInterface
+     * @var \Spryker\Zed\ProductPageSearch\Business\DataMapper\AbstractProductSearchDataMapper
      */
-    protected $searchFacade;
+    protected $productConcreteSearchDataMapper;
+
+    /**
+     * @var \Spryker\Zed\ProductPageSearch\Dependency\Facade\ProductPageSearchToStoreFacadeInterface
+     */
+    protected $storeFacade;
+
+    /**
+     * @var \Spryker\Zed\ProductPageSearch\ProductPageSearchConfig
+     */
+    protected $productPageSearchConfig;
 
     /**
      * @var \Spryker\Zed\ProductPageSearchExtension\Dependency\Plugin\ProductConcretePageDataExpanderPluginInterface[]
@@ -63,7 +77,9 @@ class ProductConcretePageSearchPublisher implements ProductConcretePageSearchPub
      * @param \Spryker\Zed\ProductPageSearch\Business\ProductConcretePageSearchWriter\ProductConcretePageSearchWriterInterface $productConcretePageSearchWriter
      * @param \Spryker\Zed\ProductPageSearch\Dependency\Facade\ProductPageSearchToProductInterface $productFacade
      * @param \Spryker\Zed\ProductPageSearch\Dependency\Service\ProductPageSearchToUtilEncodingInterface $utilEncoding
-     * @param \Spryker\Zed\ProductPageSearch\Dependency\Facade\ProductPageSearchToSearchInterface $searchFacade
+     * @param \Spryker\Zed\ProductPageSearch\Business\DataMapper\AbstractProductSearchDataMapper $productConcreteSearchDataMapper
+     * @param \Spryker\Zed\ProductPageSearch\Dependency\Facade\ProductPageSearchToStoreFacadeInterface $storeFacade
+     * @param \Spryker\Zed\ProductPageSearch\ProductPageSearchConfig $productPageSearchConfig
      * @param \Spryker\Zed\ProductPageSearchExtension\Dependency\Plugin\ProductConcretePageDataExpanderPluginInterface[] $pageDataExpanderPlugins
      */
     public function __construct(
@@ -71,30 +87,54 @@ class ProductConcretePageSearchPublisher implements ProductConcretePageSearchPub
         ProductConcretePageSearchWriterInterface $productConcretePageSearchWriter,
         ProductPageSearchToProductInterface $productFacade,
         ProductPageSearchToUtilEncodingInterface $utilEncoding,
-        ProductPageSearchToSearchInterface $searchFacade,
+        AbstractProductSearchDataMapper $productConcreteSearchDataMapper,
+        ProductPageSearchToStoreFacadeInterface $storeFacade,
+        ProductPageSearchConfig $productPageSearchConfig,
         array $pageDataExpanderPlugins
     ) {
         $this->productConcretePageSearchReader = $productConcretePageSearchReader;
         $this->productConcretePageSearchWriter = $productConcretePageSearchWriter;
         $this->productFacade = $productFacade;
+        $this->productPageSearchConfig = $productPageSearchConfig;
         $this->pageDataExpanderPlugins = $pageDataExpanderPlugins;
-        $this->searchFacade = $searchFacade;
+        $this->productConcreteSearchDataMapper = $productConcreteSearchDataMapper;
         $this->utilEncoding = $utilEncoding;
+        $this->storeFacade = $storeFacade;
     }
 
     /**
-     * @param int[] $productIds
+     * @param int[] $productConcreteIds
      *
      * @return void
      */
-    public function publish(array $productIds): void
+    public function publish(array $productConcreteIds): void
     {
-        $productConcreteTransfers = $this->productFacade->getProductConcreteTransfersByProductIds($productIds);
-        $productConcretePageSearchTransfers = $this->productConcretePageSearchReader->getProductConcretePageSearchTransfersByProductIdsGrouppedByStoreAndLocale($productIds);
+        $isPoolingStateChanged = $this->disableInstancePooling();
 
-        $this->getTransactionHandler()->handleTransaction(function () use ($productConcreteTransfers, $productConcretePageSearchTransfers) {
-            $this->executePublishTransaction($productConcreteTransfers, $productConcretePageSearchTransfers);
-        });
+        $productConcreteIds = array_unique(array_filter($productConcreteIds));
+
+        if (!$productConcreteIds) {
+            return;
+        }
+
+        $productConcreteIdsChunks = array_chunk(
+            $productConcreteIds,
+            $this->productPageSearchConfig->getProductConcretePagePublishChunkSize()
+        );
+
+        foreach ($productConcreteIdsChunks as $productConcreteIdsChunk) {
+            $productConcreteTransfers = $this->productFacade->getProductConcreteTransfersByProductIds($productConcreteIdsChunk);
+            $productConcretePageSearchTransfers = $this->productConcretePageSearchReader
+                ->getProductConcretePageSearchTransfersByProductIdsGrouppedByStoreAndLocale($productConcreteIdsChunk);
+
+            $this->getTransactionHandler()->handleTransaction(function () use ($productConcreteTransfers, $productConcretePageSearchTransfers) {
+                $this->executePublishTransaction($productConcreteTransfers, $productConcretePageSearchTransfers);
+            });
+        }
+
+        if ($isPoolingStateChanged) {
+            $this->enableInstancePooling();
+        }
     }
 
     /**
@@ -128,7 +168,7 @@ class ProductConcretePageSearchPublisher implements ProductConcretePageSearchPub
     }
 
     /**
-     * @param array $productConcreteTransfers
+     * @param \Generated\Shared\Transfer\ProductConcreteTransfer[] $productConcreteTransfers
      *
      * @return array
      */
@@ -162,7 +202,7 @@ class ProductConcretePageSearchPublisher implements ProductConcretePageSearchPub
     }
 
     /**
-     * @param array $productConcretePageSearchTransfers
+     * @param \Generated\Shared\Transfer\ProductConcretePageSearchTransfer[] $productConcretePageSearchTransfers
      *
      * @return void
      */
@@ -211,6 +251,14 @@ class ProductConcretePageSearchPublisher implements ProductConcretePageSearchPub
     ): void {
         if (!$productConcreteTransfer->getIsActive() && $productConcretePageSearchTransfer->getIdProductConcretePageSearch() !== null) {
             $this->deleteProductConcretePageSearch($productConcretePageSearchTransfer);
+
+            return;
+        }
+
+        if (!$this->isValidStoreLocale($storeTransfer->getName(), $localizedAttributesTransfer->getLocale()->getLocaleName())) {
+            if ($productConcretePageSearchTransfer->getIdProductConcretePageSearch() !== null) {
+                $this->deleteProductConcretePageSearch($productConcretePageSearchTransfer);
+            }
 
             return;
         }
@@ -299,11 +347,7 @@ class ProductConcretePageSearchPublisher implements ProductConcretePageSearchPub
         $localeTransfer = (new LocaleTransfer())
             ->setLocaleName($productConcretePageSearchTransfer->getLocale());
 
-        return $this->searchFacade->transformPageMapToDocumentByMapperName(
-            $productConcretePageSearchData,
-            $localeTransfer,
-            ProductPageSearchConstants::PRODUCT_CONCRETE_RESOURCE_NAME
-        );
+        return $this->productConcreteSearchDataMapper->mapProductDataToSearchData($productConcretePageSearchData, $localeTransfer);
     }
 
     /**
@@ -326,8 +370,10 @@ class ProductConcretePageSearchPublisher implements ProductConcretePageSearchPub
      *
      * @return \Generated\Shared\Transfer\ProductConcretePageSearchTransfer
      */
-    protected function expandProductConcretePageSearchTransferWithPlugins(ProductConcreteTransfer $productConcreteTransfer, ProductConcretePageSearchTransfer $productConcretePageSearchTransfer): ProductConcretePageSearchTransfer
-    {
+    protected function expandProductConcretePageSearchTransferWithPlugins(
+        ProductConcreteTransfer $productConcreteTransfer,
+        ProductConcretePageSearchTransfer $productConcretePageSearchTransfer
+    ): ProductConcretePageSearchTransfer {
         foreach ($this->pageDataExpanderPlugins as $pageDataExpanderPlugin) {
             $productConcretePageSearchTransfer = $pageDataExpanderPlugin->expand($productConcreteTransfer, $productConcretePageSearchTransfer);
         }
@@ -348,5 +394,16 @@ class ProductConcretePageSearchPublisher implements ProductConcretePageSearchPub
         unset($data[static::IDENTIFIER_STRUCTURED_DATA]);
 
         return $this->utilEncoding->encodeJson($data);
+    }
+
+    /**
+     * @param string $storeName
+     * @param string $localeName
+     *
+     * @return bool
+     */
+    protected function isValidStoreLocale(string $storeName, string $localeName): bool
+    {
+        return in_array($localeName, $this->storeFacade->getStoreByName($storeName)->getAvailableLocaleIsoCodes());
     }
 }

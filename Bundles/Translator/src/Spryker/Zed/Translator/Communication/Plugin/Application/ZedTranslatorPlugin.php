@@ -13,7 +13,7 @@ use Spryker\Shared\ApplicationExtension\Dependency\Plugin\BootableApplicationPlu
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 
 /**
- * @deprecated Use `Spryker\Zed\Translator\Communication\Plugin\Twig\TranslatorTwigPlugin` instead.
+ * @deprecated Use {@link \Spryker\Zed\Translator\Communication\Plugin\Twig\TranslatorTwigPlugin} instead.
  *
  * @method \Spryker\Zed\Translator\TranslatorConfig getConfig()
  * @method \Spryker\Zed\Translator\Communication\TranslatorCommunicationFactory getFactory()
@@ -22,7 +22,7 @@ use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 class ZedTranslatorPlugin extends AbstractPlugin implements ApplicationPluginInterface, BootableApplicationPluginInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *  - Extends Application with Translator instance.
      *
      * @api
@@ -39,7 +39,7 @@ class ZedTranslatorPlugin extends AbstractPlugin implements ApplicationPluginInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

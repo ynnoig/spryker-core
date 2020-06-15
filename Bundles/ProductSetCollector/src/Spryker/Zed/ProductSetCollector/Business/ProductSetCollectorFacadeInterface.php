@@ -46,8 +46,6 @@ interface ProductSetCollectorFacadeInterface
     );
 
     /**
-     * {@inheritdoc}
-     *
      * @api
      *
      * @param \Orm\Zed\Touch\Persistence\SpyTouchQuery $baseQuery

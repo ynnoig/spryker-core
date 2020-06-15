@@ -12,7 +12,9 @@ use Symfony\Component\Form\Extension\Core\Type\MoneyType as SymfonyMoneyType;
 class SimpleMoneyType extends SymfonyMoneyType
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @return string
      */
     public function getBlockPrefix()
     {
@@ -20,7 +22,7 @@ class SimpleMoneyType extends SymfonyMoneyType
     }
 
     /**
-     * @deprecated Use `getBlockPrefix()` instead.
+     * @deprecated Use {@link getBlockPrefix()} instead.
      *
      * @return string
      */

@@ -10,11 +10,9 @@ namespace Spryker\Zed\Auth\Communication\Form;
 use Spryker\Zed\Kernel\Communication\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Required;
 
 /**
  * @method \Spryker\Zed\Auth\Business\AuthFacadeInterface getFacade()
@@ -38,8 +36,7 @@ class ResetPasswordRequestForm extends AbstractType
     {
         $this
             ->addEmailField($builder)
-            ->addSubmitField($builder)
-            ->addLoginField($builder);
+            ->addSubmitField($builder);
     }
 
     /**
@@ -52,7 +49,6 @@ class ResetPasswordRequestForm extends AbstractType
         $builder
             ->add(self::FIELD_EMAIL, TextType::class, [
                 'constraints' => [
-                    new Required(),
                     new NotBlank(),
                     new Email(),
                 ],
@@ -83,25 +79,6 @@ class ResetPasswordRequestForm extends AbstractType
     }
 
     /**
-     * @param \Symfony\Component\Form\FormBuilderInterface $builder
-     *
-     * @return $this
-     */
-    protected function addLoginField(FormBuilderInterface $builder)
-    {
-        $builder
-            ->add(self::FIELD_LOGIN, UrlType::class, [
-                'attr' => [
-                    'href' => '/auth/login',
-                    'class' => 'btn btn-primary btn-block btn-outline',
-                    'title' => 'Login',
-                ],
-            ]);
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getBlockPrefix()
@@ -110,7 +87,7 @@ class ResetPasswordRequestForm extends AbstractType
     }
 
     /**
-     * @deprecated Use `getBlockPrefix()` instead.
+     * @deprecated Use {@link getBlockPrefix()} instead.
      *
      * @return string
      */

@@ -55,7 +55,6 @@ class PriceGrouper implements PriceGrouperInterface
         string $sku,
         ?PriceProductDimensionTransfer $priceProductDimensionTransfer = null
     ): array {
-
         if (!$priceProductDimensionTransfer) {
             $priceProductDimensionTransfer = (new PriceProductDimensionTransfer())
                 ->setType($this->config->getPriceDimensionDefault());
@@ -94,7 +93,8 @@ class PriceGrouper implements PriceGrouperInterface
         $priceType = $priceProductTransfer->getPriceType()->getName();
         $currencyIsoCode = $priceMoneyValueTransfer->getCurrency()->getCode();
 
-        if (!isset($prices[$currencyIsoCode][SharedPriceProductConfig::PRICE_DATA])
+        if (
+            !isset($prices[$currencyIsoCode][SharedPriceProductConfig::PRICE_DATA])
             || $priceMoneyValueTransfer->getPriceData() !== null
         ) {
             $prices[$currencyIsoCode][SharedPriceProductConfig::PRICE_DATA] = $priceMoneyValueTransfer->getPriceData();

@@ -9,7 +9,6 @@ namespace Spryker\Zed\PriceProduct\Business\Model\Product;
 
 use Generated\Shared\Transfer\MoneyValueTransfer;
 use Generated\Shared\Transfer\PriceProductTransfer;
-use Orm\Zed\PriceProduct\Persistence\SpyPriceProduct;
 use Orm\Zed\PriceProduct\Persistence\SpyPriceProductStore;
 use Spryker\Zed\Kernel\Persistence\EntityManager\TransactionTrait;
 use Spryker\Zed\PriceProduct\Business\Model\PriceData\PriceDataChecksumGeneratorInterface;
@@ -149,6 +148,10 @@ class PriceProductStoreWriter implements PriceProductStoreWriterInterface
 
         $priceProductTransfer = $this->persistPriceProductDimension($priceProductTransfer);
 
+        if ($this->priceProductConfig->getIsDeleteOrphanStorePricesOnSaveEnabled()) {
+            $this->deleteOrphanPriceProductStoreEntities();
+        }
+
         return $priceProductTransfer;
     }
 
@@ -165,37 +168,48 @@ class PriceProductStoreWriter implements PriceProductStoreWriterInterface
         $this->requireFieldsBaseOnProductType($priceProductTransfer);
 
         if ($priceProductTransfer->getIdProduct() !== null) {
-            $idPriceProduct = $this->priceProductRepository
-                ->findIdPriceProductForProductConcrete($priceProductTransfer);
-
-            if ($idPriceProduct !== null) {
-                $priceProductTransfer->setIdPriceProduct($idPriceProduct);
-
-                return $priceProductTransfer;
-            }
+            return $this->preparePriceProductForProductConcrete($priceProductTransfer);
         }
 
-        if ($priceProductTransfer->getIdProductAbstract() !== null) {
-            $idPriceProduct = $this->priceProductRepository
-                ->findIdPriceProductForProductAbstract($priceProductTransfer);
+        return $this->preparePriceProductForProductAbstract($priceProductTransfer);
+    }
 
-            if ($idPriceProduct !== null) {
-                $priceProductTransfer->setIdPriceProduct($idPriceProduct);
+    /**
+     * @param \Generated\Shared\Transfer\PriceProductTransfer $priceProductTransfer
+     *
+     * @return \Generated\Shared\Transfer\PriceProductTransfer
+     */
+    protected function preparePriceProductForProductConcrete(PriceProductTransfer $priceProductTransfer): PriceProductTransfer
+    {
+        $idPriceProduct = $this->priceProductRepository
+            ->findIdPriceProductForProductConcrete($priceProductTransfer);
 
-                return $priceProductTransfer;
-            }
+        if ($idPriceProduct === null) {
+            $idPriceProduct = $this->priceProductEntityManager
+                ->savePriceProductForProductConcrete($priceProductTransfer);
         }
 
-        $priceProductEntity = (new SpyPriceProduct())
-            ->setFkPriceType($priceProductTransfer->getFkPriceType())
-            ->setFkProduct($priceProductTransfer->getIdProduct())
-            ->setFkProductAbstract($priceProductTransfer->getIdProductAbstract());
+        return $priceProductTransfer
+            ->setIdPriceProduct($idPriceProduct);
+    }
 
-        $priceProductEntity->save();
+    /**
+     * @param \Generated\Shared\Transfer\PriceProductTransfer $priceProductTransfer
+     *
+     * @return \Generated\Shared\Transfer\PriceProductTransfer
+     */
+    protected function preparePriceProductForProductAbstract(PriceProductTransfer $priceProductTransfer): PriceProductTransfer
+    {
+        $idPriceProduct = $this->priceProductRepository
+            ->findIdPriceProductForProductAbstract($priceProductTransfer);
 
-        $priceProductTransfer->setIdPriceProduct($priceProductEntity->getIdPriceProduct());
+        if ($idPriceProduct === null) {
+            $idPriceProduct = $this->priceProductEntityManager
+                ->savePriceProductForProductAbstract($priceProductTransfer);
+        }
 
-        return $priceProductTransfer;
+        return $priceProductTransfer
+            ->setIdPriceProduct($idPriceProduct);
     }
 
     /**
@@ -247,6 +261,8 @@ class PriceProductStoreWriter implements PriceProductStoreWriterInterface
         if ($priceProductTransfer->getIdProductAbstract()) {
             return $this->priceProductStoreWriterPluginExecutor->executePriceDimensionAbstractSaverPlugins($priceProductTransfer);
         }
+
+        return $priceProductTransfer;
     }
 
     /**
@@ -258,9 +274,9 @@ class PriceProductStoreWriter implements PriceProductStoreWriterInterface
         PriceProductTransfer $priceProductTransfer
     ): PriceProductTransfer {
         $priceProductDefaultEntityTransfer = $this->priceProductDefaultWriter->persistPriceProductDefault($priceProductTransfer);
-        $priceProductTransfer->getPriceDimension()->setIdPriceProductDefault(
-            $priceProductDefaultEntityTransfer->getIdPriceProductDefault()
-        );
+        /** @var int|null $idPriceProductDefault */
+        $idPriceProductDefault = $priceProductDefaultEntityTransfer->getIdPriceProductDefault();
+        $priceProductTransfer->getPriceDimension()->setIdPriceProductDefault($idPriceProductDefault);
 
         return $priceProductTransfer;
     }
@@ -273,7 +289,7 @@ class PriceProductStoreWriter implements PriceProductStoreWriterInterface
     protected function doDeleteOrphanPriceProductStoreEntities(array $priceProductStoreEntityTransfers): void
     {
         foreach ($priceProductStoreEntityTransfers as $priceProductStoreEntityTransfer) {
-            $idPriceProductStore = $priceProductStoreEntityTransfer->getIdPriceProductStore();
+            $idPriceProductStore = (int)$priceProductStoreEntityTransfer->getIdPriceProductStore();
 
             $this->priceProductStoreWriterPluginExecutor->executePriceProductStorePreDeletePlugins($idPriceProductStore);
             $this->priceProductEntityManager->deletePriceProductStore($idPriceProductStore);
@@ -290,7 +306,6 @@ class PriceProductStoreWriter implements PriceProductStoreWriterInterface
         PriceProductTransfer $priceProductTransfer,
         MoneyValueTransfer $moneyValueTransfer
     ): SpyPriceProductStore {
-
         return $this->priceProductQueryContainer
             ->queryPriceProductStoreByProductCurrencyStore(
                 $priceProductTransfer->getIdPriceProduct(),

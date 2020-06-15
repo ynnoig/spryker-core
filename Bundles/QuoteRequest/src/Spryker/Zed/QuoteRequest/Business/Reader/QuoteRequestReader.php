@@ -101,8 +101,9 @@ class QuoteRequestReader implements QuoteRequestReaderInterface
      *
      * @return \Generated\Shared\Transfer\QuoteRequestVersionCollectionTransfer
      */
-    public function getQuoteRequestVersionCollectionByFilter(QuoteRequestVersionFilterTransfer $quoteRequestVersionFilterTransfer): QuoteRequestVersionCollectionTransfer
-    {
+    public function getQuoteRequestVersionCollectionByFilter(
+        QuoteRequestVersionFilterTransfer $quoteRequestVersionFilterTransfer
+    ): QuoteRequestVersionCollectionTransfer {
         return $this->quoteRequestRepository
             ->getQuoteRequestVersionCollectionByFilter($quoteRequestVersionFilterTransfer);
     }
@@ -160,7 +161,6 @@ class QuoteRequestReader implements QuoteRequestReaderInterface
     protected function expandQuoteRequestCollectionWithBusinessUnits(
         QuoteRequestCollectionTransfer $quoteRequestCollectionTransfer
     ): QuoteRequestCollectionTransfer {
-
         if (!$quoteRequestCollectionTransfer->getQuoteRequests()->count()) {
             return $quoteRequestCollectionTransfer;
         }

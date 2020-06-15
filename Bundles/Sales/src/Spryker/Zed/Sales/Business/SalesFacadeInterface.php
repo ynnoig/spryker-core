@@ -11,6 +11,9 @@ use Generated\Shared\Transfer\AddressTransfer;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\CommentTransfer;
 use Generated\Shared\Transfer\ExpenseTransfer;
+use Generated\Shared\Transfer\ItemCollectionTransfer;
+use Generated\Shared\Transfer\OrderItemFilterTransfer;
+use Generated\Shared\Transfer\OrderListRequestTransfer;
 use Generated\Shared\Transfer\OrderListTransfer;
 use Generated\Shared\Transfer\OrderTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
@@ -68,7 +71,7 @@ interface SalesFacadeInterface
      *
      * @api
      *
-     * @deprecated Use saveSalesOrder() instead
+     * @deprecated Use {@link saveSalesOrder()} instead
      *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
@@ -123,7 +126,22 @@ interface SalesFacadeInterface
     public function updateOrderAddress(AddressTransfer $addressesTransfer, $idAddress);
 
     /**
-     * Returns a list of of orders for the given customer id and (optional) filters.
+     * Specification:
+     * - Creates new order address with values from the addresses transfer.
+     * - Returns addresses transfer with id of newly created order address.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\AddressTransfer $addressesTransfer
+     *
+     * @return \Generated\Shared\Transfer\AddressTransfer
+     */
+    public function createOrderAddress(AddressTransfer $addressesTransfer): AddressTransfer;
+
+    /**
+     * Specification:
+     *  - Returns a list of of orders for the given customer id and (optional) filters.
+     *  - Aggregates order totals calls -> SalesAggregator
      *
      * @api
      *
@@ -136,9 +154,11 @@ interface SalesFacadeInterface
 
     /**
      * Specification:
-     *  - Returns a list of of orders for the given customer id and (optional) filters.
-     *  - Aggregates order totals calls -> SalesAggregator
-     *  - Paginates order list for limited result
+     * - Returns a list of of orders for the given customer id and (optional) filters.
+     * - OrderListTransfer::$filters can contain offset-based pagination and ordering parameters.
+     * - OrderListTransfer::$pagination can be used to apply page-based pagination strategy to the queried orders.
+     * - Hydrates the resulting orders with related data.
+     * - Aggregates order totals calls -> SalesAggregator.
      *
      * @api
      *
@@ -148,6 +168,22 @@ interface SalesFacadeInterface
      * @return \Generated\Shared\Transfer\OrderListTransfer
      */
     public function getPaginatedCustomerOrders(OrderListTransfer $orderListTransfer, $idCustomer);
+
+    /**
+     * Specification:
+     * - Returns a transfer with the filtered list of orders for the given customer.
+     * - Uses OrderListRequestTransfer::$filter to pull params for offset-based pagination strategy.
+     * - OrderListRequestTransfer::customerReference must be set.
+     * - Hydrates OrderTransfer with data from persistence by idSaleOrder.
+     * - Updates the total number of orders for the customer to the pagination transfer.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\OrderListRequestTransfer $orderListRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\OrderListTransfer
+     */
+    public function getOffsetPaginatedCustomerOrderList(OrderListRequestTransfer $orderListRequestTransfer): OrderListTransfer;
 
     /**
      * Specification:
@@ -167,11 +203,15 @@ interface SalesFacadeInterface
     /**
      * Specification:
      *  - Returns the order for the given customer id and sales order id.
-     *  - Aggregates order totals calls -> SalesAggregator
+     *  - Executes CustomerOrderAccessCheckPluginInterface plugins, expects OrderTransfer::customer to be provided, not applicable to order creator.
+     *  - Aggregates order totals calls -> SalesAggregator.
+     *  - Hydrates order using quote level (BC) or item level shipping addresses.
      *
      * @api
      *
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @throws \Spryker\Zed\Sales\Business\Exception\InvalidSalesOrderException
      *
      * @return \Generated\Shared\Transfer\OrderTransfer
      */
@@ -179,11 +219,15 @@ interface SalesFacadeInterface
 
     /**
      * Specification:
-     * - Returns the order for the given sales order id.
+     *  - Returns persisted order information for the given sales order id.
+     *  - Hydrates order by calling HydrateOrderPlugin's registered in project dependency provider.
+     *  - Hydrates order using quote level (BC) or item level shipping addresses.
      *
      * @api
      *
      * @param int $idSalesOrder
+     *
+     * @throws \Spryker\Zed\Sales\Business\Exception\InvalidSalesOrderException
      *
      * @return \Generated\Shared\Transfer\OrderTransfer
      */
@@ -191,7 +235,9 @@ interface SalesFacadeInterface
 
     /**
      * Specification:
-     * - Returns the order for the given sales order id.
+     *  - Returns persisted order information for the given sales order id.
+     *  - Hydrates order by calling HydrateOrderPlugin's registered in project dependency provider.
+     *  - Hydrates order using quote level (BC) or item level shipping addresses.
      *
      * @api
      *
@@ -204,6 +250,7 @@ interface SalesFacadeInterface
     /**
      * Specification:
      * - Returns the order for the given sales order item id.
+     * - Hydrates order using quote level (BC) or item level shipping addresses.
      *
      * @api
      *
@@ -228,8 +275,8 @@ interface SalesFacadeInterface
     public function getCustomerOrderByOrderReference(OrderTransfer $orderTransfer): OrderTransfer;
 
     /**
-     *
      * Specification:
+     * - Executes `ItemPreTransformerPluginInterface` plugins stack.
      * - Transforms provided cart items according configured cart item transformer strategies.
      * - If no cart item transformer strategy is configured, explodes the provided items per quantity.
      * - Recalculates order transfer with new values.
@@ -255,4 +302,98 @@ interface SalesFacadeInterface
      * @return \Generated\Shared\Transfer\ExpenseTransfer
      */
     public function createSalesExpense(ExpenseTransfer $expenseTransfer): ExpenseTransfer;
+
+    /**
+     * Specification:
+     * - Updates sales expense entity from transfer object.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\ExpenseTransfer $expenseTransfer
+     *
+     * @return \Generated\Shared\Transfer\ExpenseTransfer
+     */
+    public function updateSalesExpense(ExpenseTransfer $expenseTransfer): ExpenseTransfer;
+
+    /**
+     * Specification:
+     * - Returns a collection of order items grouped by unique group key.
+     *
+     * @api
+     *
+     * @deprecated Use {@link getUniqueItemsFromOrder()} instead`.
+     *
+     * @param iterable|\Generated\Shared\Transfer\ItemTransfer[] $itemTransfers
+     *
+     * @return \Generated\Shared\Transfer\ItemTransfer[]
+     */
+    public function getUniqueOrderItems(iterable $itemTransfers): array;
+
+    /**
+     * Specification:
+     * - Expands AddressTransfer with customer address data or sales address data and returns the modified object.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\AddressTransfer $addressTransfer
+     *
+     * @return \Generated\Shared\Transfer\AddressTransfer
+     */
+    public function expandWithCustomerOrSalesAddress(AddressTransfer $addressTransfer): AddressTransfer;
+
+    /**
+     * Specification:
+     * - Extracts unique items.
+     * - Returns a collection of items.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return \Generated\Shared\Transfer\ItemTransfer[]
+     */
+    public function getUniqueItemsFromOrder(OrderTransfer $orderTransfer): array;
+
+    /**
+     * Specification:
+     * - Retrieves order items from persistence by criteria from OrderItemFilterTransfer.
+     * - Executes OrderItemExpanderPluginInterface stack.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\OrderItemFilterTransfer $orderItemFilterTransfer
+     *
+     * @return \Generated\Shared\Transfer\ItemCollectionTransfer
+     */
+    public function getOrderItems(OrderItemFilterTransfer $orderItemFilterTransfer): ItemCollectionTransfer;
+
+    /**
+     * Specification:
+     * - Requires OrderListTransfer::pagination to be set.
+     * - Requires OrderListTransfer::format to be set.
+     * - Filters orders by OrderListTransfer::filterFields if provided.
+     * - Filters orders by OrderListTransfer::filter if provided.
+     * - Executes SearchOrderQueryExpanderPluginInterface plugin stack.
+     * - Finds orders by criteria from OrderListTransfer.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\OrderListTransfer $orderListTransfer
+     *
+     * @return \Generated\Shared\Transfer\OrderListTransfer
+     */
+    public function searchOrders(OrderListTransfer $orderListTransfer): OrderListTransfer;
+
+    /**
+     * Specification:
+     * - Expands order items with currency ISO code.
+     * - Expects ItemTransfer::FK_SALES_ORDER to be set.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\ItemTransfer[] $itemTransfers
+     *
+     * @return \Generated\Shared\Transfer\ItemTransfer[]
+     */
+    public function expandOrderItemsWithCurrencyIsoCode(array $itemTransfers): array;
 }

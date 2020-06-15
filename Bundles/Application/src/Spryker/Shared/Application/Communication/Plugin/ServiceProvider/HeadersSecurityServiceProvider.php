@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * @deprecated Use Spryker\Shared\Application\ServiceProvider\HeadersSecurityServiceProvider instead
+ * @deprecated Use {@link \Spryker\Shared\Application\ServiceProvider\HeadersSecurityServiceProvider} instead
  */
 class HeadersSecurityServiceProvider implements ServiceProviderInterface
 {
@@ -38,7 +38,7 @@ class HeadersSecurityServiceProvider implements ServiceProviderInterface
     public const HEADER_X_XSS_PROTECTION = 'X-XSS-Protection';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @param \Silex\Application $app
      *

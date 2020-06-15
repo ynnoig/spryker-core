@@ -18,6 +18,7 @@ use Twig\Loader\FilesystemLoader;
 
 /**
  * Auto-generated group annotations
+ *
  * @group SprykerTest
  * @group Zed
  * @group Money
@@ -30,9 +31,14 @@ use Twig\Loader\FilesystemLoader;
 class TwigMoneyServiceProviderTest extends Unit
 {
     /**
+     * @var \SprykerTest\Zed\Money\MoneyCommunicationTester
+     */
+    protected $tester;
+
+    /**
      * @return void
      */
-    public function testRegisterShouldAddFilterToTwig()
+    public function testRegisterShouldAddFilterToTwig(): void
     {
         $moneyServiceProvider = new TwigMoneyServiceProvider();
         $application = new Application();
@@ -46,7 +52,7 @@ class TwigMoneyServiceProviderTest extends Unit
     /**
      * @return void
      */
-    public function testBootShouldDoNothing()
+    public function testBootShouldDoNothing(): void
     {
         $moneyServiceProvider = new TwigMoneyServiceProvider();
         $application = new Application();
@@ -63,7 +69,7 @@ class TwigMoneyServiceProviderTest extends Unit
      *
      * @return void
      */
-    public function testFilterExecution($input, $expected, $locale, $withSymbol = true)
+    public function testFilterExecution($input, string $expected, string $locale, bool $withSymbol = true): void
     {
         $moneyServiceProvider = new TwigMoneyServiceProvider();
         $application = new Application();
@@ -79,6 +85,7 @@ class TwigMoneyServiceProviderTest extends Unit
         $callable = $filter->getCallable();
 
         Store::getInstance()->setCurrentLocale($locale);
+        $this->tester->clearLocaleCacheForMoneyFormatter();
 
         $result = $callable($input, $withSymbol);
         $this->assertSame($expected, $result);
@@ -87,7 +94,7 @@ class TwigMoneyServiceProviderTest extends Unit
     /**
      * @return array
      */
-    public function formatTestData()
+    public function formatTestData(): array
     {
         return [
             [$this->createDeMoneyTransfer(), '10,00 €', 'de_DE'],
@@ -109,7 +116,7 @@ class TwigMoneyServiceProviderTest extends Unit
     /**
      * @return \Generated\Shared\Transfer\MoneyTransfer
      */
-    protected function createDeMoneyTransfer()
+    protected function createDeMoneyTransfer(): MoneyTransfer
     {
         $moneyTransfer = new MoneyTransfer();
         $moneyTransfer->setAmount(1000);
@@ -123,7 +130,7 @@ class TwigMoneyServiceProviderTest extends Unit
     /**
      * @return \Generated\Shared\Transfer\MoneyTransfer
      */
-    protected function createJpyMoneyTransfer()
+    protected function createJpyMoneyTransfer(): MoneyTransfer
     {
         $moneyTransfer = new MoneyTransfer();
         $moneyTransfer->setAmount(1000);

@@ -24,7 +24,7 @@ use Spryker\Client\QuoteRequest\Zed\QuoteRequestStubInterface;
 class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -40,7 +40,7 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -54,7 +54,7 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -68,7 +68,7 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -82,7 +82,7 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -96,7 +96,7 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -110,7 +110,7 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -118,13 +118,14 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
      *
      * @return \Generated\Shared\Transfer\QuoteRequestVersionCollectionTransfer
      */
-    public function getQuoteRequestVersionCollectionByFilter(QuoteRequestVersionFilterTransfer $quoteRequestVersionFilterTransfer): QuoteRequestVersionCollectionTransfer
-    {
+    public function getQuoteRequestVersionCollectionByFilter(
+        QuoteRequestVersionFilterTransfer $quoteRequestVersionFilterTransfer
+    ): QuoteRequestVersionCollectionTransfer {
         return $this->getZedStub()->getQuoteRequestVersionCollectionByFilter($quoteRequestVersionFilterTransfer);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -140,7 +141,7 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -156,7 +157,7 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -172,7 +173,7 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -188,7 +189,7 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -204,7 +205,7 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -220,7 +221,7 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -239,5 +240,37 @@ class QuoteRequestClient extends AbstractClient implements QuoteRequestClientInt
     protected function getZedStub(): QuoteRequestStubInterface
     {
         return $this->getFactory()->createQuoteRequestStub();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return bool
+     */
+    public function isEditableQuoteRequestVersion(QuoteTransfer $quoteTransfer): bool
+    {
+        return $this->getFactory()
+            ->createQuoteChecker()
+            ->isEditableQuoteRequestVersion($quoteTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return bool
+     */
+    public function isEditableQuoteShipmentSourcePrice(QuoteTransfer $quoteTransfer): bool
+    {
+        return $this->getFactory()
+            ->createQuoteChecker()
+            ->isEditableQuoteShipmentSourcePrice($quoteTransfer);
     }
 }

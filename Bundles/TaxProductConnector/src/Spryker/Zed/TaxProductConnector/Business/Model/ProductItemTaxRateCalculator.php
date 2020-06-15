@@ -7,12 +7,18 @@
 
 namespace Spryker\Zed\TaxProductConnector\Business\Model;
 
+use ArrayObject;
+use Generated\Shared\Transfer\AddressTransfer;
+use Generated\Shared\Transfer\CalculableObjectTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
-use Spryker\Zed\Tax\Business\Model\CalculatorInterface;
+use Spryker\Zed\TaxProductConnector\Business\Calculator\CalculatorInterface;
 use Spryker\Zed\TaxProductConnector\Dependency\Facade\TaxProductConnectorToTaxInterface;
 use Spryker\Zed\TaxProductConnector\Persistence\TaxProductConnectorQueryContainer;
 use Spryker\Zed\TaxProductConnector\Persistence\TaxProductConnectorQueryContainerInterface;
 
+/**
+ * @deprecated Use {@link \Spryker\Zed\TaxProductConnector\Business\Calculator\ProductItemTaxRateCalculator} instead.
+ */
 class ProductItemTaxRateCalculator implements CalculatorInterface
 {
     /**
@@ -26,11 +32,23 @@ class ProductItemTaxRateCalculator implements CalculatorInterface
     protected $taxFacade;
 
     /**
+     * @var string
+     */
+    protected $defaultTaxCountryIso2Code;
+
+    /**
+     * @var float
+     */
+    protected $defaultTaxRate;
+
+    /**
      * @param \Spryker\Zed\TaxProductConnector\Persistence\TaxProductConnectorQueryContainerInterface $taxQueryContainer
      * @param \Spryker\Zed\TaxProductConnector\Dependency\Facade\TaxProductConnectorToTaxInterface $taxFacade
      */
-    public function __construct(TaxProductConnectorQueryContainerInterface $taxQueryContainer, TaxProductConnectorToTaxInterface $taxFacade)
-    {
+    public function __construct(
+        TaxProductConnectorQueryContainerInterface $taxQueryContainer,
+        TaxProductConnectorToTaxInterface $taxFacade
+    ) {
         $this->taxQueryContainer = $taxQueryContainer;
         $this->taxFacade = $taxFacade;
     }
@@ -42,40 +60,65 @@ class ProductItemTaxRateCalculator implements CalculatorInterface
      */
     public function recalculate(QuoteTransfer $quoteTransfer)
     {
-        $countryIso2Code = $this->getShippingCountryIso2Code($quoteTransfer);
-        $allIdProductAbstracts = $this->getAllIdAbstractProducts($quoteTransfer);
-
-        if (!$countryIso2Code) {
-            $countryIso2Code = $this->taxFacade->getDefaultTaxCountryIso2Code();
-        }
-
-        $taxRates = $this->findTaxRatesByAllIdProductAbstractsAndCountryIso2Code($allIdProductAbstracts, $countryIso2Code);
-        $this->setItemsTax($quoteTransfer, $taxRates);
+        $itemTransfers = $this->recalculateWithItemsAndShippingAddress($quoteTransfer->getItems(), $quoteTransfer->getShippingAddress());
+        $quoteTransfer->setItems($itemTransfers);
     }
 
     /**
-     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param \Generated\Shared\Transfer\CalculableObjectTransfer $calculableObjectTransfer
+     *
+     * @return \Generated\Shared\Transfer\CalculableObjectTransfer
+     */
+    public function recalculateWithCalculableObject(CalculableObjectTransfer $calculableObjectTransfer): CalculableObjectTransfer
+    {
+        $itemTransfers = $this->recalculateWithItemsAndShippingAddress($calculableObjectTransfer->getItems(), $calculableObjectTransfer->getShippingAddress());
+        $calculableObjectTransfer->setItems($itemTransfers);
+
+        return $calculableObjectTransfer;
+    }
+
+    /**
+     * @param \ArrayObject|\Generated\Shared\Transfer\ItemTransfer[] $itemTransfers
+     * @param \Generated\Shared\Transfer\AddressTransfer|null $shippingAddressTransfer
+     *
+     * @return \ArrayObject|\Generated\Shared\Transfer\ItemTransfer[]
+     */
+    protected function recalculateWithItemsAndShippingAddress(ArrayObject $itemTransfers, ?AddressTransfer $shippingAddressTransfer): ArrayObject
+    {
+        $countryIso2Code = $this->getShippingCountryIso2Code($shippingAddressTransfer);
+        $allIdProductAbstracts = $this->getAllIdAbstractProducts($itemTransfers);
+
+        $taxRates = $this->findTaxRatesByAllIdProductAbstractsAndCountryIso2Code(
+            $allIdProductAbstracts,
+            $countryIso2Code
+        );
+
+        return $this->setItemsTax($itemTransfers, $taxRates);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\AddressTransfer|null $shippingAddressTransfer
      *
      * @return string
      */
-    protected function getShippingCountryIso2Code(QuoteTransfer $quoteTransfer)
+    protected function getShippingCountryIso2Code(?AddressTransfer $shippingAddressTransfer): string
     {
-        if ($quoteTransfer->getShippingAddress() === null) {
-            return $this->taxFacade->getDefaultTaxCountryIso2Code();
+        if (!$shippingAddressTransfer || !$shippingAddressTransfer->getIso2Code()) {
+            return $this->getDefaultTaxCountryIso2Code();
         }
 
-        return $quoteTransfer->getShippingAddress()->getIso2Code();
+        return $shippingAddressTransfer->getIso2Code();
     }
 
     /**
-     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param \ArrayObject|\Generated\Shared\Transfer\ItemTransfer[] $itemTransfers
      *
-     * @return array
+     * @return int[]
      */
-    protected function getAllIdAbstractProducts(QuoteTransfer $quoteTransfer)
+    protected function getAllIdAbstractProducts(ArrayObject $itemTransfers): array
     {
         $allIdProductAbstracts = [];
-        foreach ($quoteTransfer->getItems() as $itemTransfer) {
+        foreach ($itemTransfers as $itemTransfer) {
             $allIdProductAbstracts[] = $itemTransfer->getIdProductAbstract();
         }
 
@@ -83,16 +126,18 @@ class ProductItemTaxRateCalculator implements CalculatorInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param \ArrayObject|\Generated\Shared\Transfer\ItemTransfer[] $itemTransfers
      * @param array $taxRates
      *
-     * @return void
+     * @return \ArrayObject|\Generated\Shared\Transfer\ItemTransfer[]
      */
-    protected function setItemsTax(QuoteTransfer $quoteTransfer, array $taxRates)
+    protected function setItemsTax(ArrayObject $itemTransfers, array $taxRates): ArrayObject
     {
-        foreach ($quoteTransfer->getItems() as $itemTransfer) {
+        foreach ($itemTransfers as $itemTransfer) {
             $itemTransfer->setTaxRate($this->getEffectiveTaxRate($taxRates, $itemTransfer->getIdProductAbstract()));
         }
+
+        return $itemTransfers;
     }
 
     /**
@@ -109,7 +154,7 @@ class ProductItemTaxRateCalculator implements CalculatorInterface
             }
         }
 
-        return $this->taxFacade->getDefaultTaxRate();
+        return $this->getDefaultTaxRate();
     }
 
     /**
@@ -118,10 +163,37 @@ class ProductItemTaxRateCalculator implements CalculatorInterface
      *
      * @return array
      */
-    protected function findTaxRatesByAllIdProductAbstractsAndCountryIso2Code(array $allIdProductAbstracts, $countryIso2Code)
-    {
-        return $this->taxQueryContainer->queryTaxSetByIdProductAbstractAndCountryIso2Code($allIdProductAbstracts, $countryIso2Code)
+    protected function findTaxRatesByAllIdProductAbstractsAndCountryIso2Code(
+        array $allIdProductAbstracts,
+        $countryIso2Code
+    ): array {
+        return $this->taxQueryContainer
+            ->queryTaxSetByIdProductAbstractAndCountryIso2Code($allIdProductAbstracts, $countryIso2Code)
             ->find()
             ->toArray();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDefaultTaxCountryIso2Code(): string
+    {
+        if ($this->defaultTaxCountryIso2Code === null) {
+            $this->defaultTaxCountryIso2Code = $this->taxFacade->getDefaultTaxCountryIso2Code();
+        }
+
+        return $this->defaultTaxCountryIso2Code;
+    }
+
+    /**
+     * @return float
+     */
+    protected function getDefaultTaxRate(): float
+    {
+        if ($this->defaultTaxRate === null) {
+            $this->defaultTaxRate = $this->taxFacade->getDefaultTaxRate();
+        }
+
+        return $this->defaultTaxRate;
     }
 }

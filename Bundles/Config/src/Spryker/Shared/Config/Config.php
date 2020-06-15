@@ -9,7 +9,6 @@ namespace Spryker\Shared\Config;
 
 use ArrayObject;
 use Exception;
-use Spryker\Shared\Kernel\Store;
 
 class Config
 {
@@ -19,7 +18,7 @@ class Config
     /**
      * @var \ArrayObject|null
      */
-    protected static $config = null;
+    protected static $config;
 
     /**
      * @var self|null
@@ -30,11 +29,6 @@ class Config
      * @var \Spryker\Shared\Config\Profiler|null
      */
     private static $profiler;
-
-    /**
-     * @var bool
-     */
-    private static $isProfilerEnabled;
 
     /**
      * @return \Spryker\Shared\Config\Config
@@ -88,27 +82,11 @@ class Config
      */
     protected static function addProfileData($key, $default, $value)
     {
-        if (!static::isProfilerEnabled()) {
-            return;
-        }
-
         if (!static::$profiler) {
             static::$profiler = new Profiler();
         }
 
         static::$profiler->add($key, $default, $value);
-    }
-
-    /**
-     * @return bool
-     */
-    protected static function isProfilerEnabled()
-    {
-        if (static::$isProfilerEnabled === null) {
-            static::$isProfilerEnabled = (static::hasValue(ConfigConstants::ENABLE_WEB_PROFILER)) ? static::$config[ConfigConstants::ENABLE_WEB_PROFILER] : false;
-        }
-
-        return static::$isProfilerEnabled;
     }
 
     /**
@@ -136,7 +114,11 @@ class Config
      */
     public static function hasKey($key)
     {
-        return array_key_exists($key, static::$config);
+        if (static::$config === null) {
+            return false;
+        }
+
+        return static::$config->offsetExists($key);
     }
 
     /**
@@ -148,7 +130,7 @@ class Config
     {
         $config = new ArrayObject();
         $environmentName = $environmentName ?? static::getEnvironmentName();
-        $storeName = static::getStore()->getStoreName();
+        static::defineCodeBucket();
 
         /*
          * e.g. config_default.php
@@ -163,12 +145,16 @@ class Config
         /*
          * e.g. config_default_DE.php
          */
-        static::buildConfig('default_' . $storeName, $config);
+        if (APPLICATION_CODE_BUCKET !== '') {
+            static::buildConfig('default_' . APPLICATION_CODE_BUCKET, $config);
+        }
 
         /*
          * e.g. config_default-production_DE.php
          */
-        static::buildConfig('default-' . $environmentName . '_' . $storeName, $config);
+        if (APPLICATION_CODE_BUCKET !== '') {
+            static::buildConfig('default-' . $environmentName . '_' . APPLICATION_CODE_BUCKET, $config);
+        }
 
         /*
          * e.g. config_local_test.php
@@ -183,7 +169,9 @@ class Config
         /*
          * e.g. config_local_DE.php
          */
-        static::buildConfig('local_' . $storeName, $config);
+        if (APPLICATION_CODE_BUCKET !== '') {
+            static::buildConfig('local_' . APPLICATION_CODE_BUCKET, $config);
+        }
 
         /*
          * e.g. config_propel.php
@@ -191,6 +179,18 @@ class Config
         static::buildConfig('propel', $config);
 
         static::$config = $config;
+    }
+
+    /**
+     * @deprecated Exists for BC reasons.
+     *
+     * @return void
+     */
+    protected static function defineCodeBucket(): void
+    {
+        if (!defined('APPLICATION_CODE_BUCKET')) {
+            define('APPLICATION_CODE_BUCKET', APPLICATION_STORE);
+        }
     }
 
     /**
@@ -215,13 +215,5 @@ class Config
     private static function getEnvironmentName(): string
     {
         return APPLICATION_ENV;
-    }
-
-    /**
-     * @return \Spryker\Shared\Kernel\Store
-     */
-    private static function getStore(): Store
-    {
-        return Store::getInstance();
     }
 }

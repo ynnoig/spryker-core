@@ -18,7 +18,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class ProductQuantityStorageFacade extends AbstractFacade implements ProductQuantityStorageFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -32,8 +32,7 @@ class ProductQuantityStorageFacade extends AbstractFacade implements ProductQuan
     }
 
     /**
-     * Specification:
-     * - Retrieves all product quantity transfers.
+     * {@inheritDoc}
      *
      * @api
      *
@@ -45,8 +44,7 @@ class ProductQuantityStorageFacade extends AbstractFacade implements ProductQuan
     }
 
     /**
-     * Specification:
-     * - Retrieves product quantity transfers by product ids.
+     * {@inheritDoc}
      *
      * @api
      *
@@ -60,7 +58,7 @@ class ProductQuantityStorageFacade extends AbstractFacade implements ProductQuan
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

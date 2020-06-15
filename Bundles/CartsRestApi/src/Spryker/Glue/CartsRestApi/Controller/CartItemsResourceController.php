@@ -24,9 +24,9 @@ class CartItemsResourceController extends AbstractController
      *              "Adds an item to the cart."
      *          ],
      *          "parameters": [{
-     *              "name": "Accept-Language",
-     *              "in": "header"
+     *              "ref": "acceptLanguage"
      *          }],
+     *          "responseAttributesClassName": "Generated\\Shared\\Transfer\\RestCartsAttributesTransfer",
      *          "responses": {
      *              "400": "Cart id is missing.",
      *              "403": "Unauthorized cart action.",
@@ -54,13 +54,14 @@ class CartItemsResourceController extends AbstractController
     /**
      * @Glue({
      *     "patch": {
+     *          "path": "/carts/{cartId}/items/{itemId}",
      *          "summary": [
      *              "Updates cart item quantity."
      *          ],
      *          "parameters": [{
-     *              "name": "Accept-Language",
-     *              "in": "header"
+     *              "ref": "acceptLanguage"
      *          }],
+     *          "responseAttributesClassName": "Generated\\Shared\\Transfer\\RestCartsAttributesTransfer",
      *          "responses": {
      *              "400": "Cart id or item id is not specified.",
      *              "403": "Unauthorized cart action.",
@@ -88,12 +89,12 @@ class CartItemsResourceController extends AbstractController
     /**
      * @Glue({
      *     "delete": {
+     *          "path": "/carts/{cartId}/items/{itemId}",
      *          "summary": [
      *              "Removes item from the cart."
      *          ],
      *          "parameters": [{
-     *              "name": "Accept-Language",
-     *              "in": "header"
+     *              "ref": "acceptLanguage"
      *          }],
      *          "responses": {
      *              "400": "Cart id or item id is not specified.",

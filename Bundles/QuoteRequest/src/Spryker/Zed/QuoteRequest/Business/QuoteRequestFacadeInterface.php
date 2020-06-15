@@ -42,6 +42,8 @@ interface QuoteRequestFacadeInterface
      * - Expects "Request for Quote" status to be "draft".
      * - Updates metadata in latest version.
      * - Updates quote in latest version.
+     * - Clears quote item source prices.
+     * - Clears shipment source prices.
      *
      * @api
      *
@@ -58,6 +60,8 @@ interface QuoteRequestFacadeInterface
      * - Expects "Request for Quote" status to be "ready".
      * - Creates latest version from previous version.
      * - Sets status to "draft".
+     * - Clears quote item source prices.
+     * - Clears shipment source prices.
      *
      * @api
      *
@@ -216,7 +220,9 @@ interface QuoteRequestFacadeInterface
      *
      * @return \Generated\Shared\Transfer\QuoteRequestVersionCollectionTransfer
      */
-    public function getQuoteRequestVersionCollectionByFilter(QuoteRequestVersionFilterTransfer $quoteRequestVersionFilterTransfer): QuoteRequestVersionCollectionTransfer;
+    public function getQuoteRequestVersionCollectionByFilter(
+        QuoteRequestVersionFilterTransfer $quoteRequestVersionFilterTransfer
+    ): QuoteRequestVersionCollectionTransfer;
 
     /**
      * Specification:
@@ -274,4 +280,16 @@ interface QuoteRequestFacadeInterface
      * @return \Generated\Shared\Transfer\QuoteRequestResponseTransfer
      */
     public function getQuoteRequest(QuoteRequestFilterTransfer $quoteRequestFilterTransfer): QuoteRequestResponseTransfer;
+
+    /**
+     * Specification:
+     * - Deletes Quote Requests assigned to a specific Company User from the database.
+     *
+     * @api
+     *
+     * @param int $idCompanyUser
+     *
+     * @return void
+     */
+    public function deleteQuoteRequestsByIdCompanyUser(int $idCompanyUser): void;
 }

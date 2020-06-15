@@ -19,7 +19,7 @@ use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
 class PriceProductEntityManager extends AbstractEntityManager implements PriceProductEntityManagerInterface
 {
     /**
-     * @deprecated Use \Spryker\Zed\PriceProduct\Business\Model\Product\PriceProductStoreWriter::deleteOrphanPriceProductStoreEntities() instead.
+     * @deprecated Use {@link \Spryker\Zed\PriceProduct\Business\Model\Product\PriceProductStoreWriter::deleteOrphanPriceProductStoreEntities()} instead.
      *
      * @return void
      */
@@ -117,5 +117,49 @@ class PriceProductEntityManager extends AbstractEntityManager implements PricePr
             ->filterByFkPriceProductStore($idPriceProductStore)
             ->find()
             ->delete();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\PriceProductTransfer $priceProductTransfer
+     *
+     * @return int
+     */
+    public function savePriceProductForProductConcrete(PriceProductTransfer $priceProductTransfer): int
+    {
+        $priceProductTransfer
+            ->requireFkPriceType()
+            ->requireIdProduct();
+
+        /** @var \Orm\Zed\PriceProduct\Persistence\SpyPriceProduct $priceProductEntity */
+        $priceProductEntity = $this->getFactory()
+            ->createPriceProductQuery()
+            ->filterByFKProduct($priceProductTransfer->getIdProduct())
+            ->filterByFkPriceType($priceProductTransfer->getFkPriceType())
+            ->findOneOrCreate()
+            ->save();
+
+        return $priceProductEntity->getIdPriceProduct();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\PriceProductTransfer $priceProductTransfer
+     *
+     * @return int
+     */
+    public function savePriceProductForProductAbstract(PriceProductTransfer $priceProductTransfer): int
+    {
+        $priceProductTransfer
+            ->requireFkPriceType()
+            ->requireIdProductAbstract();
+
+        /** @var \Orm\Zed\PriceProduct\Persistence\SpyPriceProduct $priceProductEntity */
+        $priceProductEntity = $this->getFactory()
+            ->createPriceProductQuery()
+            ->filterByFkProductAbstract($priceProductTransfer->getIdProductAbstract())
+            ->filterByFkPriceType($priceProductTransfer->getFkPriceType())
+            ->findOneOrCreate()
+            ->save();
+
+        return $priceProductEntity->getIdPriceProduct();
     }
 }

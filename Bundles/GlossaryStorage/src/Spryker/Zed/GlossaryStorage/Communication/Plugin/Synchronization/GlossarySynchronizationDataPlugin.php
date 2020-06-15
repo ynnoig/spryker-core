@@ -8,11 +8,13 @@
 namespace Spryker\Zed\GlossaryStorage\Communication\Plugin\Synchronization;
 
 use Propel\Runtime\ActiveQuery\ModelCriteria;
-use Spryker\Shared\GlossaryStorage\GlossaryStorageConstants;
+use Spryker\Shared\GlossaryStorage\GlossaryStorageConfig;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 use Spryker\Zed\SynchronizationExtension\Dependency\Plugin\SynchronizationDataQueryContainerPluginInterface;
 
 /**
+ * @deprecated Use {@link \Spryker\Zed\GlossaryStorage\Communication\Plugin\Synchronization\GlossarySynchronizationDataRepositoryPlugin} instead.
+ *
  * @method \Spryker\Zed\GlossaryStorage\Persistence\GlossaryStorageQueryContainerInterface getQueryContainer()
  * @method \Spryker\Zed\GlossaryStorage\Business\GlossaryStorageFacadeInterface getFacade()
  * @method \Spryker\Zed\GlossaryStorage\Communication\GlossaryStorageCommunicationFactory getFactory()
@@ -21,7 +23,7 @@ use Spryker\Zed\SynchronizationExtension\Dependency\Plugin\SynchronizationDataQu
 class GlossarySynchronizationDataPlugin extends AbstractPlugin implements SynchronizationDataQueryContainerPluginInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -29,11 +31,11 @@ class GlossarySynchronizationDataPlugin extends AbstractPlugin implements Synchr
      */
     public function getResourceName(): string
     {
-        return GlossaryStorageConstants::RESOURCE_NAME;
+        return GlossaryStorageConfig::TRANSLATION_RESOURCE_NAME;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -45,7 +47,7 @@ class GlossarySynchronizationDataPlugin extends AbstractPlugin implements Synchr
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -55,7 +57,9 @@ class GlossarySynchronizationDataPlugin extends AbstractPlugin implements Synchr
      */
     public function queryData($ids = []): ?ModelCriteria
     {
-        $query = $this->getQueryContainer()->queryGlossaryStorageByGlossaryIds($ids);
+        $query = $this->getQueryContainer()
+            ->queryGlossaryStorageByGlossaryIds($ids)
+            ->orderByIdGlossaryStorage();
 
         if ($ids === []) {
             $query->clear();
@@ -65,7 +69,7 @@ class GlossarySynchronizationDataPlugin extends AbstractPlugin implements Synchr
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -77,7 +81,7 @@ class GlossarySynchronizationDataPlugin extends AbstractPlugin implements Synchr
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -85,11 +89,11 @@ class GlossarySynchronizationDataPlugin extends AbstractPlugin implements Synchr
      */
     public function getQueueName(): string
     {
-        return GlossaryStorageConstants::SYNC_STORAGE_QUEUE;
+        return GlossaryStorageConfig::SYNC_STORAGE_TRANSLATION;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

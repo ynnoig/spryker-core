@@ -84,7 +84,7 @@ class VersionPageController extends AbstractController
     public function historyAction(Request $request)
     {
         $idCmsPage = $this->castId($request->query->get(static::URL_PARAM_ID_CMS_PAGE));
-        $version = $request->query->get(static::URL_PARAM_VERSION);
+        $version = $request->query->getInt(static::URL_PARAM_VERSION) ?: null;
         $redirect = null;
 
         $cmsVersionFormDataProvider = $this->getFactory()
@@ -95,6 +95,7 @@ class VersionPageController extends AbstractController
             ->handleRequest($request);
 
         if ($versionForm->isSubmitted() && $versionForm->isValid()) {
+            /** @var array $cmsVersionData */
             $cmsVersionData = $request->request->get(CmsVersionFormType::CMS_VERSION);
             $version = $this->castId($cmsVersionData['version']);
 
@@ -130,6 +131,7 @@ class VersionPageController extends AbstractController
             'cmsTargetGlossary' => $cmsTargetVersionDataTransfer->getCmsGlossary(),
             'versionForm' => $versionForm->createView(),
             'cmsVersion' => $cmsCurrentVersionTransfer,
+            'isPageTemplateWithPlaceholders' => $this->isPageTemplateWithPlaceholders($idCmsPage),
         ];
     }
 
@@ -183,9 +185,25 @@ class VersionPageController extends AbstractController
             ->findCmsVersionByIdCmsPageAndVersion($idCmsPage, $version);
 
         if ($cmsTargetVersionTransfer === null) {
-            throw new NotFoundHttpException('Cms page with version "%d" not found.', [ '%d' => $version ]);
+            throw new NotFoundHttpException(sprintf('CMS page with version `%s` not found.', $version));
         }
 
         return $cmsVersionDataHelper->mapToCmsVersionDataTransfer($cmsTargetVersionTransfer);
+    }
+
+    /**
+     * @param int $idCmsPage
+     *
+     * @return bool
+     */
+    protected function isPageTemplateWithPlaceholders(int $idCmsPage): bool
+    {
+        $cmsGlossaryTransfer = $this->getFactory()->getCmsFacade()->findPageGlossaryAttributes($idCmsPage);
+
+        if (!$cmsGlossaryTransfer) {
+            return false;
+        }
+
+        return $cmsGlossaryTransfer->getGlossaryAttributes()->count() > 0;
     }
 }

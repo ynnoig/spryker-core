@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @method \Spryker\Zed\ProductLabelGui\Communication\ProductLabelGuiCommunicationFactory getFactory()
  * @method \Spryker\Zed\ProductLabelGui\Persistence\ProductLabelGuiQueryContainerInterface getQueryContainer()
- * @method \Spryker\Zed\ProductLabelGui\Business\ProductLabelGuiFacadeInterface getFacade()
  */
 class EditController extends AbstractController
 {
@@ -33,14 +32,7 @@ class EditController extends AbstractController
         $productLabelTransfer = $this->findProductLabelById($idProductLabel);
 
         $productLabelAggregateForm = $this->createProductLabelAggregateForm($productLabelTransfer);
-        $isFormSuccessfullyHandled = $this->handleProductLabelAggregateForm(
-            $request,
-            $productLabelAggregateForm
-        );
-
-        if ($isFormSuccessfullyHandled) {
-            return $this->redirectResponse('/product-label-gui');
-        }
+        $this->handleProductLabelAggregateForm($request, $productLabelAggregateForm);
 
         return $this->viewResponse([
             'productLabelTransfer' => $productLabelTransfer,
@@ -89,14 +81,14 @@ class EditController extends AbstractController
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param \Symfony\Component\Form\FormInterface $aggregateForm
      *
-     * @return bool
+     * @return void
      */
-    protected function handleProductLabelAggregateForm(Request $request, FormInterface $aggregateForm)
+    protected function handleProductLabelAggregateForm(Request $request, FormInterface $aggregateForm): void
     {
         $aggregateForm->handleRequest($request);
 
-        if (!$aggregateForm->isValid()) {
-            return false;
+        if ($aggregateForm->isSubmitted() === false || $aggregateForm->isValid() === false) {
+            return;
         }
 
         /** @var \Generated\Shared\Transfer\ProductLabelAggregateFormTransfer $aggregateFormTransfer */
@@ -110,8 +102,6 @@ class EditController extends AbstractController
         $this->addSuccessMessage('Product label #%d successfully updated.', [
             '%d' => $productLabelTransfer->getIdProductLabel(),
         ]);
-
-        return true;
     }
 
     /**

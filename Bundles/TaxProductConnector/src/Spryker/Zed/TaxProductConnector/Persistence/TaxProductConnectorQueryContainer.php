@@ -7,9 +7,11 @@
 
 namespace Spryker\Zed\TaxProductConnector\Persistence;
 
+use Orm\Zed\Country\Persistence\Map\SpyCountryTableMap;
 use Orm\Zed\Product\Persistence\Map\SpyProductAbstractTableMap;
 use Orm\Zed\Tax\Persistence\Map\SpyTaxRateTableMap;
 use Orm\Zed\Tax\Persistence\Map\SpyTaxSetTableMap;
+use Orm\Zed\Tax\Persistence\SpyTaxSetQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Spryker\Shared\Tax\TaxConstants;
 use Spryker\Zed\Kernel\Persistence\AbstractQueryContainer;
@@ -21,8 +23,11 @@ class TaxProductConnectorQueryContainer extends AbstractQueryContainer implement
 {
     public const COL_MAX_TAX_RATE = 'MaxTaxRate';
     public const COL_ID_ABSTRACT_PRODUCT = 'IdProductAbstract';
+    public const COL_COUNTRY_CODE = 'COUNTRY_CODE';
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @todo CD-427 Follow naming conventions and use method name starting with 'query*'
@@ -47,6 +52,8 @@ class TaxProductConnectorQueryContainer extends AbstractQueryContainer implement
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @todo CD-427 Follow naming conventions and use method name starting with 'query*'
@@ -70,6 +77,8 @@ class TaxProductConnectorQueryContainer extends AbstractQueryContainer implement
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param int $idProductAbstract
@@ -84,6 +93,8 @@ class TaxProductConnectorQueryContainer extends AbstractQueryContainer implement
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param int $idProductAbstract
@@ -100,7 +111,13 @@ class TaxProductConnectorQueryContainer extends AbstractQueryContainer implement
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
+     *
+     * @module Country
+     *
+     * @deprecated Use {@link queryTaxSetByIdProductAbstractAndCountryIso2Codes()} instead.
      *
      * @param int[] $allIdProductAbstracts
      * @param string $countryIso2Code
@@ -126,5 +143,41 @@ class TaxProductConnectorQueryContainer extends AbstractQueryContainer implement
                 ->withColumn('MAX(' . SpyTaxRateTableMap::COL_RATE . ')', self::COL_MAX_TAX_RATE)
             ->endUse()
             ->select([self::COL_MAX_TAX_RATE]);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @module Country
+     *
+     * @param int[] $idProductAbstracts
+     * @param string[] $countryIso2Code
+     *
+     * @return \Orm\Zed\Tax\Persistence\SpyTaxSetQuery
+     */
+    public function queryTaxSetByIdProductAbstractAndCountryIso2Codes(array $idProductAbstracts, array $countryIso2Code): SpyTaxSetQuery
+    {
+        return $this->getFactory()
+            ->createTaxSetQuery()
+            ->useSpyProductAbstractQuery()
+                ->filterByIdProductAbstract($idProductAbstracts, Criteria::IN)
+                ->withColumn(SpyProductAbstractTableMap::COL_ID_PRODUCT_ABSTRACT, static::COL_ID_ABSTRACT_PRODUCT)
+                ->groupBy(SpyProductAbstractTableMap::COL_ID_PRODUCT_ABSTRACT)
+            ->endUse()
+            ->useSpyTaxSetTaxQuery()
+                ->useSpyTaxRateQuery()
+                    ->useCountryQuery()
+                        ->filterByIso2Code($countryIso2Code, Criteria::IN)
+                        ->withColumn(SpyCountryTableMap::COL_ISO2_CODE, static::COL_COUNTRY_CODE)
+                        ->groupBy(SpyCountryTableMap::COL_ISO2_CODE)
+                    ->endUse()
+                    ->_or()
+                    ->filterByFkCountry(null)
+                ->endUse()
+                ->withColumn('MAX(' . SpyTaxRateTableMap::COL_RATE . ')', static::COL_MAX_TAX_RATE)
+            ->endUse()
+            ->select([static::COL_COUNTRY_CODE, static::COL_MAX_TAX_RATE, SpyProductAbstractTableMap::COL_ID_PRODUCT_ABSTRACT]);
     }
 }

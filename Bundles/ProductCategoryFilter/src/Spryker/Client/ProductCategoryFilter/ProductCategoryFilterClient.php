@@ -16,14 +16,14 @@ use Spryker\Client\Kernel\AbstractClient;
 class ProductCategoryFilterClient extends AbstractClient implements ProductCategoryFilterClientInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @param \Spryker\Shared\Kernel\Transfer\AbstractTransfer[] $facets
+     * @param \Generated\Shared\Transfer\FacetSearchResultTransfer[]|\Generated\Shared\Transfer\RangeSearchResultTransfer[] $facets
      * @param array $productCategoryFilters
      *
-     * @return \Spryker\Shared\Kernel\Transfer\AbstractTransfer[]
+     * @return \Generated\Shared\Transfer\FacetSearchResultTransfer[]|\Generated\Shared\Transfer\RangeSearchResultTransfer[]
      */
     public function updateFacetsByCategory(array $facets, array $productCategoryFilters)
     {
@@ -33,7 +33,7 @@ class ProductCategoryFilterClient extends AbstractClient implements ProductCateg
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -54,7 +54,7 @@ class ProductCategoryFilterClient extends AbstractClient implements ProductCateg
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -69,6 +69,8 @@ class ProductCategoryFilterClient extends AbstractClient implements ProductCateg
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param int $idCategory

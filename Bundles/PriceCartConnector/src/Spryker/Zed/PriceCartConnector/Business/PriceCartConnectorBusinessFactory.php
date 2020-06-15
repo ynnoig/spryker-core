@@ -10,12 +10,15 @@ namespace Spryker\Zed\PriceCartConnector\Business;
 use Spryker\Zed\Kernel\Business\AbstractBusinessFactory;
 use Spryker\Zed\PriceCartConnector\Business\Filter\ItemFilterInterface;
 use Spryker\Zed\PriceCartConnector\Business\Filter\ItemsWithoutPriceFilter;
+use Spryker\Zed\PriceCartConnector\Business\Filter\PriceProductFilter;
+use Spryker\Zed\PriceCartConnector\Business\Filter\PriceProductFilterInterface;
 use Spryker\Zed\PriceCartConnector\Business\Manager\PriceManager;
 use Spryker\Zed\PriceCartConnector\Business\Sanitizer\SourcePriceSanitizer;
 use Spryker\Zed\PriceCartConnector\Business\Sanitizer\SourcePriceSanitizerInterface;
 use Spryker\Zed\PriceCartConnector\Business\Validator\PriceProductValidator;
 use Spryker\Zed\PriceCartConnector\Dependency\Facade\PriceCartConnectorToCurrencyFacadeInterface;
 use Spryker\Zed\PriceCartConnector\Dependency\Facade\PriceCartToMessengerInterface;
+use Spryker\Zed\PriceCartConnector\Dependency\Service\PriceCartConnectorToPriceProductServiceInterface;
 use Spryker\Zed\PriceCartConnector\PriceCartConnectorDependencyProvider;
 
 /**
@@ -31,7 +34,9 @@ class PriceCartConnectorBusinessFactory extends AbstractBusinessFactory
     {
         return new PriceManager(
             $this->getPriceProductFacade(),
-            $this->getPriceFacade()
+            $this->getPriceFacade(),
+            $this->createPriceProductFilter(),
+            $this->getPriceProductService()
         );
     }
 
@@ -41,6 +46,17 @@ class PriceCartConnectorBusinessFactory extends AbstractBusinessFactory
     public function createPriceProductValidator()
     {
         return new PriceProductValidator(
+            $this->getPriceProductFacade(),
+            $this->createPriceProductFilter()
+        );
+    }
+
+    /**
+     * @return \Spryker\Zed\PriceCartConnector\Business\Filter\PriceProductFilterInterface
+     */
+    public function createPriceProductFilter(): PriceProductFilterInterface
+    {
+        return new PriceProductFilter(
             $this->getPriceProductFacade(),
             $this->getPriceFacade(),
             $this->getCurrencyFacade()
@@ -55,7 +71,8 @@ class PriceCartConnectorBusinessFactory extends AbstractBusinessFactory
         return new ItemsWithoutPriceFilter(
             $this->getPriceFacade(),
             $this->getPriceProductFacade(),
-            $this->getMessengerFacade()
+            $this->getMessengerFacade(),
+            $this->getPriceProductService()
         );
     }
 
@@ -97,5 +114,13 @@ class PriceCartConnectorBusinessFactory extends AbstractBusinessFactory
     public function getCurrencyFacade(): PriceCartConnectorToCurrencyFacadeInterface
     {
         return $this->getProvidedDependency(PriceCartConnectorDependencyProvider::FACADE_CURRENCY);
+    }
+
+    /**
+     * @return \Spryker\Zed\PriceCartConnector\Dependency\Service\PriceCartConnectorToPriceProductServiceInterface
+     */
+    public function getPriceProductService(): PriceCartConnectorToPriceProductServiceInterface
+    {
+        return $this->getProvidedDependency(PriceCartConnectorDependencyProvider::SERVICE_PRICE_PRODUCT);
     }
 }

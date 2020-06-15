@@ -19,9 +19,7 @@ use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
 class CompanyUnitAddressEntityManager extends AbstractEntityManager implements CompanyUnitAddressEntityManagerInterface
 {
     /**
-     * {@inheritdoc}
-     *
-     * @api
+     * {@inheritDoc}
      *
      * @param \Generated\Shared\Transfer\CompanyUnitAddressTransfer $companyUnitAddressTransfer
      *
@@ -33,7 +31,7 @@ class CompanyUnitAddressEntityManager extends AbstractEntityManager implements C
             ->filterByIdCompanyUnitAddress($companyUnitAddressTransfer->getIdCompanyUnitAddress())
             ->findOneOrCreate();
 
-        $companyUnitAddressMapper = $this->getFactory()->createCompanyUniAddressMapper();
+        $companyUnitAddressMapper = $this->getFactory()->createCompanyUnitAddressMapper();
 
         $companyUnitAddressEntity = $companyUnitAddressMapper
             ->mapCompanyUnitAddressTransferToCompanyUnitAddressEntity(
@@ -50,9 +48,7 @@ class CompanyUnitAddressEntityManager extends AbstractEntityManager implements C
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @api
+     * {@inheritDoc}
      *
      * @param int $idCompanyUnitAddress
      *
@@ -107,8 +103,9 @@ class CompanyUnitAddressEntityManager extends AbstractEntityManager implements C
      *
      * @return void
      */
-    public function saveAddressToBusinessUnitRelation(SpyCompanyUnitAddressToCompanyBusinessUnitEntityTransfer $companyUnitAddressToCompanyBusinessUnitEntityTransfer): void
-    {
+    public function saveAddressToBusinessUnitRelation(
+        SpyCompanyUnitAddressToCompanyBusinessUnitEntityTransfer $companyUnitAddressToCompanyBusinessUnitEntityTransfer
+    ): void {
         $this->save($companyUnitAddressToCompanyBusinessUnitEntityTransfer);
     }
 }

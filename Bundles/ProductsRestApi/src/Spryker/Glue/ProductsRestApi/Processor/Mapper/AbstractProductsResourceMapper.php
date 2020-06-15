@@ -37,7 +37,6 @@ class AbstractProductsResourceMapper implements AbstractProductsResourceMapperIn
     protected function changeIdsToSkus(
         AbstractProductsRestAttributesTransfer $restAbstractProductsAttributesTransfer
     ): AbstractProductsRestAttributesTransfer {
-
         $attributeMap = $restAbstractProductsAttributesTransfer->getAttributeMap();
         if (!isset($attributeMap[static::KEY_PRODUCT_CONCRETE_IDS])) {
             return $restAbstractProductsAttributesTransfer;
@@ -56,7 +55,7 @@ class AbstractProductsResourceMapper implements AbstractProductsResourceMapperIn
 
     /**
      * @param array $variants
-     * @param array $productConcreteIds
+     * @param int[] $productConcreteIds
      *
      * @return array
      */
@@ -66,6 +65,7 @@ class AbstractProductsResourceMapper implements AbstractProductsResourceMapperIn
             if (isset($variants[$key][static::KEY_ID_PRODUCT_CONCRETE])) {
                 $variants[$key][static::KEY_ID_PRODUCT_CONCRETE] =
                     $productConcreteIds[$data[static::KEY_ID_PRODUCT_CONCRETE]];
+
                 continue;
             }
             $variants[$key] = $this->changeVariantsIdsToSkus($variants[$key], $productConcreteIds);

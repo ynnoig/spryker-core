@@ -142,8 +142,12 @@ class DependencyViolationFinderConsole extends AbstractCoreModuleAwareConsole
      *
      * @return void
      */
-    protected function printDependencyViolationErrors(string $moduleToValidate, ArrayObject $moduleDependencyTransferCollection, OutputInterface $output, ?string $dependencyType = null): void
-    {
+    protected function printDependencyViolationErrors(
+        string $moduleToValidate,
+        ArrayObject $moduleDependencyTransferCollection,
+        OutputInterface $output,
+        ?string $dependencyType = null
+    ): void {
         $tableRows = [];
         foreach ($moduleDependencyTransferCollection as $moduleDependencyTransfer) {
             if ($dependencyType !== null && !in_array($dependencyType, $moduleDependencyTransfer->getDependencyTypes())) {
@@ -151,7 +155,8 @@ class DependencyViolationFinderConsole extends AbstractCoreModuleAwareConsole
             }
 
             foreach ($moduleDependencyTransfer->getValidationMessages() as $validationMessageTransfer) {
-                $tableRows[] = [$moduleDependencyTransfer->getModule(), $validationMessageTransfer->getMessage()];
+                $composerName = $moduleDependencyTransfer->getComposerName();
+                $tableRows[] = [$composerName, $validationMessageTransfer->getMessage()];
             }
         }
 
@@ -180,8 +185,12 @@ class DependencyViolationFinderConsole extends AbstractCoreModuleAwareConsole
      */
     protected function buildTableRow(ModuleDependencyTransfer $moduleDependencyTransfer): array
     {
+        $color = $moduleDependencyTransfer->getIsValid() ? 'yellow' : 'red';
+        $composerName = $moduleDependencyTransfer->getComposerName();
+
         return [
-            'Dependency Module' => sprintf('<fg=yellow>%s</>', $moduleDependencyTransfer->getModule()),
+            'Composer name' => sprintf('<fg=%s>%s</>', $color, $composerName),
+            'Module name' => $moduleDependencyTransfer->getModuleName(),
             'is valid' => $this->getColoredYesOrNo($moduleDependencyTransfer->getIsValid()),
             'src dependency' => $this->getYesOrNo($moduleDependencyTransfer->getIsSrcDependency()),
             'test dependency' => $this->getYesOrNo($moduleDependencyTransfer->getIsTestDependency()),

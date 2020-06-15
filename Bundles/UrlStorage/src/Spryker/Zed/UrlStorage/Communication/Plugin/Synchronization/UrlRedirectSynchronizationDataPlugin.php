@@ -21,7 +21,7 @@ use Spryker\Zed\SynchronizationExtension\Dependency\Plugin\SynchronizationDataQu
 class UrlRedirectSynchronizationDataPlugin extends AbstractPlugin implements SynchronizationDataQueryContainerPluginInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -33,7 +33,7 @@ class UrlRedirectSynchronizationDataPlugin extends AbstractPlugin implements Syn
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -45,7 +45,7 @@ class UrlRedirectSynchronizationDataPlugin extends AbstractPlugin implements Syn
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -55,17 +55,17 @@ class UrlRedirectSynchronizationDataPlugin extends AbstractPlugin implements Syn
      */
     public function queryData($ids = []): ?ModelCriteria
     {
-        $query = $this->getQueryContainer()->queryUrlStorageByIds($ids);
+        $query = $this->getQueryContainer()->queryRedirectStorageByIds($ids);
 
         if ($ids === []) {
             $query->clear();
         }
 
-        return $query->orderByIdUrlStorage();
+        return $query->orderByIdUrlRedirectStorage();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -77,7 +77,7 @@ class UrlRedirectSynchronizationDataPlugin extends AbstractPlugin implements Syn
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -89,7 +89,7 @@ class UrlRedirectSynchronizationDataPlugin extends AbstractPlugin implements Syn
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

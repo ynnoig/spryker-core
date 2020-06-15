@@ -12,6 +12,7 @@ use Spryker\Service\UtilMeasurementUnitConversion\Exception\InvalidMeasurementUn
 
 /**
  * Auto-generated group annotations
+ *
  * @group SprykerTest
  * @group Service
  * @group UtilMeasurementUnitConversion
@@ -64,8 +65,8 @@ class UtilMeasurementUnitConversionServiceTest extends Unit
     public function getExampleMeasurementUnitConversions(): array
     {
         return [
-            ["METR", "CMET", 100],
-            ["CMET", "METR", 0.01],
+            ['METR', 'CMET', 100],
+            ['CMET', 'METR', 0.01],
         ];
     }
 
@@ -75,7 +76,7 @@ class UtilMeasurementUnitConversionServiceTest extends Unit
     public function testGetMeasurementUnitExchangeRatioThrowsExceptionOnUndefinedExchangeRequest(): void
     {
         // Assign
-        $unknownCode = "UNKNOWN";
+        $unknownCode = 'UNKNOWN';
 
         // Assert
         $this->expectException(InvalidMeasurementUnitExchangeException::class);

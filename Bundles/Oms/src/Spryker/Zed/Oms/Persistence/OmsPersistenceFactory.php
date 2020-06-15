@@ -7,6 +7,7 @@
 
 namespace Spryker\Zed\Oms\Persistence;
 
+use Orm\Zed\Oms\Persistence\SpyOmsOrderItemStateHistoryQuery;
 use Orm\Zed\Oms\Persistence\SpyOmsOrderItemStateQuery;
 use Orm\Zed\Oms\Persistence\SpyOmsOrderProcessQuery;
 use Orm\Zed\Oms\Persistence\SpyOmsProductReservationChangeVersionQuery;
@@ -15,9 +16,11 @@ use Orm\Zed\Oms\Persistence\SpyOmsProductReservationQuery;
 use Orm\Zed\Oms\Persistence\SpyOmsProductReservationStoreQuery;
 use Orm\Zed\Oms\Persistence\SpyOmsStateMachineLockQuery;
 use Orm\Zed\Oms\Persistence\SpyOmsTransitionLogQuery;
+use Orm\Zed\Sales\Persistence\SpySalesOrderItemQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
 use Spryker\Zed\Oms\OmsDependencyProvider;
-use Spryker\Zed\Oms\Persistence\Propel\Mapper\OrderItemMatrixMapper;
+use Spryker\Zed\Oms\Persistence\Propel\Mapper\OrderItemMapper;
+use Spryker\Zed\Oms\Persistence\Propel\Mapper\OrderItemMapperInterface;
 
 /**
  * @method \Spryker\Zed\Oms\OmsConfig getConfig()
@@ -91,11 +94,19 @@ class OmsPersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
-     * @return \Spryker\Zed\Oms\Persistence\Propel\Mapper\OrderItemMatrixMapper
+     * @return \Orm\Zed\Oms\Persistence\SpyOmsOrderItemStateHistoryQuery
      */
-    public function createOrderItemMatrixMapper(): OrderItemMatrixMapper
+    public function createOmsOrderItemStateHistoryQuery(): SpyOmsOrderItemStateHistoryQuery
     {
-        return new OrderItemMatrixMapper();
+        return SpyOmsOrderItemStateHistoryQuery::create();
+    }
+
+    /**
+     * @return \Spryker\Zed\Oms\Persistence\Propel\Mapper\OrderItemMapperInterface
+     */
+    public function createOrderItemMapper(): OrderItemMapperInterface
+    {
+        return new OrderItemMapper();
     }
 
     /**
@@ -112,5 +123,13 @@ class OmsPersistenceFactory extends AbstractPersistenceFactory
     public function getSalesQueryContainer()
     {
         return $this->getProvidedDependency(OmsDependencyProvider::QUERY_CONTAINER_SALES);
+    }
+
+    /**
+     * @return \Orm\Zed\Sales\Persistence\SpySalesOrderItemQuery
+     */
+    public function getSalesOrderItemPropelQuery(): SpySalesOrderItemQuery
+    {
+        return $this->getProvidedDependency(OmsDependencyProvider::PROPEL_QUERY_SALES_ORDER_ITEM);
     }
 }

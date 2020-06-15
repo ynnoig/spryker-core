@@ -7,6 +7,7 @@
 
 namespace Spryker\Zed\ZedRequest\Communication\Controller;
 
+use ReflectionProperty;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 use Spryker\Zed\ZedRequest\Communication\Exception\NotAllowedActionException;
 use Spryker\Zed\ZedRequest\Communication\Plugin\TransferObject\TransferServer;
@@ -45,8 +46,37 @@ class TransferController extends AbstractController
         $request->attributes->set('controller', $repeatData['controller']);
         $request->attributes->set('action', $repeatData['action']);
 
+        $reflectionProperty = new ReflectionProperty($request, 'pathInfo');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($request, sprintf('/%s/%s/%s', $repeatData['module'], $repeatData['controller'], $repeatData['action']));
+
         $request->request->replace($repeatData);
 
-        return $this->getApplication()->handle($request, HttpKernelInterface::SUB_REQUEST);
+        return $this->handle($request, HttpKernelInterface::SUB_REQUEST);
+    }
+
+    /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param int $type
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function handle(Request $request, int $type): Response
+    {
+        $current = $this->getApplication()->get('request');
+        $this->getApplication()->set('request', $request);
+
+        $response = $this->getKernel()->handle($request, $type);
+        $this->getApplication()->set('request', $current);
+
+        return $response;
+    }
+
+    /**
+     * @return \Symfony\Component\HttpKernel\HttpKernelInterface
+     */
+    protected function getKernel(): HttpKernelInterface
+    {
+        return $this->getApplication()->get('kernel');
     }
 }

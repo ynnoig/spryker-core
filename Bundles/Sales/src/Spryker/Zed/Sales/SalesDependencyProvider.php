@@ -41,6 +41,12 @@ class SalesDependencyProvider extends AbstractBundleDependencyProvider
     public const ITEM_TRANSFORMER_STRATEGY_PLUGINS = 'ITEM_TRANSFORMER_STRATEGY_PLUGINS';
     public const UI_SALES_TABLE_PLUGINS = 'UI_SALES_TABLE_PLUGINS';
     public const PLUGINS_ORDER_POST_SAVE = 'PLUGINS_ORDER_POST_SAVE';
+    public const PLUGINS_ITEM_PRE_TRANSFORMER = 'PLUGINS_ITEM_PRE_TRANSFORMER';
+    public const PLUGINS_UNIQUE_ORDER_ITEMS_EXPANDER = 'PLUGINS_UNIQUE_ORDER_ITEMS_EXPANDER';
+    public const PLUGINS_ORDER_ITEM_EXPANDER = 'PLUGINS_ORDER_ITEM_EXPANDER';
+    public const PLUGINS_SEARCH_ORDER_EXPANDER = 'PLUGINS_SEARCH_ORDER_EXPANDER';
+    public const PLUGINS_ORDER_SEARCH_QUERY_EXPANDER = 'PLUGINS_ORDER_SEARCH_QUERY_EXPANDER';
+    public const PLUGINS_CUSTOMER_ORDER_ACCESS_CHECK = 'PLUGINS_CUSTOMER_ORDER_ACCESS_CHECK';
 
     /**
      * @deprecated Will be removed in the next major version.
@@ -53,8 +59,9 @@ class SalesDependencyProvider extends AbstractBundleDependencyProvider
      *
      * @return \Spryker\Zed\Kernel\Container
      */
-    public function provideBusinessLayerDependencies(Container $container)
+    public function provideBusinessLayerDependencies(Container $container): Container
     {
+        $container = parent::provideBusinessLayerDependencies($container);
         $container = $this->addSequenceNumberFacade($container);
         $container = $this->addCountryFacade($container);
         $container = $this->addOmsFacade($container);
@@ -67,6 +74,12 @@ class SalesDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addOrderItemExpanderPreSavePlugins($container);
         $container = $this->addItemTransformerStrategyPlugins($container);
         $container = $this->addOrderPostSavePlugins($container);
+        $container = $this->addItemPreTransformerPlugins($container);
+        $container = $this->addUniqueOrderItemsExpanderPlugins($container);
+        $container = $this->addOrderItemExpanderPlugins($container);
+        $container = $this->addSearchOrderExpanderPlugins($container);
+        $container = $this->addOrderSearchQueryExpanderPlugins($container);
+        $container = $this->addCustomerOrderAccessCheckPlugins($container);
 
         return $container;
     }
@@ -76,8 +89,9 @@ class SalesDependencyProvider extends AbstractBundleDependencyProvider
      *
      * @return \Spryker\Zed\Kernel\Container
      */
-    public function provideCommunicationLayerDependencies(Container $container)
+    public function provideCommunicationLayerDependencies(Container $container): Container
     {
+        $container = parent::provideCommunicationLayerDependencies($container);
         $container = $this->addOmsFacade($container);
         $container = $this->addUserFacade($container);
         $container = $this->addDateTimeFormatter($container);
@@ -329,11 +343,95 @@ class SalesDependencyProvider extends AbstractBundleDependencyProvider
     }
 
     /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addItemPreTransformerPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_ITEM_PRE_TRANSFORMER, function () {
+            return $this->getItemPreTransformerPlugins();
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addUniqueOrderItemsExpanderPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_UNIQUE_ORDER_ITEMS_EXPANDER, function () {
+            return $this->getUniqueOrderItemsExpanderPlugins();
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addOrderItemExpanderPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_ORDER_ITEM_EXPANDER, function () {
+            return $this->getOrderItemExpanderPlugins();
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addSearchOrderExpanderPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_SEARCH_ORDER_EXPANDER, function () {
+            return $this->getSearchOrderExpanderPlugins();
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addOrderSearchQueryExpanderPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_ORDER_SEARCH_QUERY_EXPANDER, function () {
+            return $this->getOrderSearchQueryExpanderPlugins();
+        });
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addCustomerOrderAccessCheckPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_CUSTOMER_ORDER_ACCESS_CHECK, function () {
+            return $this->getCustomerOrderAccessCheckPlugins();
+        });
+
+        return $container;
+    }
+
+    /**
      * @return \Spryker\Zed\Sales\Dependency\Plugin\OrderExpanderPreSavePluginInterface[]
      */
     protected function getOrderExpanderPreSavePlugins()
     {
-         return [];
+        return [];
     }
 
     /**
@@ -341,7 +439,7 @@ class SalesDependencyProvider extends AbstractBundleDependencyProvider
      */
     protected function getOrderHydrationPlugins()
     {
-         return [];
+        return [];
     }
 
     /**
@@ -349,7 +447,7 @@ class SalesDependencyProvider extends AbstractBundleDependencyProvider
      */
     protected function getOrderItemExpanderPreSavePlugins()
     {
-         return [];
+        return [];
     }
 
     /**
@@ -365,13 +463,61 @@ class SalesDependencyProvider extends AbstractBundleDependencyProvider
      */
     protected function getSalesTablePlugins()
     {
-         return [];
+        return [];
     }
 
     /**
      * @return \Spryker\Zed\SalesExtension\Dependency\Plugin\OrderPostSavePluginInterface[]
      */
     protected function getOrderPostSavePlugins()
+    {
+        return [];
+    }
+
+    /**
+     * @return \Spryker\Zed\SalesExtension\Dependency\Plugin\ItemPreTransformerPluginInterface[]
+     */
+    protected function getItemPreTransformerPlugins(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return \Spryker\Zed\SalesExtension\Dependency\Plugin\UniqueOrderItemsExpanderPluginInterface[]
+     */
+    protected function getUniqueOrderItemsExpanderPlugins(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return \Spryker\Zed\SalesExtension\Dependency\Plugin\OrderItemExpanderPluginInterface[]
+     */
+    protected function getOrderItemExpanderPlugins(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return \Spryker\Zed\SalesExtension\Dependency\Plugin\SearchOrderExpanderPluginInterface[]
+     */
+    protected function getSearchOrderExpanderPlugins(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return \Spryker\Zed\SalesExtension\Dependency\Plugin\SearchOrderQueryExpanderPluginInterface[]
+     */
+    protected function getOrderSearchQueryExpanderPlugins(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return \Spryker\Zed\SalesExtension\Dependency\Plugin\CustomerOrderAccessCheckPluginInterface[]
+     */
+    protected function getCustomerOrderAccessCheckPlugins(): array
     {
         return [];
     }

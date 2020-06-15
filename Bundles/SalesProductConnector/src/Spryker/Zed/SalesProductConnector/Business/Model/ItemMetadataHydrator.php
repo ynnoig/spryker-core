@@ -13,6 +13,9 @@ use Orm\Zed\Sales\Persistence\SpySalesOrderItemMetadata;
 use Spryker\Zed\SalesProductConnector\Dependency\Service\SalesProductConnectorToUtilEncodingInterface;
 use Spryker\Zed\SalesProductConnector\Persistence\SalesProductConnectorQueryContainerInterface;
 
+/**
+ * @deprecated Will be removed without replacement.
+ */
 class ItemMetadataHydrator implements ItemMetadataHydratorInterface
 {
     /**
@@ -60,7 +63,7 @@ class ItemMetadataHydrator implements ItemMetadataHydratorInterface
     /**
      * @param int $idSalesOrderItem
      *
-     * @return \Orm\Zed\Sales\Persistence\SpySalesOrderItemMetadata
+     * @return \Orm\Zed\Sales\Persistence\SpySalesOrderItemMetadata|null
      */
     protected function findMetadata($idSalesOrderItem)
     {

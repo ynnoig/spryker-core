@@ -19,9 +19,7 @@ interface QuoteRepositoryInterface
      * Specification:
      * - Find quote by customer reference.
      *
-     * @api
-     *
-     * @deprecated Use findQuoteByCustomerReferenceAndIdStore() instead.
+     * @deprecated Use {@link findQuoteByCustomerReferenceAndIdStore()} instead.
      *
      * @param string $customerReference
      *
@@ -32,8 +30,6 @@ interface QuoteRepositoryInterface
     /**
      * Specification:
      * - Find quote by customer reference and ID store.
-     *
-     * @api
      *
      * @param string $customerReference
      * @param int $idStore
@@ -46,8 +42,6 @@ interface QuoteRepositoryInterface
      * Specification:
      * - Find quote by quote id.
      *
-     * @api
-     *
      * @param int $idQuote
      *
      * @return \Generated\Shared\Transfer\QuoteTransfer|null
@@ -57,8 +51,6 @@ interface QuoteRepositoryInterface
     /**
      * Specification:
      * - Get quote collection filtered by criteria
-     *
-     * @api
      *
      * @param \Generated\Shared\Transfer\QuoteCriteriaFilterTransfer $quoteCriteriaFilterTransfer
      *

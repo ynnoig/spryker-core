@@ -8,7 +8,6 @@
 namespace Spryker\Zed\ProductMeasurementUnitStorage\Communication\Plugin\Synchronization;
 
 use Generated\Shared\Transfer\FilterTransfer;
-use Generated\Shared\Transfer\SynchronizationDataTransfer;
 use Orm\Zed\ProductMeasurementUnitStorage\Persistence\Map\SpyProductMeasurementUnitStorageTableMap;
 use Spryker\Shared\ProductMeasurementUnitStorage\ProductMeasurementUnitStorageConfig;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
@@ -23,7 +22,7 @@ use Spryker\Zed\SynchronizationExtension\Dependency\Plugin\SynchronizationDataBu
 class ProductMeasurementUnitSynchronizationDataBulkPlugin extends AbstractPlugin implements SynchronizationDataBulkRepositoryPluginInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -35,7 +34,7 @@ class ProductMeasurementUnitSynchronizationDataBulkPlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -47,7 +46,7 @@ class ProductMeasurementUnitSynchronizationDataBulkPlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -59,23 +58,14 @@ class ProductMeasurementUnitSynchronizationDataBulkPlugin extends AbstractPlugin
      */
     public function getData(int $offset, int $limit, array $ids = []): array
     {
-        $synchronizationDataTransfers = [];
-        $filterTransfer = $this->createFilterTransfer($offset, $limit);
-
-        $productMeasurementUnitEntityTransfers = $this->getRepository()->findFilteredProductMeasurementUnitStorageEntities($filterTransfer, $ids);
-
-        foreach ($productMeasurementUnitEntityTransfers as $productMeasurementUnitEntityTransfer) {
-            $synchronizationDataTransfer = new SynchronizationDataTransfer();
-            $synchronizationDataTransfer->setData($productMeasurementUnitEntityTransfer->getData());
-            $synchronizationDataTransfer->setKey($productMeasurementUnitEntityTransfer->getKey());
-            $synchronizationDataTransfers[] = $synchronizationDataTransfer;
-        }
-
-        return $synchronizationDataTransfers;
+        return $this->getRepository()->findFilteredProductMeasurementUnitStorageDataTransfers(
+            $this->createFilterTransfer($offset, $limit),
+            $ids
+        );
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -87,7 +77,7 @@ class ProductMeasurementUnitSynchronizationDataBulkPlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -99,7 +89,7 @@ class ProductMeasurementUnitSynchronizationDataBulkPlugin extends AbstractPlugin
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

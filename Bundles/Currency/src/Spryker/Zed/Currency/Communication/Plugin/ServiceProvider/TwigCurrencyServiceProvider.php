@@ -14,7 +14,7 @@ use Twig\Environment;
 use Twig\TwigFunction;
 
 /**
- * @deprecated Use `Spryker\Zed\Currency\Communication\Plugin\Twig\CurrencyTwigPlugin` instead.
+ * @deprecated Use {@link \Spryker\Zed\Currency\Communication\Plugin\Twig\CurrencyTwigPlugin} instead.
  *
  * @method \Spryker\Zed\Currency\Business\CurrencyFacadeInterface getFacade()
  * @method \Spryker\Zed\Currency\CurrencyConfig getConfig()
@@ -80,7 +80,7 @@ class TwigCurrencyServiceProvider extends AbstractPlugin implements ServiceProvi
     {
         $currencySymbol = static::NO_SYMBOL_FOUND;
         $currencyTransfer = $this->getCurrencyTransfer($isoCode);
-        if ($currencyTransfer && $currencyTransfer->getSymbol() !== null) {
+        if ($currencyTransfer->getSymbol() !== null) {
             $currencySymbol = $currencyTransfer->getSymbol();
         }
 

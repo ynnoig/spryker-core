@@ -7,7 +7,6 @@
 
 namespace Spryker\Zed\Propel;
 
-use Spryker\Shared\Kernel\Store;
 use Spryker\Shared\Propel\PropelConstants;
 use Spryker\Zed\Kernel\AbstractBundleConfig;
 use Spryker\Zed\Propel\Business\Exception\UnSupportedDatabaseEngineException;
@@ -16,6 +15,8 @@ class PropelConfig extends AbstractBundleConfig
 {
     public const DB_ENGINE_MYSQL = 'mysql';
     public const DB_ENGINE_PGSQL = 'pgsql';
+
+    protected const PROCESS_TIMEOUT = 600;
 
     /**
      * Specification:
@@ -28,6 +29,8 @@ class PropelConfig extends AbstractBundleConfig
     public const POSTGRES_INDEX_NAME_MAX_LENGTH = 63;
 
     /**
+     * @api
+     *
      * @return string
      */
     public function getGeneratedDirectory()
@@ -36,6 +39,8 @@ class PropelConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return array
      */
     public function getPropelConfig()
@@ -44,6 +49,28 @@ class PropelConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        return $this->get(PropelConstants::ZED_DB_USERNAME);
+    }
+
+    /**
+     * @api
+     *
+     * @return string
+     */
+    public function getPassword(): string
+    {
+        return $this->get(PropelConstants::ZED_DB_PASSWORD);
+    }
+
+    /**
+     * @api
+     *
      * @return string
      */
     public function getSchemaDirectory()
@@ -55,6 +82,8 @@ class PropelConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return string
      */
     public function getMigrationDirectory()
@@ -68,6 +97,8 @@ class PropelConfig extends AbstractBundleConfig
     /**
      * First load the core file if present and then override it with the one from project
      *
+     * @api
+     *
      * @return array
      */
     public function getPropelSchemaPathPatterns()
@@ -79,7 +110,9 @@ class PropelConfig extends AbstractBundleConfig
     }
 
     /**
-     * @return array
+     * @api
+     *
+     * @return string[]
      */
     public function getCorePropelSchemaPathPatterns()
     {
@@ -87,6 +120,8 @@ class PropelConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return array
      */
     public function getProjectPropelSchemaPathPatterns()
@@ -95,16 +130,36 @@ class PropelConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return string
      */
     public function getLogPath()
     {
-        $defaultPath = APPLICATION_ROOT_DIR . '/data/' . Store::getInstance()->getStoreName() . '/logs/ZED/propel.log';
+        $basePath = APPLICATION_ROOT_DIR . '/data/logs/';
+
+        if (!is_writable($basePath)) {
+            $basePath = $this->getBCBaseLogPath();
+        }
+
+        $defaultPath = $basePath . 'ZED/propel.log';
 
         return $this->get(PropelConstants::LOG_FILE_PATH, $defaultPath);
     }
 
     /**
+     * @deprecated Exists for BC reasons.
+     *
+     * @return string
+     */
+    protected function getBCBaseLogPath(): string
+    {
+        return APPLICATION_ROOT_DIR . '/data/' . APPLICATION_STORE . '/logs/';
+    }
+
+    /**
+     * @api
+     *
      * @return string
      */
     public function getCurrentDatabaseEngine()
@@ -113,6 +168,8 @@ class PropelConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @throws \Spryker\Zed\Propel\Business\Exception\UnSupportedDatabaseEngineException
      *
      * @return string
@@ -130,6 +187,8 @@ class PropelConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return array
      */
     public function getWhitelistForAllowedAttributeValueChanges()
@@ -138,6 +197,8 @@ class PropelConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return string[]
      */
     public function getTableElementHierarchy(): array
@@ -150,5 +211,39 @@ class PropelConfig extends AbstractBundleConfig
             'id-method-parameter',
             'behavior',
         ];
+    }
+
+    /**
+     * @api
+     *
+     * @return bool
+     */
+    public function isDebugEnabled(): bool
+    {
+        return $this->get(PropelConstants::PROPEL_DEBUG, false);
+    }
+
+    /**
+     * Specification:
+     * - Returns the value for the process timeout in seconds, after which an exception will be thrown.
+     * - Can return int, float or null to disable timeout.
+     *
+     * @api
+     *
+     * @return int|float|null
+     */
+    public function getProcessTimeout()
+    {
+        return static::PROCESS_TIMEOUT;
+    }
+
+    /**
+     * @api
+     *
+     * @return bool
+     */
+    public function allowIndexOverriding(): bool
+    {
+        return false;
     }
 }

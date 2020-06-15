@@ -9,9 +9,15 @@ namespace Spryker\Zed\SetupFrontend\Business;
 
 use Spryker\Zed\Kernel\Business\AbstractBusinessFactory;
 use Spryker\Zed\SetupFrontend\Business\Model\Builder\Builder;
+use Spryker\Zed\SetupFrontend\Business\Model\Builder\BuilderInterface;
 use Spryker\Zed\SetupFrontend\Business\Model\Cleaner\Cleaner;
 use Spryker\Zed\SetupFrontend\Business\Model\Installer\DependencyInstaller;
+use Spryker\Zed\SetupFrontend\Business\Model\Installer\DependencyInstallerInterface;
+use Spryker\Zed\SetupFrontend\Business\Model\Installer\PathFinder\InstallMultiPathFinder;
 use Spryker\Zed\SetupFrontend\Business\Model\Installer\PathFinder\InstallPathFinder;
+use Spryker\Zed\SetupFrontend\Business\Model\Installer\PathFinder\PathFinderInterface;
+use Spryker\Zed\SetupFrontend\Business\Model\Installer\PathFinder\PathPatternValidator;
+use Spryker\Zed\SetupFrontend\Business\Model\Installer\PathFinder\PathPatternValidatorInterface;
 use Spryker\Zed\SetupFrontend\Business\Model\Installer\ProjectInstaller;
 use Spryker\Zed\SetupFrontend\Business\Model\PackageManager\NodeInstaller;
 
@@ -53,22 +59,39 @@ class SetupFrontendBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
+     * @deprecated In next major single installer will be used. See {@link this->createProjectInstaller()}
+     *
      * @return \Spryker\Zed\SetupFrontend\Business\Model\Installer\DependencyInstallerInterface
      */
     public function createYvesDependencyInstaller()
     {
         return new DependencyInstaller(
-            $this->createYvesInstallerPathFinder(),
+            $this->createInstallMultiPathFinderForYves(),
             $this->getConfig()->getYvesInstallCommand()
         );
     }
 
     /**
+     * @deprecated Use {@link createInstallMultiPathFinderForYves()} instead
+     *
      * @return \Spryker\Zed\SetupFrontend\Business\Model\Installer\PathFinder\PathFinderInterface
      */
     protected function createYvesInstallerPathFinder()
     {
         return new InstallPathFinder($this->getConfig()->getYvesInstallerDirectoryPattern());
+    }
+
+    /**
+     * @deprecated In next major single installer will be used. See {@link this->createProjectInstaller()}
+     *
+     * @return \Spryker\Zed\SetupFrontend\Business\Model\Installer\PathFinder\PathFinderInterface
+     */
+    public function createInstallMultiPathFinderForYves(): PathFinderInterface
+    {
+        return new InstallMultiPathFinder(
+            $this->getConfig()->getYvesInstallMultiPathDirectoryPatterns(),
+            $this->createPathPatternValidator()
+        );
     }
 
     /**
@@ -88,17 +111,21 @@ class SetupFrontendBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
+     * @deprecated In next major single installer will be used. See {@link this->createProjectInstaller()}
+     *
      * @return \Spryker\Zed\SetupFrontend\Business\Model\Installer\DependencyInstallerInterface
      */
     public function createZedDependencyInstaller()
     {
         return new DependencyInstaller(
-            $this->createZedInstallerPathFinder(),
-            $this->getConfig()->getYvesInstallCommand()
+            $this->createInstallMultiPathFinderForZed(),
+            $this->getConfig()->getZedInstallCommand()
         );
     }
 
     /**
+     * @deprecated Use {@link createInstallMultiPathFinderForZed()} instead
+     *
      * @return \Spryker\Zed\SetupFrontend\Business\Model\Installer\PathFinder\PathFinderInterface
      */
     protected function createZedInstallerPathFinder()
@@ -107,10 +134,49 @@ class SetupFrontendBusinessFactory extends AbstractBusinessFactory
     }
 
     /**
+     * @deprecated In next major single installer will be used. See {@link this->createProjectInstaller()}
+     *
+     * @return \Spryker\Zed\SetupFrontend\Business\Model\Installer\PathFinder\PathFinderInterface
+     */
+    public function createInstallMultiPathFinderForZed(): PathFinderInterface
+    {
+        return new InstallMultiPathFinder(
+            $this->getConfig()->getZedInstallMultiPathDirectoryPatterns(),
+            $this->createPathPatternValidator()
+        );
+    }
+
+    /**
      * @return \Spryker\Zed\SetupFrontend\Business\Model\Builder\BuilderInterface
      */
     public function createZedBuilder()
     {
         return new Builder($this->getConfig()->getZedBuildCommand());
+    }
+
+    /**
+     * @return \Spryker\Zed\SetupFrontend\Business\Model\Installer\PathFinder\PathPatternValidatorInterface
+     */
+    public function createPathPatternValidator(): PathPatternValidatorInterface
+    {
+        return new PathPatternValidator();
+    }
+
+    /**
+     * @deprecated In next major single installer will be used. See {@link this->createProjectInstaller()}
+     *
+     * @return \Spryker\Zed\SetupFrontend\Business\Model\Installer\DependencyInstallerInterface
+     */
+    public function createMerchantPortalDependencyInstaller(): DependencyInstallerInterface
+    {
+        return new ProjectInstaller($this->getConfig()->getMerchantPortalInstallCommand());
+    }
+
+    /**
+     * @return \Spryker\Zed\SetupFrontend\Business\Model\Builder\BuilderInterface
+     */
+    public function createMerchantPortalBuilder(): BuilderInterface
+    {
+        return new Builder($this->getConfig()->getMerchantPortalBuildCommand());
     }
 }

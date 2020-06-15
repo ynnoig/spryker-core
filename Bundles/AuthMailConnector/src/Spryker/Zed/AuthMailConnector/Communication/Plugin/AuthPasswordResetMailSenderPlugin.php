@@ -23,9 +23,9 @@ class AuthPasswordResetMailSenderPlugin extends AbstractPlugin implements AuthPa
     public const SUBJECT = 'Password reset request';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      * - Generates MailTransfer for reset password functionality.
-     * - Uses `MailFacade::handleMail()` to handle generated MailTransfer.
+     * - Uses {@link \Spryker\Zed\Mail\Business\MailFacadeInterface::handleMail()} to handle generated MailTransfer.
      *
      * @api
      *

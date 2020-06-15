@@ -7,24 +7,43 @@
 
 namespace Spryker\Client\ProductStorage\Finder;
 
+use Generated\Shared\Transfer\ProductViewTransfer;
+use Spryker\Client\ProductStorage\Dependency\Client\ProductStorageToStoreClientInterface;
 use Spryker\Client\ProductStorage\Mapper\ProductStorageDataMapperInterface;
 use Spryker\Client\ProductStorage\Storage\ProductAbstractStorageReaderInterface;
 
 class ProductAbstractViewTransferFinder extends AbstractProductViewTransferFinder
 {
+    protected const KEY_ID_PRODUCT = 'id_product_abstract';
+
     /**
      * @var \Spryker\Client\ProductStorage\Storage\ProductAbstractStorageReaderInterface
      */
     protected $productAbstractStorageReader;
 
     /**
+     * @var array
+     */
+    protected static $productViewTransfersCache = [];
+
+    /**
+     * @var \Spryker\Client\ProductStorage\Dependency\Client\ProductStorageToStoreClientInterface
+     */
+    protected $storeClient;
+
+    /**
      * @param \Spryker\Client\ProductStorage\Storage\ProductAbstractStorageReaderInterface $productAbstractStorage
      * @param \Spryker\Client\ProductStorage\Mapper\ProductStorageDataMapperInterface $productStorageDataMapper
+     * @param \Spryker\Client\ProductStorage\Dependency\Client\ProductStorageToStoreClientInterface $storeClient
      */
-    public function __construct(ProductAbstractStorageReaderInterface $productAbstractStorage, ProductStorageDataMapperInterface $productStorageDataMapper)
-    {
+    public function __construct(
+        ProductAbstractStorageReaderInterface $productAbstractStorage,
+        ProductStorageDataMapperInterface $productStorageDataMapper,
+        ProductStorageToStoreClientInterface $storeClient
+    ) {
         parent::__construct($productStorageDataMapper);
         $this->productAbstractStorageReader = $productAbstractStorage;
+        $this->storeClient = $storeClient;
     }
 
     /**
@@ -36,5 +55,40 @@ class ProductAbstractViewTransferFinder extends AbstractProductViewTransferFinde
     protected function findProductStorageData(int $idProductAbstract, string $localeName): ?array
     {
         return $this->productAbstractStorageReader->findProductAbstractStorageData($idProductAbstract, $localeName);
+    }
+
+    /**
+     * @param int[] $productIds
+     * @param string $localeName
+     *
+     * @return array
+     */
+    protected function getBulkProductStorageData(array $productIds, string $localeName): array
+    {
+        $storeName = $this->storeClient->getCurrentStore()->getName();
+
+        return $this
+            ->productAbstractStorageReader
+            ->getBulkProductAbstractStorageDataByProductAbstractIdsForLocaleNameAndStore($productIds, $localeName, $storeName);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\ProductViewTransfer $productViewTransfer
+     *
+     * @return int
+     */
+    protected function getProductId(ProductViewTransfer $productViewTransfer): int
+    {
+        return $productViewTransfer->getIdProductAbstract();
+    }
+
+    /**
+     * @param array $productData
+     *
+     * @return int
+     */
+    protected function getProductDataProductId(array $productData): int
+    {
+        return $productData[static::KEY_ID_PRODUCT];
     }
 }

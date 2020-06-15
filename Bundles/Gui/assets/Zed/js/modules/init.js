@@ -72,12 +72,17 @@ $(document).ready(function() {
     $('.fix-height').sprykerFixHeight();
 
     $('.spryker-form-autocomplete').each(function(key, value) {
-        var obj = $(value);
-        if (obj.data('url') === 'undefined') {
+        var autoCompletedField = $(value);
+        if (autoCompletedField.data('url') === 'undefined') {
             return;
         }
-        obj.autocomplete({
-            source: obj.data('url'),
+
+        if (autoCompletedField.hasClass('ui-autocomplete')) {
+            autoCompletedField.autocomplete('destroy');
+        }
+
+        autoCompletedField.autocomplete({
+            source: autoCompletedField.data('url'),
             minLength: 3
         });
     });
@@ -134,6 +139,18 @@ $(document).ready(function() {
         }
 
         selectElement.select2(select2InitOptions);
+    });
+
+    $('.more-history').click(function(e){
+        e.preventDefault();
+        var idProductItem = $(this).data('id');
+        var $history = $('#history_details_' + idProductItem);
+        var $button = $('#history-btn-' + idProductItem);
+        var isHidden = $history.hasClass('hidden');
+
+        $history.toggleClass('hidden', !isHidden);
+        $button.toggleClass('is-hidden', !isHidden);
+        $button.toggleClass('is-shown', isHidden);
     });
 
     /* Init tabs */

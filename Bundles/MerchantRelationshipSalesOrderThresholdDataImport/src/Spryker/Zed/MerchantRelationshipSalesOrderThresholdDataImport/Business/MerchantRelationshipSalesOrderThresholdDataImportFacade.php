@@ -17,7 +17,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class MerchantRelationshipSalesOrderThresholdDataImportFacade extends AbstractFacade implements MerchantRelationshipSalesOrderThresholdDataImportFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -25,8 +25,9 @@ class MerchantRelationshipSalesOrderThresholdDataImportFacade extends AbstractFa
      *
      * @return \Generated\Shared\Transfer\DataImporterReportTransfer
      */
-    public function importMerchantRelationshipSalesOrderThresholds(?DataImporterConfigurationTransfer $dataImporterConfigurationTransfer = null): DataImporterReportTransfer
-    {
+    public function importMerchantRelationshipSalesOrderThresholds(
+        ?DataImporterConfigurationTransfer $dataImporterConfigurationTransfer = null
+    ): DataImporterReportTransfer {
         return $this->getFactory()->createMerchantRelationshipSalesOrderThresholdDataImport()->import($dataImporterConfigurationTransfer);
     }
 }

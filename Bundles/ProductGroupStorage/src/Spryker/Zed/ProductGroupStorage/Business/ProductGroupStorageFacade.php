@@ -15,11 +15,11 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class ProductGroupStorageFacade extends AbstractFacade implements ProductGroupStorageFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @param array $productAbstractIds
+     * @param int[] $productAbstractIds
      *
      * @return void
      */
@@ -29,11 +29,11 @@ class ProductGroupStorageFacade extends AbstractFacade implements ProductGroupSt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @param array $productAbstractIds
+     * @param int[] $productAbstractIds
      *
      * @return void
      */

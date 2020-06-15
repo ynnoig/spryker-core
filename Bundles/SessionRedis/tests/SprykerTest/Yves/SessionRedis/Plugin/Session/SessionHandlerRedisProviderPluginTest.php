@@ -11,9 +11,12 @@ use Codeception\Test\Unit;
 use Spryker\Shared\SessionRedis\Handler\SessionHandlerRedis;
 use Spryker\Shared\SessionRedis\SessionRedisConfig;
 use Spryker\Yves\SessionRedis\Plugin\Session\SessionHandlerRedisProviderPlugin;
+use Spryker\Yves\SessionRedis\SessionRedisDependencyProvider;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Auto-generated group annotations
+ *
  * @group SprykerTest
  * @group Yves
  * @group SessionRedis
@@ -30,12 +33,18 @@ class SessionHandlerRedisProviderPluginTest extends Unit
     protected $sessionHandlerPlugin;
 
     /**
+     * @var \SprykerTest\Yves\SessionRedis\SessionRedisYvesTester
+     */
+    protected $tester;
+
+    /**
      * @return void
      */
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->tester->setDependency(SessionRedisDependencyProvider::REQUEST_STACK, new RequestStack());
         $this->sessionHandlerPlugin = new SessionHandlerRedisProviderPlugin();
     }
 

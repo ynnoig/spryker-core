@@ -56,6 +56,8 @@ interface CmsFacadeInterface
     /**
      * @api
      *
+     * @deprecated Use {@link createPage()} or {@link updatePage()} instead.
+     *
      * @param \Generated\Shared\Transfer\PageTransfer $pageTransfer
      *
      * @throws \Spryker\Zed\Cms\Business\Exception\MissingPageException
@@ -139,7 +141,13 @@ interface CmsFacadeInterface
      *
      * @return \Generated\Shared\Transfer\PageKeyMappingTransfer
      */
-    public function addPlaceholderText(PageTransfer $pageTransfer, string $placeholder, string $value, ?LocaleTransfer $localeTransfer = null, bool $autoGlossaryKeyIncrement = true): PageKeyMappingTransfer;
+    public function addPlaceholderText(
+        PageTransfer $pageTransfer,
+        string $placeholder,
+        string $value,
+        ?LocaleTransfer $localeTransfer = null,
+        bool $autoGlossaryKeyIncrement = true
+    ): PageKeyMappingTransfer;
 
     /**
      * @api

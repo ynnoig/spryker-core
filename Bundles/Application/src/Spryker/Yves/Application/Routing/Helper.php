@@ -10,8 +10,12 @@ namespace Spryker\Yves\Application\Routing;
 use LogicException;
 use Silex\Application;
 use Spryker\Service\UtilText\UtilTextService;
-use Spryker\Shared\Kernel\Store;
 
+/**
+ * @deprecated Will be removed without replacement.
+ *
+ * @see Router Module.
+ */
 class Helper
 {
     /**
@@ -46,7 +50,7 @@ class Helper
         }
         [$namespace, $application, $bundle, $layer, $controllerName] = explode('\\', $controllerNamespaceName);
 
-        $bundle = str_replace(Store::getInstance()->getStoreName(), '', $bundle);
+        $bundle = str_replace(APPLICATION_CODE_BUCKET, '', $bundle);
 
         $utilTextService = new UtilTextService();
         $controller = $utilTextService->camelCaseToSeparator(str_replace('Controller', '', $controllerName));

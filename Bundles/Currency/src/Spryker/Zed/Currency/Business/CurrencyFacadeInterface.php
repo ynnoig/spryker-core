@@ -10,6 +10,7 @@ namespace Spryker\Zed\Currency\Business;
 use Generated\Shared\Transfer\CurrencyTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Generated\Shared\Transfer\QuoteValidationResponseTransfer;
+use Generated\Shared\Transfer\StoreWithCurrencyTransfer;
 
 /**
  * @method \Spryker\Zed\Currency\Business\CurrencyBusinessFactory getFactory()
@@ -125,7 +126,7 @@ interface CurrencyFacadeInterface
 
     /**
      * Specification:
-     * - Gets currency transfers by array of iso codes.
+     * - Gets Currency transfers by array of ISO codes.
      *
      * @api
      *
@@ -134,4 +135,16 @@ interface CurrencyFacadeInterface
      * @return \Generated\Shared\Transfer\CurrencyTransfer[]
      */
     public function getCurrencyTransfersByIsoCodes(array $isoCodes): array;
+
+    /**
+     * Specification:
+     * - Gets store with currencies by given store id.
+     *
+     * @api
+     *
+     * @param int $idStore
+     *
+     * @return \Generated\Shared\Transfer\StoreWithCurrencyTransfer
+     */
+    public function getStoreWithCurrenciesByIdStore(int $idStore): StoreWithCurrencyTransfer;
 }

@@ -15,6 +15,7 @@ use Spryker\Zed\Api\Business\Model\Processor\Post\Filter\Header\CorsFilterPostPr
 
 /**
  * Auto-generated group annotations
+ *
  * @group SprykerTest
  * @group Zed
  * @group Api
@@ -32,7 +33,7 @@ class CorsFilterPostProcessorTest extends Unit
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }
@@ -40,7 +41,7 @@ class CorsFilterPostProcessorTest extends Unit
     /**
      * @return void
      */
-    public function testProcessWithItem()
+    public function testProcessWithItem(): void
     {
         $config = new ApiConfig();
         $processor = new CorsFilterPostProcessor($config);
@@ -54,9 +55,9 @@ class CorsFilterPostProcessorTest extends Unit
         $this->assertSame(['GET', 'PATCH', 'DELETE', 'OPTIONS'], $apiResponseTransfer->getOptions());
 
         $expected = [
-            CorsFilterPostProcessor::HEADER_ACCESS_CONTROL_ALLOW_HEADERS => "origin, x-requested-with, accept",
-            CorsFilterPostProcessor::HEADER_ACCESS_CONTROL_ALLOW_METHODS => "GET, PATCH, DELETE, OPTIONS",
-            CorsFilterPostProcessor::HEADER_ACCESS_CONTROL_ALLOW_ORIGIN => "*",
+            CorsFilterPostProcessor::HEADER_ACCESS_CONTROL_ALLOW_HEADERS => 'origin, x-requested-with, accept',
+            CorsFilterPostProcessor::HEADER_ACCESS_CONTROL_ALLOW_METHODS => 'GET, PATCH, DELETE, OPTIONS',
+            CorsFilterPostProcessor::HEADER_ACCESS_CONTROL_ALLOW_ORIGIN => '*',
         ];
         $this->assertSame($expected, $apiResponseTransfer->getHeaders());
     }
@@ -64,7 +65,7 @@ class CorsFilterPostProcessorTest extends Unit
     /**
      * @return void
      */
-    public function testProcessWithCollection()
+    public function testProcessWithCollection(): void
     {
         $config = new ApiConfig();
         $processor = new CorsFilterPostProcessor($config);
@@ -77,9 +78,9 @@ class CorsFilterPostProcessorTest extends Unit
         $this->assertSame(['GET', 'POST', 'OPTIONS'], $apiResponseTransfer->getOptions());
 
         $expected = [
-            CorsFilterPostProcessor::HEADER_ACCESS_CONTROL_ALLOW_HEADERS => "origin, x-requested-with, accept",
-            CorsFilterPostProcessor::HEADER_ACCESS_CONTROL_ALLOW_METHODS => "GET, POST, OPTIONS",
-            CorsFilterPostProcessor::HEADER_ACCESS_CONTROL_ALLOW_ORIGIN => "*",
+            CorsFilterPostProcessor::HEADER_ACCESS_CONTROL_ALLOW_HEADERS => 'origin, x-requested-with, accept',
+            CorsFilterPostProcessor::HEADER_ACCESS_CONTROL_ALLOW_METHODS => 'GET, POST, OPTIONS',
+            CorsFilterPostProcessor::HEADER_ACCESS_CONTROL_ALLOW_ORIGIN => '*',
         ];
         $this->assertSame($expected, $apiResponseTransfer->getHeaders());
     }

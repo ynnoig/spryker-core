@@ -62,7 +62,7 @@ class AttributeSuperForm extends AttributeAbstractForm
         if ($isDisabled) {
             $config = $this->getValueFieldConfig($name, $attributes);
             $config['attr']['readonly'] = 'readonly';
-            $input = $inputManager->getSymfonyInputType(null, $value);
+            $input = $inputManager->getSymfonyInputType('', $value);
         }
 
         $builder->add(self::FIELD_VALUE, $input, $config);
@@ -79,7 +79,7 @@ class AttributeSuperForm extends AttributeAbstractForm
     }
 
     /**
-     * @deprecated Use `getBlockPrefix()` instead.
+     * @deprecated Use {@link getBlockPrefix()} instead.
      *
      * @return string
      */

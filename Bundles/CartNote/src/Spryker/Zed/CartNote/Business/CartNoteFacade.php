@@ -21,7 +21,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class CartNoteFacade extends AbstractFacade implements CartNoteFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -38,8 +38,7 @@ class CartNoteFacade extends AbstractFacade implements CartNoteFacadeInterface
     }
 
     /**
-     * Specification:
-     *  - Saves cart note to order
+     * {@inheritDoc}
      *
      * @api
      *
@@ -55,8 +54,7 @@ class CartNoteFacade extends AbstractFacade implements CartNoteFacadeInterface
     }
 
     /**
-     * Specification:
-     *  - Saves cart note to order
+     * {@inheritDoc}
      *
      * @api
      *

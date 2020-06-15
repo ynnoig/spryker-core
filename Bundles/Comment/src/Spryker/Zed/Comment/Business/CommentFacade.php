@@ -22,7 +22,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class CommentFacade extends AbstractFacade implements CommentFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -38,7 +38,7 @@ class CommentFacade extends AbstractFacade implements CommentFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -54,7 +54,7 @@ class CommentFacade extends AbstractFacade implements CommentFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -70,7 +70,7 @@ class CommentFacade extends AbstractFacade implements CommentFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -86,7 +86,7 @@ class CommentFacade extends AbstractFacade implements CommentFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -95,15 +95,17 @@ class CommentFacade extends AbstractFacade implements CommentFacadeInterface
      *
      * @return \Generated\Shared\Transfer\CommentThreadResponseTransfer
      */
-    public function duplicateCommentThread(CommentFilterTransfer $commentFilterTransfer, CommentRequestTransfer $commentRequestTransfer): CommentThreadResponseTransfer
-    {
+    public function duplicateCommentThread(
+        CommentFilterTransfer $commentFilterTransfer,
+        CommentRequestTransfer $commentRequestTransfer
+    ): CommentThreadResponseTransfer {
         return $this->getFactory()
             ->createCommentThreadWriter()
             ->duplicateCommentThread($commentFilterTransfer, $commentRequestTransfer);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -119,7 +121,7 @@ class CommentFacade extends AbstractFacade implements CommentFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

@@ -20,7 +20,7 @@ use Spryker\Zed\ProductPageSearchExtension\Dependency\Plugin\ProductConcretePage
 class ProductConcreteProductListPageDataExpanderPlugin extends AbstractPlugin implements ProductConcretePageDataExpanderPluginInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      * - Expands provided ProductConcretePageSearchTransfer with product lists ids.
      *
      * @api
@@ -30,8 +30,10 @@ class ProductConcreteProductListPageDataExpanderPlugin extends AbstractPlugin im
      *
      * @return \Generated\Shared\Transfer\ProductConcretePageSearchTransfer
      */
-    public function expand(ProductConcreteTransfer $productConcreteTransfer, ProductConcretePageSearchTransfer $productConcretePageSearchTransfer): ProductConcretePageSearchTransfer
-    {
+    public function expand(
+        ProductConcreteTransfer $productConcreteTransfer,
+        ProductConcretePageSearchTransfer $productConcretePageSearchTransfer
+    ): ProductConcretePageSearchTransfer {
         $productConcretePageSearchTransfer->setFkProduct(
             $productConcreteTransfer->getIdProductConcrete()
         );

@@ -8,10 +8,14 @@
 namespace SprykerTest\Zed\Merchant;
 
 use Codeception\Actor;
+use Generated\Shared\DataBuilder\MerchantBuilder;
+use Generated\Shared\DataBuilder\StoreRelationBuilder;
+use Generated\Shared\Transfer\MerchantTransfer;
 use Orm\Zed\Merchant\Persistence\SpyMerchantQuery;
 
 /**
  * Inherited Methods
+ *
  * @method void wantToTest($text)
  * @method void wantTo($text)
  * @method void execute($callable)
@@ -22,6 +26,7 @@ use Orm\Zed\Merchant\Persistence\SpyMerchantQuery;
  * @method void lookForwardTo($achieveValue)
  * @method void comment($description)
  * @method \Codeception\Lib\Friend haveFriend($name, $actorClass = NULL)
+ * @method \Spryker\Zed\Merchant\Business\MerchantFacadeInterface getFacade()
  *
  * @SuppressWarnings(PHPMD)
  */
@@ -39,6 +44,19 @@ class MerchantBusinessTester extends Actor
     public function truncateMerchantRelations(): void
     {
         $this->truncateTableRelations($this->getMerchantQuery());
+    }
+
+    /**
+     * @param int|null $merchantId
+     *
+     * @return \Generated\Shared\Transfer\MerchantTransfer
+     */
+    public function createMerchantTransfer(?int $merchantId = null): MerchantTransfer
+    {
+        return (new MerchantBuilder())
+            ->build()
+            ->setIdMerchant($merchantId)
+            ->setStoreRelation((new StoreRelationBuilder())->build());
     }
 
     /**

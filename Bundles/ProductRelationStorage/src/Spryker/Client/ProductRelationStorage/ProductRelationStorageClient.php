@@ -16,24 +16,25 @@ use Spryker\Client\Kernel\AbstractClient;
 class ProductRelationStorageClient extends AbstractClient implements ProductRelationStorageClientInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
      * @param int $idProductAbstract
      * @param string $localeName
+     * @param string $storeName
      *
      * @return \Generated\Shared\Transfer\ProductViewTransfer[]
      */
-    public function findRelatedProducts($idProductAbstract, $localeName)
+    public function findRelatedProducts($idProductAbstract, $localeName, string $storeName)
     {
         return $this->getFactory()
             ->createRelatedProductReader()
-            ->findRelatedProducts($idProductAbstract, $localeName);
+            ->findRelatedProducts($idProductAbstract, $localeName, $storeName);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -50,23 +51,24 @@ class ProductRelationStorageClient extends AbstractClient implements ProductRela
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
      * @param int $idProductAbstract
+     * @param string $storeName
      *
      * @return int[]
      */
-    public function findRelatedAbstractProductIds(int $idProductAbstract): array
+    public function findRelatedAbstractProductIds(int $idProductAbstract, string $storeName): array
     {
         return $this->getFactory()
             ->createRelatedProductReader()
-            ->findRelatedAbstractProductIds($idProductAbstract);
+            ->findRelatedAbstractProductIds($idProductAbstract, $storeName);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

@@ -7,7 +7,9 @@
 
 namespace Spryker\Zed\DataImport\Business;
 
+use Generated\Shared\Transfer\DataImportConfigurationActionTransfer;
 use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
+use Generated\Shared\Transfer\DataImporterReportTransfer;
 use Spryker\Zed\Kernel\Business\AbstractFacade;
 
 /**
@@ -16,9 +18,11 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class DataImportFacade extends AbstractFacade implements DataImportFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
+     *
+     * @deprecated Use {@link \Spryker\Zed\DataImport\Business\DataImportFacadeInterface::importByAction()} instead.
      *
      * @param \Generated\Shared\Transfer\DataImporterConfigurationTransfer|null $dataImporterConfiguration
      *
@@ -30,11 +34,30 @@ class DataImportFacade extends AbstractFacade implements DataImportFacadeInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @return array
+     * @param \Generated\Shared\Transfer\DataImportConfigurationActionTransfer $dataImportConfigurationActionTransfer
+     * @param \Generated\Shared\Transfer\DataImporterConfigurationTransfer|null $dataImporterConfiguration
+     *
+     * @return \Generated\Shared\Transfer\DataImporterReportTransfer
+     */
+    public function importByAction(
+        DataImportConfigurationActionTransfer $dataImportConfigurationActionTransfer,
+        ?DataImporterConfigurationTransfer $dataImporterConfiguration = null
+    ): DataImporterReportTransfer {
+        return $this->getFactory()
+            ->getImporterByConfigurationAction($dataImportConfigurationActionTransfer)
+            ->import($dataImporterConfiguration);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @return string[]
      */
     public function listImporters(): array
     {
@@ -42,7 +65,7 @@ class DataImportFacade extends AbstractFacade implements DataImportFacadeInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -54,7 +77,7 @@ class DataImportFacade extends AbstractFacade implements DataImportFacadeInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

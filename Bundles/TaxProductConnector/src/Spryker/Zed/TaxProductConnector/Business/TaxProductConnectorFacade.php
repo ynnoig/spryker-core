@@ -7,6 +7,7 @@
 
 namespace Spryker\Zed\TaxProductConnector\Business;
 
+use Generated\Shared\Transfer\CalculableObjectTransfer;
 use Generated\Shared\Transfer\ProductAbstractTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Generated\Shared\Transfer\TaxSetResponseTransfer;
@@ -19,8 +20,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class TaxProductConnectorFacade extends AbstractFacade implements TaxProductConnectorFacadeInterface
 {
     /**
-     * Specification:
-     * - Save tax set id to product abstract table
+     * {@inheritDoc}
      *
      * @api
      *
@@ -36,8 +36,7 @@ class TaxProductConnectorFacade extends AbstractFacade implements TaxProductConn
     }
 
     /**
-     * Specification:
-     * - Read tax set from database and sets PriceProductTransfer on ProductAbstractTransfer
+     * {@inheritDoc}
      *
      * @api
      *
@@ -53,8 +52,7 @@ class TaxProductConnectorFacade extends AbstractFacade implements TaxProductConn
     }
 
     /**
-     * Specification:
-     *  - Set tax rate for each item
+     * {@inheritDoc}
      *
      * @api
      *
@@ -65,14 +63,34 @@ class TaxProductConnectorFacade extends AbstractFacade implements TaxProductConn
     public function calculateProductItemTaxRate(QuoteTransfer $quoteTransfer)
     {
         $this->getFactory()
-            ->createProductItemTaxRateCalculator()
+            ->createProductItemTaxRateCalculatorStrategyResolver()
+            ->resolve($quoteTransfer->getItems(), $quoteTransfer->getShippingAddress())
             ->recalculate($quoteTransfer);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
+     *
+     * @param \Generated\Shared\Transfer\CalculableObjectTransfer $calculableObjectTransfer
+     *
+     * @return \Generated\Shared\Transfer\CalculableObjectTransfer
+     */
+    public function calculateProductItemTaxRateForCalculableObjectTransfer(CalculableObjectTransfer $calculableObjectTransfer): CalculableObjectTransfer
+    {
+        return $this->getFactory()
+            ->createProductItemTaxRateCalculatorStrategyResolver()
+            ->resolve($calculableObjectTransfer->getItems(), $calculableObjectTransfer->getShippingAddress())
+            ->recalculateWithCalculableObject($calculableObjectTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @deprecated Will be removed without replacement.
      *
      * @param \Generated\Shared\Transfer\ProductAbstractTransfer $productAbstractTransfer
      *

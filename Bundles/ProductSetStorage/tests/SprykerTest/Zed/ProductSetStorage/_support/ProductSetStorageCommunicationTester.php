@@ -12,14 +12,19 @@ use Codeception\Actor;
 use Generated\Shared\DataBuilder\LocalizedProductSetBuilder;
 use Generated\Shared\DataBuilder\ProductImageBuilder;
 use Generated\Shared\DataBuilder\ProductSetBuilder;
+use Generated\Shared\Transfer\EventEntityTransfer;
 use Generated\Shared\Transfer\ProductImageTransfer;
 use Generated\Shared\Transfer\ProductSetTransfer;
 use Orm\Zed\ProductImage\Persistence\SpyProductImageSetToProductImageQuery;
 use Orm\Zed\ProductSetStorage\Persistence\SpyProductSetStorageQuery;
 use Spryker\Zed\ProductSet\Business\ProductSetFacadeInterface;
+use Spryker\Zed\ProductSet\Dependency\ProductSetEvents;
+use Spryker\Zed\ProductSetStorage\Business\ProductSetStorageFacade;
+use Spryker\Zed\ProductSetStorage\Communication\Plugin\Event\Listener\ProductSetStoragePublishListener;
 
 /**
  * Inherited Methods
+ *
  * @method void wantToTest($text)
  * @method void wantTo($text)
  * @method void execute($callable)
@@ -48,13 +53,32 @@ class ProductSetStorageCommunicationTester extends Actor
     /**
      * @return bool
      */
-    public function isSuiteProject()
+    public function isSuiteProject(): bool
     {
         if (getenv(static::PARAM_PROJECT) === static::PROJECT_SUITE) {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * @return \Generated\Shared\Transfer\ProductSetTransfer
+     */
+    public function generateProductSetTransfer(): ProductSetTransfer
+    {
+        $localizedProductSetTransfer = (new LocalizedProductSetBuilder())
+            ->withProductSetData()
+            ->build()
+            ->setLocale($this->haveLocale());
+
+         return $this->haveProductSet([
+             ProductSetTransfer::LOCALIZED_DATA => new ArrayObject([$localizedProductSetTransfer]),
+             ProductSetTransfer::ID_PRODUCT_ABSTRACTS => [
+                $this->haveProductAbstract()->getIdProductAbstract(),
+                $this->haveProductAbstract()->getIdProductAbstract(),
+             ],
+         ]);
     }
 
     /**
@@ -105,7 +129,7 @@ class ProductSetStorageCommunicationTester extends Actor
     /**
      * @param int $idProductSet
      *
-     * @return array[]
+     * @return array
      */
     public function getProductSetImages(int $idProductSet): array
     {
@@ -143,6 +167,28 @@ class ProductSetStorageCommunicationTester extends Actor
     public function deleteProductSet(ProductSetTransfer $productSetTransfer): void
     {
         $this->getProductSetFacade()->deleteProductSet($productSetTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\ProductSetTransfer[] $productSetTransfers
+     * @param \Spryker\Zed\ProductSetStorage\Business\ProductSetStorageFacade $productSetStorageFacade
+     *
+     * @return void
+     */
+    public function publishProductSetTransfers(array $productSetTransfers, ProductSetStorageFacade $productSetStorageFacade): void
+    {
+        if ($productSetTransfers === []) {
+            return;
+        }
+
+        $eventTransfers = [];
+        foreach ($productSetTransfers as $productSetTransfer) {
+            $eventTransfers[] = (new EventEntityTransfer())->setId($productSetTransfer->getIdProductSet());
+        }
+
+        (new ProductSetStoragePublishListener())
+            ->setFacade($productSetStorageFacade)
+            ->handleBulk($eventTransfers, ProductSetEvents::PRODUCT_SET_PUBLISH);
     }
 
     /**

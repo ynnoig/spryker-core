@@ -23,6 +23,7 @@ use Spryker\Shared\Search\SearchConfig as SharedSearchConfig;
 
 /**
  * Auto-generated group annotations
+ *
  * @group SprykerTest
  * @group Client
  * @group Search
@@ -379,7 +380,7 @@ class FacetResultFormatterPluginTest extends AbstractResultFormatterPluginTest
             ->setConfig($searchConfig->getFacetConfigBuilder()->get('baz'))
             ->setMin(10)
             ->setMax(20)
-            ->setActiveMin(5)
+            ->setActiveMin(10)
             ->setActiveMax(20);
 
         return [
@@ -400,9 +401,9 @@ class FacetResultFormatterPluginTest extends AbstractResultFormatterPluginTest
         $aggregationResult = [
             PageIndexMap::CATEGORY_ALL_PARENTS => [
                 'buckets' => [
-                    ["key" => 'c1', "doc_count" => 10],
-                    ["key" => 'c2', "doc_count" => 20],
-                    ["key" => 'c3', "doc_count" => 30],
+                    ['key' => 'c1', 'doc_count' => 10],
+                    ['key' => 'c2', 'doc_count' => 20],
+                    ['key' => 'c3', 'doc_count' => 30],
                 ],
             ],
         ];

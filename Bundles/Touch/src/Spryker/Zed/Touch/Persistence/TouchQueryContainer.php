@@ -24,6 +24,8 @@ class TouchQueryContainer extends AbstractQueryContainer implements TouchQueryCo
     public const TOUCH_ENTRIES_QUERY_KEY = 'search touch entries';
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $itemType
@@ -39,6 +41,8 @@ class TouchQueryContainer extends AbstractQueryContainer implements TouchQueryCo
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $itemType
@@ -58,10 +62,12 @@ class TouchQueryContainer extends AbstractQueryContainer implements TouchQueryCo
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $itemType
-     * @param string $itemId
+     * @param int $itemId
      * @param string|null $itemEvent
      *
      * @return \Orm\Zed\Touch\Persistence\SpyTouchQuery
@@ -81,6 +87,8 @@ class TouchQueryContainer extends AbstractQueryContainer implements TouchQueryCo
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $itemType
@@ -101,6 +109,8 @@ class TouchQueryContainer extends AbstractQueryContainer implements TouchQueryCo
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @return \Orm\Zed\Touch\Persistence\SpyTouchQuery
@@ -118,8 +128,7 @@ class TouchQueryContainer extends AbstractQueryContainer implements TouchQueryCo
     }
 
     /**
-     * Specification:
-     *  - return all items with given `$itemType` and `$itemId` whether they are active, inactive or deleted
+     * {@inheritDoc}
      *
      * @api
      *
@@ -138,6 +147,8 @@ class TouchQueryContainer extends AbstractQueryContainer implements TouchQueryCo
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $itemType
@@ -167,6 +178,8 @@ class TouchQueryContainer extends AbstractQueryContainer implements TouchQueryCo
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $itemEvent
@@ -182,9 +195,11 @@ class TouchQueryContainer extends AbstractQueryContainer implements TouchQueryCo
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
-     * @param array $touchIds
+     * @param int[]|int $touchIds
      *
      * @return \Orm\Zed\Touch\Persistence\SpyTouchSearchQuery
      */
@@ -203,9 +218,11 @@ class TouchQueryContainer extends AbstractQueryContainer implements TouchQueryCo
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
-     * @param array $touchIds
+     * @param int[]|int $touchIds
      *
      * @return \Orm\Zed\Touch\Persistence\SpyTouchStorageQuery
      */
@@ -224,7 +241,7 @@ class TouchQueryContainer extends AbstractQueryContainer implements TouchQueryCo
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -245,7 +262,7 @@ class TouchQueryContainer extends AbstractQueryContainer implements TouchQueryCo
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -266,7 +283,7 @@ class TouchQueryContainer extends AbstractQueryContainer implements TouchQueryCo
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

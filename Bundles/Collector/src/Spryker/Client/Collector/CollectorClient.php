@@ -18,11 +18,11 @@ use Spryker\Client\Kernel\AbstractClient;
 class CollectorClient extends AbstractClient implements UrlMatcherInterface, CollectorClientInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @deprecated Use \Spryker\Client\Url\UrlClient::matchUrl() instead.
+     * @deprecated Use {@link \Spryker\Client\Url\UrlClient::matchUrl()} instead.
      *
      * @param string $url
      * @param string $localeName

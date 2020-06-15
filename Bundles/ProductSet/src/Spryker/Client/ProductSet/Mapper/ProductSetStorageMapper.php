@@ -43,7 +43,7 @@ class ProductSetStorageMapper implements ProductSetStorageMapperInterface
     /**
      * @param \Generated\Shared\Transfer\ProductSetStorageTransfer $storageProductTransfer
      *
-     * @return \Generated\Shared\Transfer\ProductSetStorageTransfer $storageProductTransfer
+     * @return \Generated\Shared\Transfer\ProductSetStorageTransfer
      */
     public function mapProductImages(ProductSetStorageTransfer $storageProductTransfer)
     {
@@ -70,7 +70,7 @@ class ProductSetStorageMapper implements ProductSetStorageMapperInterface
     /**
      * @param array $images
      *
-     * @return \ArrayObject
+     * @return \ArrayObject|\Generated\Shared\Transfer\StorageProductImageTransfer[]
      */
     protected function mapStorageProductImageCollection(array $images)
     {

@@ -21,7 +21,7 @@ use Spryker\Zed\SynchronizationExtension\Dependency\Plugin\SynchronizationDataQu
 class CategoryNodeSynchronizationDataPlugin extends AbstractPlugin implements SynchronizationDataQueryContainerPluginInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -33,7 +33,7 @@ class CategoryNodeSynchronizationDataPlugin extends AbstractPlugin implements Sy
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -45,7 +45,7 @@ class CategoryNodeSynchronizationDataPlugin extends AbstractPlugin implements Sy
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -65,7 +65,7 @@ class CategoryNodeSynchronizationDataPlugin extends AbstractPlugin implements Sy
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -77,7 +77,7 @@ class CategoryNodeSynchronizationDataPlugin extends AbstractPlugin implements Sy
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -89,7 +89,7 @@ class CategoryNodeSynchronizationDataPlugin extends AbstractPlugin implements Sy
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -97,6 +97,6 @@ class CategoryNodeSynchronizationDataPlugin extends AbstractPlugin implements Sy
      */
     public function getSynchronizationQueuePoolName(): ?string
     {
-        return $this->getFactory()->getConfig()->getCategoryNodeSynchronizationPoolName();
+        return $this->getConfig()->getCategoryNodeSynchronizationPoolName();
     }
 }

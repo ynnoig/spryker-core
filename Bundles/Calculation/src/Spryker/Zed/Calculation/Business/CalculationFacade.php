@@ -20,23 +20,24 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class CalculationFacade extends AbstractFacade implements CalculationFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param bool $executeQuotePlugins
      *
      * @return \Generated\Shared\Transfer\QuoteTransfer
      */
-    public function recalculateQuote(QuoteTransfer $quoteTransfer)
+    public function recalculateQuote(QuoteTransfer $quoteTransfer, bool $executeQuotePlugins = true)
     {
         return $this->getFactory()
             ->createQuoteCalculatorExecutor()
-            ->recalculate($quoteTransfer);
+            ->recalculate($quoteTransfer, $executeQuotePlugins);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -52,7 +53,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -68,7 +69,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -84,7 +85,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -100,7 +101,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -116,7 +117,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -132,7 +133,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -148,7 +149,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -164,7 +165,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -180,7 +181,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -196,7 +197,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -212,7 +213,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -228,7 +229,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -244,7 +245,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -260,7 +261,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -276,7 +277,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -292,7 +293,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -308,7 +309,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -324,7 +325,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -340,7 +341,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -356,7 +357,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -372,7 +373,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -388,11 +389,11 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * @deprecated Will be removed in the next major version.
-     *
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
+     *
+     * @deprecated Will be removed in the next major version.
      *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponseTransfer
@@ -409,7 +410,7 @@ class CalculationFacade extends AbstractFacade implements CalculationFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

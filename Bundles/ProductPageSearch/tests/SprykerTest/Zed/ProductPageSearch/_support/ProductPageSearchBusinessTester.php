@@ -20,6 +20,7 @@ use Spryker\Zed\Store\Business\StoreFacadeInterface;
 
 /**
  * Inherited Methods
+ *
  * @method void wantToTest($text)
  * @method void wantTo($text)
  * @method void execute($callable)
@@ -38,17 +39,17 @@ class ProductPageSearchBusinessTester extends Actor
     use _generated\ProductPageSearchBusinessTesterActions;
 
     /**
-     * @var \Generated\Shared\Transfer\ProductConcreteTransfer;
+     * @var \Generated\Shared\Transfer\ProductConcreteTransfer
      */
     protected $productConcreteTransfer;
 
     /**
-     * @var \Generated\Shared\Transfer\ProductAbstractTransfer;
+     * @var \Generated\Shared\Transfer\ProductAbstractTransfer
      */
     protected $productAbstractTransfer;
 
     /**
-     * @var \Generated\Shared\Transfer\StoreTransfer[];
+     * @var \Generated\Shared\Transfer\StoreTransfer[]
      */
     protected $storeTransfers;
 

@@ -16,9 +16,11 @@ use Spryker\Zed\Kernel\Persistence\AbstractQueryContainer;
 class CurrencyQueryContainer extends AbstractQueryContainer implements CurrencyQueryContainerInterface
 {
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
-     * @param int $isoCode
+     * @param string $isoCode
      *
      * @return \Orm\Zed\Currency\Persistence\SpyCurrencyQuery
      */
@@ -30,6 +32,8 @@ class CurrencyQueryContainer extends AbstractQueryContainer implements CurrencyQ
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param int $idCurrency
@@ -44,6 +48,8 @@ class CurrencyQueryContainer extends AbstractQueryContainer implements CurrencyQ
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param array $isoCodes

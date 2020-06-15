@@ -9,16 +9,27 @@ namespace SprykerTest\Zed\Oms\Business;
 
 use Codeception\Test\Unit;
 use DateTime;
+use Generated\Shared\DataBuilder\ItemBuilder;
+use Generated\Shared\Transfer\OrderTransfer;
 use Generated\Shared\Transfer\StoreTransfer;
 use Orm\Zed\Oms\Persistence\SpyOmsStateMachineLock;
 use Orm\Zed\Oms\Persistence\SpyOmsStateMachineLockQuery;
+use Orm\Zed\Sales\Persistence\SpySalesOrderItemQuery;
 use Orm\Zed\Sales\Persistence\SpySalesOrderQuery;
+use Spryker\DecimalObject\Decimal;
+use Spryker\Zed\Kernel\Container;
 use Spryker\Zed\Oms\Business\OmsBusinessFactory;
 use Spryker\Zed\Oms\Business\OmsFacade;
+use Spryker\Zed\Oms\Business\OmsFacadeInterface;
+use Spryker\Zed\Oms\Communication\Plugin\Oms\Command\CommandCollectionInterface;
 use Spryker\Zed\Oms\OmsConfig;
+use Spryker\Zed\Oms\OmsDependencyProvider;
+use Spryker\Zed\PropelOrm\Business\Runtime\ActiveQuery\Criteria;
+use SprykerTest\Zed\Oms\Business\OrderStateMachine\Plugin\Fixtures\TestAuthPlugin;
 
 /**
  * Auto-generated group annotations
+ *
  * @group SprykerTest
  * @group Zed
  * @group Oms
@@ -37,7 +48,27 @@ class OmsFacadeTest extends Unit
     /**
      * @return void
      */
-    public function testClearLocksShouldEmptyDatabaseFromExpiredLocks()
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tester->resetReservedStatesCache();
+        $this->tester->configureTestStateMachine(['Test01']);
+    }
+
+    /**
+     * @return void
+     */
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        $this->tester->resetReservedStatesCache();
+    }
+
+    /**
+     * @return void
+     */
+    public function testClearLocksShouldEmptyDatabaseFromExpiredLocks(): void
     {
         $identifier = '1-2-3';
 
@@ -52,13 +83,13 @@ class OmsFacadeTest extends Unit
 
         $numberOfItems = SpyOmsStateMachineLockQuery::create()->filterByIdentifier($identifier)->count();
 
-        $this->assertEquals(0, $numberOfItems);
+        $this->assertSame(0, $numberOfItems);
     }
 
     /**
      * @return void
      */
-    public function testOrderMatrixCreation()
+    public function testOrderMatrixCreation(): void
     {
         $omsFacade = $this->createOmsFacade();
 
@@ -71,7 +102,7 @@ class OmsFacadeTest extends Unit
     /**
      * @return void
      */
-    public function testIsOrderFlaggedExcludeFromCustomerShouldReturnTrueWhenAllStatesHaveFlag()
+    public function testIsOrderFlaggedExcludeFromCustomerShouldReturnTrueWhenAllStatesHaveFlag(): void
     {
         $testStateMachineProcessName = 'Test01';
 
@@ -96,7 +127,7 @@ class OmsFacadeTest extends Unit
     /**
      * @return void
      */
-    public function testIsOrderFlaggedExcludeFromCustomerShouldReturnFalseWhenAnyOfStatesMissingFlag()
+    public function testIsOrderFlaggedExcludeFromCustomerShouldReturnFalseWhenAnyOfStatesMissingFlag(): void
     {
         $testStateMachineProcessName = 'Test01';
 
@@ -117,17 +148,6 @@ class OmsFacadeTest extends Unit
     /**
      * @return void
      */
-    public function testReservedItemsByNonExistentSku()
-    {
-        $omsFacade = $this->createOmsFacade();
-        $items = $omsFacade->getReservedOrderItemsForSku('non-existent-sku');
-
-        $this->assertSame(0, $items->count());
-    }
-
-    /**
-     * @return void
-     */
     public function testGetReservedStateNames(): void
     {
         $expected = [
@@ -139,7 +159,7 @@ class OmsFacadeTest extends Unit
         ];
 
         // Action
-        $stateNames = $this->createOmsFacade()->getReservedStateNames();
+        $stateNames = array_keys($this->createOmsFacade()->getOmsReservedStateCollection()->getStates()->getArrayCopy());
 
         // Assert
         $this->assertSame($expected, $stateNames);
@@ -150,25 +170,111 @@ class OmsFacadeTest extends Unit
      */
     public function testSaveReservation(): void
     {
-        $omsFacade = $this->createOmsFacade();
         $storeTransfer = (new StoreTransfer())->setIdStore(1)->setName('DE');
         $productSku = 'xxx';
-        $reservationQuantity = 10;
+        $reservationQuantity = new Decimal(10);
 
         // Action
         $this->createOmsFacade()->saveReservation($productSku, $storeTransfer, $reservationQuantity);
 
         // Assert
-        $this->assertEquals(
-            $reservationQuantity,
-            $this->createOmsFacade()->getOmsReservedProductQuantityForSku($productSku, $storeTransfer)
+        $this->assertTrue(
+            $this->createOmsFacade()
+                ->getOmsReservedProductQuantityForSku($productSku, $storeTransfer)
+                ->equals($reservationQuantity)
         );
+    }
+
+    /**
+     * @return void
+     */
+    public function testTriggerEventWillNotThrowAnExceptionWhenExceptionWasThrownDuringOrderItemHandling(): void
+    {
+        //Arrange
+        $testStateMachineProcessName = 'Test04';
+        $this->tester->configureTestStateMachine([$testStateMachineProcessName]);
+
+        $saveOrderTransfer1 = $this->tester->haveOrder([
+            'unitPrice' => 100,
+            'sumPrice' => 100,
+        ], $testStateMachineProcessName);
+        $saveOrderTransfer2 = $this->tester->haveOrder([
+            'unitPrice' => 100,
+            'sumPrice' => 100,
+        ], $testStateMachineProcessName);
+
+        $orderItems = SpySalesOrderItemQuery::create()
+            ->filterByFkSalesOrder_In([
+                $saveOrderTransfer1->getIdSalesOrder(),
+                $saveOrderTransfer2->getIdSalesOrder(),
+            ])
+            ->orderByIdSalesOrderItem(Criteria::ASC)
+            ->find();
+
+        $omsFacade = $this->createOmsFacadeWithErroredTestStateMachine([$testStateMachineProcessName]);
+
+        //Act
+        $omsFacade->triggerEvent('authorize', clone $orderItems, []);
+
+        //Assert
+        $processedOrderItems = SpySalesOrderItemQuery::create()
+            ->filterByFkSalesOrder_In([
+                $saveOrderTransfer1->getIdSalesOrder(),
+                $saveOrderTransfer2->getIdSalesOrder(),
+            ])
+            ->orderByIdSalesOrderItem(Criteria::ASC)
+            ->find();
+
+        $this->assertEquals(
+            $orderItems->offsetGet(0)->getFkOmsOrderItemState(),
+            $processedOrderItems->offsetGet(0)->getFkOmsOrderItemState(),
+            'Order item state ID does not equal to an expected value.'
+        );
+        $this->assertNotEquals(
+            $orderItems->offsetGet(1)->getFkOmsOrderItemState(),
+            $processedOrderItems->offsetGet(1)->getFkOmsOrderItemState(),
+            'Order item state ID does not equal to an expected value.'
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testExpandOrderWithOmsStatesReturnsUpdatedTransferWithCorrectData(): void
+    {
+        // Arrange
+        $itemTransfer = (new ItemBuilder())->withState()->build();
+        $orderTransfer = (new OrderTransfer())->addItem($itemTransfer);
+
+        // Act
+        $expandedOrderTransfer = $this->createOmsFacade()
+            ->expandOrderWithOmsStates($orderTransfer);
+
+        // Assert
+        $this->assertSame([$itemTransfer->getState()->getName()], $expandedOrderTransfer->getItemStates());
+    }
+
+    /**
+     * @return void
+     */
+    public function testExpandOrderWithOmsStatesDoesNothingWithIncorrectData(): void
+    {
+        // Arrange
+        $itemTransfer = (new ItemBuilder())->build();
+        $orderTransfer = (new OrderTransfer())->addItem($itemTransfer);
+
+        // Act
+        $expandedOrderTransfer = $this->createOmsFacade()
+            ->expandOrderWithOmsStates($orderTransfer);
+
+        // Assert
+        $this->assertEmpty($expandedOrderTransfer->getItemStates());
     }
 
     /**
      * @return \Spryker\Zed\Oms\Business\OmsFacadeInterface
      */
-    protected function createOmsFacade()
+    protected function createOmsFacade(): OmsFacadeInterface
     {
         $omsBusinessFactory = new OmsBusinessFactory();
         $omsConfig = new OmsConfig();
@@ -186,10 +292,37 @@ class OmsFacadeTest extends Unit
      *
      * @return \Spryker\Zed\Oms\Business\OmsFacadeInterface
      */
-    protected function createOmsFacadeWithTestStateMachine(array $activeProcesses = [], $xmlFolder = null)
+    protected function createOmsFacadeWithTestStateMachine(array $activeProcesses = [], ?string $xmlFolder = null): OmsFacadeInterface
     {
         $this->tester->configureTestStateMachine($activeProcesses, $xmlFolder);
 
         return new OmsFacade();
+    }
+
+    /**
+     * @param array $activeProcesses
+     * @param string|null $xmlFolder
+     *
+     * @return \Spryker\Zed\Oms\Business\OmsFacadeInterface
+     */
+    protected function createOmsFacadeWithErroredTestStateMachine(array $activeProcesses = [], ?string $xmlFolder = null): OmsFacadeInterface
+    {
+        $this->tester->configureTestStateMachine($activeProcesses);
+
+        $omsDependencyProvider = new OmsDependencyProvider();
+        $container = new Container();
+        $container = $omsDependencyProvider->provideBusinessLayerDependencies($container);
+        $container = $omsDependencyProvider->providePersistenceLayerDependencies($container);
+        $container->extend(OmsDependencyProvider::COMMAND_PLUGINS, function (CommandCollectionInterface $commandCollection) {
+            return $commandCollection->add(new TestAuthPlugin(), 'TestPayment/Authorize');
+        });
+
+        $omsBusinessFactory = new OmsBusinessFactory();
+        $omsBusinessFactory->setContainer($container);
+
+        $omsFacade = new OmsFacade();
+        $omsFacade->setFactory($omsBusinessFactory);
+
+        return $omsFacade;
     }
 }

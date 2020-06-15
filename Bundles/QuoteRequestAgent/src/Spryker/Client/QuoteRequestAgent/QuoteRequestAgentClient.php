@@ -13,6 +13,7 @@ use Generated\Shared\Transfer\QuoteRequestOverviewFilterTransfer;
 use Generated\Shared\Transfer\QuoteRequestResponseTransfer;
 use Generated\Shared\Transfer\QuoteRequestTransfer;
 use Generated\Shared\Transfer\QuoteResponseTransfer;
+use Generated\Shared\Transfer\QuoteTransfer;
 use Spryker\Client\Kernel\AbstractClient;
 use Spryker\Client\QuoteRequestAgent\Zed\QuoteRequestAgentStubInterface;
 
@@ -22,7 +23,7 @@ use Spryker\Client\QuoteRequestAgent\Zed\QuoteRequestAgentStubInterface;
 class QuoteRequestAgentClient extends AbstractClient implements QuoteRequestAgentClientInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -36,7 +37,7 @@ class QuoteRequestAgentClient extends AbstractClient implements QuoteRequestAgen
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -50,7 +51,7 @@ class QuoteRequestAgentClient extends AbstractClient implements QuoteRequestAgen
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -64,7 +65,7 @@ class QuoteRequestAgentClient extends AbstractClient implements QuoteRequestAgen
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -78,7 +79,7 @@ class QuoteRequestAgentClient extends AbstractClient implements QuoteRequestAgen
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -92,7 +93,7 @@ class QuoteRequestAgentClient extends AbstractClient implements QuoteRequestAgen
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -100,13 +101,14 @@ class QuoteRequestAgentClient extends AbstractClient implements QuoteRequestAgen
      *
      * @return \Generated\Shared\Transfer\QuoteRequestOverviewCollectionTransfer
      */
-    public function getQuoteRequestOverviewCollection(QuoteRequestOverviewFilterTransfer $quoteRequestOverviewFilterTransfer): QuoteRequestOverviewCollectionTransfer
-    {
+    public function getQuoteRequestOverviewCollection(
+        QuoteRequestOverviewFilterTransfer $quoteRequestOverviewFilterTransfer
+    ): QuoteRequestOverviewCollectionTransfer {
         return $this->getZedStub()->getQuoteRequestOverviewCollection($quoteRequestOverviewFilterTransfer);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -122,7 +124,7 @@ class QuoteRequestAgentClient extends AbstractClient implements QuoteRequestAgen
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -138,7 +140,7 @@ class QuoteRequestAgentClient extends AbstractClient implements QuoteRequestAgen
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -154,7 +156,7 @@ class QuoteRequestAgentClient extends AbstractClient implements QuoteRequestAgen
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -170,7 +172,7 @@ class QuoteRequestAgentClient extends AbstractClient implements QuoteRequestAgen
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -183,6 +185,22 @@ class QuoteRequestAgentClient extends AbstractClient implements QuoteRequestAgen
         return $this->getFactory()
             ->createQuoteRequestAgentStatus()
             ->isQuoteRequestEditable($quoteRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return bool
+     */
+    public function isEditableQuoteRequestVersion(QuoteTransfer $quoteTransfer): bool
+    {
+        return $this->getFactory()
+            ->createQuoteChecker()
+            ->isEditableQuoteRequestVersion($quoteTransfer);
     }
 
     /**

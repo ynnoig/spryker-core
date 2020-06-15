@@ -11,6 +11,7 @@ use Codeception\Actor;
 
 /**
  * Inherited Methods
+ *
  * @method void wantToTest($text)
  * @method void wantTo($text)
  * @method void execute($callable)
@@ -27,8 +28,4 @@ use Codeception\Actor;
 class KernelSharedTester extends Actor
 {
     use _generated\KernelSharedTesterActions;
-
-   /**
-    * Define custom actions here
-    */
 }

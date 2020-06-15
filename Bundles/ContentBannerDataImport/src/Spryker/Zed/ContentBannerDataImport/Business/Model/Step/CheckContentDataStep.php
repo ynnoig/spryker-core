@@ -4,6 +4,7 @@
  * Copyright © 2016-present Spryker Systems GmbH. All rights reserved.
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
+
 namespace Spryker\Zed\ContentBannerDataImport\Business\Model\Step;
 
 use Generated\Shared\Transfer\ContentTransfer;
@@ -37,7 +38,7 @@ class CheckContentDataStep implements DataImportStepInterface
      *
      * @return void
      */
-    public function execute(DataSetInterface $dataSet)
+    public function execute(DataSetInterface $dataSet): void
     {
         $contentTransfer = (new ContentTransfer())
             ->setName($dataSet[ContentTransfer::NAME])

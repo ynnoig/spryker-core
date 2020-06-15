@@ -15,10 +15,12 @@ use Spryker\Shared\StorageRedis\StorageRedisConstants;
 class StorageRedisConfig extends AbstractBundleConfig
 {
     protected const STORAGE_REDIS_CONNECTION_KEY = 'STORAGE_REDIS';
-
     protected const REDIS_DEFAULT_DATABASE = 0;
+    protected const SCAN_CHUNK_SIZE = 100;
 
     /**
+     * @api
+     *
      * @return bool
      */
     public function getDebugMode(): bool
@@ -27,6 +29,8 @@ class StorageRedisConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return \Generated\Shared\Transfer\RedisConfigurationTransfer
      */
     public function getRedisConnectionConfiguration(): RedisConfigurationTransfer
@@ -44,11 +48,23 @@ class StorageRedisConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return string
      */
     public function getRedisConnectionKey(): string
     {
         return static::STORAGE_REDIS_CONNECTION_KEY;
+    }
+
+    /**
+     * @api
+     *
+     * @return int
+     */
+    public function getRedisScanChunkSize(): int
+    {
+        return static::SCAN_CHUNK_SIZE;
     }
 
     /**

@@ -21,6 +21,7 @@ use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
  * @method \Spryker\Zed\Acl\Communication\AclCommunicationFactory getFactory()
  * @method \Spryker\Zed\Acl\Business\AclFacadeInterface getFacade()
  * @method \Spryker\Zed\Acl\Persistence\AclQueryContainerInterface getQueryContainer()
+ * @method \Spryker\Zed\Acl\Persistence\AclRepositoryInterface getRepository()
  */
 class RoleController extends AbstractController
 {
@@ -174,7 +175,7 @@ class RoleController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function ruleSetTableAction(Request $request)
+    public function rulesetTableAction(Request $request)
     {
         $idRole = $this->castId($request->get(self::PARAM_ID_ROLE));
         $ruleSetTable = $this->getFactory()->createRulesetTable($idRole);

@@ -25,7 +25,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -41,7 +41,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -57,7 +57,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -73,7 +73,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -89,7 +89,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -105,7 +105,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -121,7 +121,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -137,7 +137,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -153,7 +153,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -169,7 +169,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -185,7 +185,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -201,7 +201,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -217,7 +217,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -225,15 +225,16 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
      *
      * @return \Generated\Shared\Transfer\QuoteRequestVersionCollectionTransfer
      */
-    public function getQuoteRequestVersionCollectionByFilter(QuoteRequestVersionFilterTransfer $quoteRequestVersionFilterTransfer): QuoteRequestVersionCollectionTransfer
-    {
+    public function getQuoteRequestVersionCollectionByFilter(
+        QuoteRequestVersionFilterTransfer $quoteRequestVersionFilterTransfer
+    ): QuoteRequestVersionCollectionTransfer {
         return $this->getFactory()
             ->createQuoteRequestReader()
             ->getQuoteRequestVersionCollectionByFilter($quoteRequestVersionFilterTransfer);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -250,7 +251,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -264,7 +265,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -280,7 +281,7 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -293,5 +294,21 @@ class QuoteRequestFacade extends AbstractFacade implements QuoteRequestFacadeInt
         return $this->getFactory()
             ->createQuoteRequestReader()
             ->getQuoteRequest($quoteRequestFilterTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param int $idCompanyUser
+     *
+     * @return void
+     */
+    public function deleteQuoteRequestsByIdCompanyUser(int $idCompanyUser): void
+    {
+        $this->getFactory()
+            ->createQuoteRequestCleaner()
+            ->deleteQuoteRequestsByIdCompanyUser($idCompanyUser);
     }
 }

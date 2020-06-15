@@ -28,6 +28,8 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class CmsFacade extends AbstractFacade implements CmsFacadeInterface
 {
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $name
@@ -39,10 +41,12 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     {
         $templateManager = $this->getFactory()->createTemplateManager();
 
-        return $templateEntity = $templateManager->createTemplate($name, $path);
+        return $templateManager->createTemplate($name, $path);
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $path
@@ -57,6 +61,8 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $path
@@ -71,7 +77,11 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
+     *
+     * @deprecated Use {@link createPage()} or {@link updatePage()} instead.
      *
      * @param \Generated\Shared\Transfer\PageTransfer $pageTransfer
      *
@@ -85,6 +95,8 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param \Generated\Shared\Transfer\PageKeyMappingTransfer $pageKeyMappingTransfer
@@ -99,6 +111,8 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param \Generated\Shared\Transfer\PageKeyMappingTransfer $pageKeyMappingTransfer
@@ -114,6 +128,8 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param int $idPage
@@ -129,6 +145,8 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param int $idPage
@@ -144,6 +162,8 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param \Generated\Shared\Transfer\CmsTemplateTransfer $cmsTemplateTransfer
@@ -158,6 +178,8 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param int $idPage
@@ -174,6 +196,8 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param \Generated\Shared\Transfer\PageTransfer $pageTransfer
@@ -184,14 +208,21 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
      *
      * @return \Generated\Shared\Transfer\PageKeyMappingTransfer
      */
-    public function addPlaceholderText(PageTransfer $pageTransfer, string $placeholder, string $value, ?LocaleTransfer $localeTransfer = null, bool $autoGlossaryKeyIncrement = true): PageKeyMappingTransfer
-    {
+    public function addPlaceholderText(
+        PageTransfer $pageTransfer,
+        string $placeholder,
+        string $value,
+        ?LocaleTransfer $localeTransfer = null,
+        bool $autoGlossaryKeyIncrement = true
+    ): PageKeyMappingTransfer {
         $glossaryKeyMappingManager = $this->getFactory()->createGlossaryKeyMappingManager();
 
         return $glossaryKeyMappingManager->addPlaceholderText($pageTransfer, $placeholder, $value, $localeTransfer, $autoGlossaryKeyIncrement);
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param \Generated\Shared\Transfer\PageTransfer $pageTransfer
@@ -207,6 +238,8 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param \Generated\Shared\Transfer\PageTransfer $pageTransfer
@@ -221,6 +254,8 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param \Generated\Shared\Transfer\PageTransfer $pageTransfer
@@ -235,6 +270,8 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param int $idPage
@@ -249,6 +286,8 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $cmsTemplateFolderPath
@@ -263,6 +302,8 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $templateName
@@ -278,9 +319,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * Specification:
-     * - Deletes Cms Page and its relations (urls, glossary key mappings) from database
-     * - Touches deleted Cms Page to notify collector about the change
+     * {@inheritDoc}
      *
      * @api
      *
@@ -296,7 +335,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -312,7 +351,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -328,7 +367,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -346,7 +385,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -362,7 +401,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -378,7 +417,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -394,7 +433,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -410,7 +449,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -426,7 +465,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -442,7 +481,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -458,7 +497,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -477,7 +516,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -493,7 +532,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -509,7 +548,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -528,7 +567,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -545,7 +584,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -564,7 +603,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -580,7 +619,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -596,7 +635,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -612,7 +651,7 @@ class CmsFacade extends AbstractFacade implements CmsFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

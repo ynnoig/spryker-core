@@ -4,6 +4,7 @@
 "Company Users","Company Users"
 "Create Company User","Create Company User"
 "Customer Access","Customer Access"
+"Customer with id `%s` does not exist","Customer with id `%s` does not exist"
 E-Mail,E-Mail
 "Edit Company User","Edit Company User"
 "List of Company Users","List of Company Users"

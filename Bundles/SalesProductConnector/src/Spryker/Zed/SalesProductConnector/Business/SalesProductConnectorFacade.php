@@ -15,15 +15,16 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 
 /**
  * @method \Spryker\Zed\SalesProductConnector\Business\SalesProductConnectorBusinessFactory getFactory()
+ * @method \Spryker\Zed\SalesProductConnector\Persistence\SalesProductConnectorRepositoryInterface getRepository()
  */
 class SalesProductConnectorFacade extends AbstractFacade implements SalesProductConnectorFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @deprecated Use saveOrderItemMetadata() instead
+     * @deprecated Use {@link saveOrderItemMetadata()} instead
      *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponse
@@ -38,7 +39,7 @@ class SalesProductConnectorFacade extends AbstractFacade implements SalesProduct
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -55,9 +56,11 @@ class SalesProductConnectorFacade extends AbstractFacade implements SalesProduct
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
+     *
+     * @deprecated Use {@link expandOrderItemsWithMetadata()} instead.
      *
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      *
@@ -69,9 +72,11 @@ class SalesProductConnectorFacade extends AbstractFacade implements SalesProduct
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
+     *
+     * @deprecated Use {@link SalesProductConnectorFacade::expandOrderItemsWithProductIds()} instead.
      *
      * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
      *
@@ -80,5 +85,53 @@ class SalesProductConnectorFacade extends AbstractFacade implements SalesProduct
     public function hydrateProductIds(OrderTransfer $orderTransfer)
     {
         return $this->getFactory()->createProductIdHydrator()->hydrateProductIds($orderTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\ItemTransfer[] $itemTransfers
+     *
+     * @return \Generated\Shared\Transfer\ItemTransfer[]
+     */
+    public function expandOrderItemsWithMetadata(array $itemTransfers): array
+    {
+        return $this->getFactory()
+            ->createItemMetadataExpander()
+            ->expandOrderItemsWithMetadata($itemTransfers);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\OrderTransfer[] $orderTransfers
+     *
+     * @return \Generated\Shared\Transfer\OrderTransfer[]
+     */
+    public function expandOrdersWithMetadata(array $orderTransfers): array
+    {
+        return $this->getFactory()
+            ->createOrderExpander()
+            ->expandOrdersWithMetadata($orderTransfers);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\ItemTransfer[] $itemTransfers
+     *
+     * @return \Generated\Shared\Transfer\ItemTransfer[]
+     */
+    public function expandOrderItemsWithProductIds(array $itemTransfers): array
+    {
+        return $this->getFactory()
+            ->createProductIdExpander()
+            ->expandOrderItemsWithProduct($itemTransfers);
     }
 }

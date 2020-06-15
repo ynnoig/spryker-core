@@ -7,6 +7,7 @@
 
 namespace Spryker\Zed\DataImport;
 
+use Generated\Shared\Transfer\DataImportConfigurationActionTransfer;
 use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
 use Generated\Shared\Transfer\DataImporterQueueReaderConfigurationTransfer;
 use Generated\Shared\Transfer\DataImporterReaderConfigurationTransfer;
@@ -24,6 +25,8 @@ class DataImportConfig extends AbstractBundleConfig
     protected const DEFAULT_QUEUE_WRITER_CHUNK_SIZE = 100;
 
     /**
+     * @api
+     *
      * @return string
      */
     public function getDataImportRootPath()
@@ -35,6 +38,8 @@ class DataImportConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return int
      */
     public function getQueueReaderChunkSize(): int
@@ -43,11 +48,33 @@ class DataImportConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return int
      */
     public function getQueueWriterChunkSize(): int
     {
         return $this->get(DataImportConstants::QUEUE_WRITER_CHUNK_SIZE, static::DEFAULT_QUEUE_WRITER_CHUNK_SIZE);
+    }
+
+    /**
+     * @api
+     *
+     * @return string[]
+     */
+    public function getFullImportTypes(): array
+    {
+        return [];
+    }
+
+    /**
+     * @api
+     *
+     * @return string|null
+     */
+    public function getDefaultYamlConfigPath(): ?string
+    {
+        return null;
     }
 
     /**
@@ -72,14 +99,39 @@ class DataImportConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\DataImportConfigurationActionTransfer $dataImportConfigurationActionTransfer
+     *
+     * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer
+     */
+    public function buildImporterConfigurationByDataImportConfigAction(
+        DataImportConfigurationActionTransfer $dataImportConfigurationActionTransfer
+    ): DataImporterConfigurationTransfer {
+        $dataImportReaderConfigurationTransfer = new DataImporterReaderConfigurationTransfer();
+        $dataImportReaderConfigurationTransfer
+            ->setFileName($dataImportConfigurationActionTransfer->getSource());
+
+        $dataImporterConfigurationTransfer = new DataImporterConfigurationTransfer();
+        $dataImporterConfigurationTransfer
+            ->setImportType($dataImportConfigurationActionTransfer->getDataEntity())
+            ->setReaderConfiguration($dataImportReaderConfigurationTransfer);
+
+        return $dataImporterConfigurationTransfer;
+    }
+
+    /**
      * @param string $queueName
      * @param string $importType
      * @param array $queueConsumerOptions
      *
      * @return \Generated\Shared\Transfer\QueueDataImporterConfigurationTransfer
      */
-    protected function buildQueueDataImporterConfiguration(string $queueName, string $importType, array $queueConsumerOptions): QueueDataImporterConfigurationTransfer
-    {
+    protected function buildQueueDataImporterConfiguration(
+        string $queueName,
+        string $importType,
+        array $queueConsumerOptions
+    ): QueueDataImporterConfigurationTransfer {
         $dataImportQueueReaderConfigurationTransfer = new DataImporterQueueReaderConfigurationTransfer();
         $dataImportQueueReaderConfigurationTransfer
             ->setQueueName($queueName)

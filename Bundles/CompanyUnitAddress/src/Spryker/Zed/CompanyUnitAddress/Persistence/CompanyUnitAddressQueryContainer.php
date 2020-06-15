@@ -16,6 +16,8 @@ use Spryker\Zed\Kernel\Persistence\AbstractQueryContainer;
 class CompanyUnitAddressQueryContainer extends AbstractQueryContainer implements CompanyUnitAddressQueryContainerInterface
 {
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @return \Orm\Zed\CompanyUnitAddress\Persistence\SpyCompanyUnitAddressQuery
@@ -27,6 +29,25 @@ class CompanyUnitAddressQueryContainer extends AbstractQueryContainer implements
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @module Company
+     * @module Country
+     *
+     * @return \Orm\Zed\CompanyUnitAddress\Persistence\SpyCompanyUnitAddressQuery
+     */
+    public function queryCompanyUnitAddressWithCompanyAndCountry(): SpyCompanyUnitAddressQuery
+    {
+        return $this->queryCompanyUnitAddress()
+            ->leftJoinCompany()
+            ->leftJoinCountry();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param int $idCompanyUnitAddress
@@ -42,6 +63,8 @@ class CompanyUnitAddressQueryContainer extends AbstractQueryContainer implements
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param int $idCompanyUnitAddress
@@ -57,6 +80,8 @@ class CompanyUnitAddressQueryContainer extends AbstractQueryContainer implements
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param int $idCompanyUnitAddress

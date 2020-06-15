@@ -22,6 +22,8 @@ class ReadShoppingListPermissionPlugin extends AbstractPlugin implements Executa
     public const KEY = ShoppingListConfig::READ_SHOPPING_LIST_PERMISSION_PLUGIN_KEY;
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @return string
@@ -32,7 +34,7 @@ class ReadShoppingListPermissionPlugin extends AbstractPlugin implements Executa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -51,6 +53,8 @@ class ReadShoppingListPermissionPlugin extends AbstractPlugin implements Executa
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @return array

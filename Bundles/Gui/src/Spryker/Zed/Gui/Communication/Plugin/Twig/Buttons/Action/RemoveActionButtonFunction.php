@@ -7,6 +7,9 @@
 
 namespace Spryker\Zed\Gui\Communication\Plugin\Twig\Buttons\Action;
 
+/**
+ * @deprecated Use {@link \Spryker\Zed\Gui\Communication\Plugin\Twig\Buttons\Action\RemoveActionButtonTwigPlugin} instead.
+ */
 class RemoveActionButtonFunction extends AbstractActionButtonFunction
 {
     /**

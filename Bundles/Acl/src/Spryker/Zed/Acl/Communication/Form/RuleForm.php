@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -20,6 +21,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  * @method \Spryker\Zed\Acl\Communication\AclCommunicationFactory getFactory()
  * @method \Spryker\Zed\Acl\Persistence\AclQueryContainerInterface getQueryContainer()
  * @method \Spryker\Zed\Acl\AclConfig getConfig()
+ * @method \Spryker\Zed\Acl\Persistence\AclRepositoryInterface getRepository()
  */
 class RuleForm extends AbstractType
 {
@@ -42,7 +44,7 @@ class RuleForm extends AbstractType
     }
 
     /**
-     * @deprecated Use `configureOptions()` instead.
+     * @deprecated Use {@link configureOptions()} instead.
      *
      * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver
      *
@@ -79,7 +81,8 @@ class RuleForm extends AbstractType
         $builder->add(self::FIELD_BUNDLE, TextType::class, [
             'label' => 'Bundle',
             'constraints' => [
-               new NotBlank(),
+                new NotBlank(),
+                new Length(['max' => 45]),
             ],
         ]);
 
@@ -97,6 +100,7 @@ class RuleForm extends AbstractType
             'label' => 'Controller',
             'constraints' => [
                 new NotBlank(),
+                new Length(['max' => 45]),
             ],
         ]);
 
@@ -114,6 +118,7 @@ class RuleForm extends AbstractType
             'label' => 'Action',
             'constraints' => [
                 new NotBlank(),
+                new Length(['max' => 45]),
             ],
         ]);
 
@@ -157,7 +162,7 @@ class RuleForm extends AbstractType
     }
 
     /**
-     * @deprecated Use `getBlockPrefix()` instead.
+     * @deprecated Use {@link getBlockPrefix()} instead.
      *
      * @return string
      */

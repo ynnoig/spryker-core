@@ -23,6 +23,8 @@ use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 class OrderShipmentSavePlugin extends AbstractPlugin implements CheckoutSaveOrderInterface
 {
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
@@ -32,6 +34,6 @@ class OrderShipmentSavePlugin extends AbstractPlugin implements CheckoutSaveOrde
      */
     public function saveOrder(QuoteTransfer $quoteTransfer, CheckoutResponseTransfer $checkoutResponse)
     {
-        $this->getFacade()->saveShipmentForOrder($quoteTransfer, $checkoutResponse);
+        $this->getFacade()->saveOrderShipment($quoteTransfer, $checkoutResponse->getSaveOrder());
     }
 }

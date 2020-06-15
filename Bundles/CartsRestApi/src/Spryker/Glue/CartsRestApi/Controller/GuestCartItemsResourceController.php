@@ -26,7 +26,8 @@ class GuestCartItemsResourceController extends AbstractController
      *          "parameters": [{
      *              "name": "X-Anonymous-Customer-Unique-Id",
      *              "in": "header",
-     *              "required": true
+     *              "required": true,
+     *              "description": "Guest customer unique ID."
      *          }],
      *          "responseAttributesClassName": "Generated\\Shared\\Transfer\\RestCartsAttributesTransfer",
      *          "responses": {
@@ -51,13 +52,15 @@ class GuestCartItemsResourceController extends AbstractController
     /**
      * @Glue({
      *      "patch": {
+     *          "path": "/guest-carts/{guestCartId}/guest-cart-items/{guestCartItemId}",
      *          "summary": [
      *              "Updates guest cart item quantity."
      *          ],
      *          "parameters": [{
      *              "name": "X-Anonymous-Customer-Unique-Id",
      *              "in": "header",
-     *              "required": true
+     *              "required": true,
+     *              "description": "Guest customer unique ID."
      *          }],
      *          "responseAttributesClassName": "Generated\\Shared\\Transfer\\RestCartsAttributesTransfer",
      *          "responses": {
@@ -83,13 +86,15 @@ class GuestCartItemsResourceController extends AbstractController
     /**
      * @Glue({
      *      "delete": {
+     *          "path": "/guest-carts/{guestCartId}/guest-cart-items/{guestCartItemId}",
      *          "summary": [
      *              "Removes item from guest cart."
      *          ],
      *          "parameters": [{
      *              "name": "X-Anonymous-Customer-Unique-Id",
      *              "in": "header",
-     *              "required": true
+     *              "required": true,
+     *              "description": "Guest customer unique ID."
      *          }],
      *          "responseAttributesClassName": "Generated\\Shared\\Transfer\\RestCartsAttributesTransfer",
      *          "responses": {

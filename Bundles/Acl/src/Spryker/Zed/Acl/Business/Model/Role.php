@@ -146,7 +146,7 @@ class Role implements RoleInterface
     {
         $groupRoles = $this->getGroupRoles($idAclGroup);
 
-        foreach ($groupRoles as $groupRole) {
+        foreach ($groupRoles->getRoles() as $groupRole) {
             $rolesTransfer->addRole($groupRole);
         }
     }
@@ -246,5 +246,19 @@ class Role implements RoleInterface
         $roleTransfer->fromArray($aclRoleEntity->toArray(), true);
 
         return $roleTransfer;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return \Generated\Shared\Transfer\RoleTransfer|null
+     */
+    public function findRoleByName(string $name): ?RoleTransfer
+    {
+        if (!$this->hasRoleName($name)) {
+            return null;
+        }
+
+        return $this->getByName($name);
     }
 }

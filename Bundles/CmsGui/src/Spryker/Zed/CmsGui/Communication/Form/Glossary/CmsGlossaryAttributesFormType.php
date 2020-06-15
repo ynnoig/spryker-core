@@ -20,7 +20,6 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Required;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
@@ -29,6 +28,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class CmsGlossaryAttributesFormType extends AbstractType
 {
+    use ArrayObjectTransformerTrait;
+
     public const FIELD_PLACEHOLDER = 'placeholder';
     public const FIELD_FK_PAGE = 'fkPage';
     public const FIELD_FK_GLOSSARY_MAPPING = 'fkCmsGlossaryMapping';
@@ -40,8 +41,6 @@ class CmsGlossaryAttributesFormType extends AbstractType
     public const GROUP_PLACEHOLDER_CHECK = 'placeholder_check';
 
     public const OPTION_GLOSSARY_KEY_SEARCH_OPTIONS = 'glossaryKeySearchOptions';
-
-    use ArrayObjectTransformerTrait;
 
     /**
      * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver
@@ -186,7 +185,6 @@ class CmsGlossaryAttributesFormType extends AbstractType
     protected function getPlaceholderConstants()
     {
         $placeholderConstraints = [
-            new Required(),
             new NotBlank(),
             new Length(['max' => 255]),
         ];
@@ -213,7 +211,7 @@ class CmsGlossaryAttributesFormType extends AbstractType
     }
 
     /**
-     * @deprecated Use `getBlockPrefix()` instead.
+     * @deprecated Use {@link getBlockPrefix()} instead.
      *
      * @return string
      */

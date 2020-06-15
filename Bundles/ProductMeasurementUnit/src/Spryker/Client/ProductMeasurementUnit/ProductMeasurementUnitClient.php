@@ -17,25 +17,26 @@ use Spryker\Client\Kernel\AbstractClient;
 class ProductMeasurementUnitClient extends AbstractClient implements ProductMeasurementUnitClientInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
      * @param \Generated\Shared\Transfer\PersistentCartChangeTransfer $cartChangeTransfer
      * @param array $params
      *
-     *
      * @return \Generated\Shared\Transfer\PersistentCartChangeTransfer
      */
-    public function expandSingleItemQuantitySalesUnitForPersistentCartChange(PersistentCartChangeTransfer $cartChangeTransfer, array $params = []): PersistentCartChangeTransfer
-    {
+    public function expandSingleItemQuantitySalesUnitForPersistentCartChange(
+        PersistentCartChangeTransfer $cartChangeTransfer,
+        array $params = []
+    ): PersistentCartChangeTransfer {
         return $this->getFactory()
             ->createProductMeasurementSalesUnitExpander()
             ->expandSingleItemQuantitySalesUnitForPersistentCartChange($cartChangeTransfer, $params);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Copyright © 2017-present Spryker Systems GmbH. All rights reserved.
+ * Copyright © 2016-present Spryker Systems GmbH. All rights reserved.
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
@@ -19,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Auto-generated group annotations
+ *
  * @group SprykerTest
  * @group Glue
  * @group GlueApplication
@@ -77,7 +79,7 @@ class ResponseFormatterTest extends Unit
         $this->assertNotEmpty($responseObject->errors);
         $this->assertEquals(($responseObject->errors[0])->status, 400);
         $this->assertEquals(($responseObject->errors[0])->code, 1);
-        $this->assertEquals(($responseObject->errors[0])->detail, "error");
+        $this->assertEquals(($responseObject->errors[0])->detail, 'error');
     }
 
     /**
@@ -122,7 +124,6 @@ class ResponseFormatterTest extends Unit
         EncoderMatcherInterface $encoderMatcher,
         ResponseBuilderInterface $responseBuilder
     ): ResponseFormatterInterface {
-
         return new ResponseFormatter($encoderMatcher, $responseBuilder);
     }
 

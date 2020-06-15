@@ -17,7 +17,7 @@ use Spryker\Zed\Calculation\Business\Model\Calculator\CalculatorInterface;
 /**
  * Old implementation of DiscountAmountAggregation not used since Discount module version 5, kept for BC reasons.
  *
- * @deprecated Use Spryker\Zed\Calculation\Business\Model\Aggregator\DiscountAmountAggregator instead.
+ * @deprecated Use {@link \Spryker\Zed\Calculation\Business\Model\Aggregator\DiscountAmountAggregator} instead.
  */
 class DiscountAmountAggregatorForGrossAmount implements CalculatorInterface
 {
@@ -179,7 +179,7 @@ class DiscountAmountAggregatorForGrossAmount implements CalculatorInterface
      * @param \ArrayObject|\Generated\Shared\Transfer\CalculatedDiscountTransfer[] $calculateDiscounts
      * @param int $maxAmount
      * @param string $priceMode
-     * @param int $taxRate
+     * @param float $taxRate
      *
      * @return int
      */
@@ -216,7 +216,7 @@ class DiscountAmountAggregatorForGrossAmount implements CalculatorInterface
     }
 
     /**
-     * @param int $taxRate
+     * @param float $taxRate
      * @param int $discountAmount
      *
      * @return int

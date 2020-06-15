@@ -22,14 +22,20 @@ class CompanyUsersResourceController extends AbstractController
      *          "summary": [
      *              "Retrieves a company user by id."
      *          ],
+     *          "parameters": [{
+     *              "ref": "acceptLanguage"
+     *          }],
      *          "responses": {
-     *              "501": "Not implemented."
+     *              "404": "Company user not found."
      *          }
      *     },
      *     "getCollection": {
      *          "summary": [
      *              "Retrieves list of company users."
-     *          ]
+     *          ],
+     *          "responses": {
+     *              "403": "Unauthorized request."
+     *          }
      *     }
      * })
      *

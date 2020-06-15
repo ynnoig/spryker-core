@@ -59,8 +59,9 @@ class QuoteRequestRepository extends AbstractRepository implements QuoteRequestR
      *
      * @return \Generated\Shared\Transfer\QuoteRequestVersionCollectionTransfer
      */
-    public function getQuoteRequestVersionCollectionByFilter(QuoteRequestVersionFilterTransfer $quoteRequestVersionFilterTransfer): QuoteRequestVersionCollectionTransfer
-    {
+    public function getQuoteRequestVersionCollectionByFilter(
+        QuoteRequestVersionFilterTransfer $quoteRequestVersionFilterTransfer
+    ): QuoteRequestVersionCollectionTransfer {
         $quoteRequestVersionQuery = $this->getFactory()
             ->getQuoteRequestVersionPropelQuery()
             ->joinWithSpyQuoteRequest()
@@ -129,6 +130,21 @@ class QuoteRequestRepository extends AbstractRepository implements QuoteRequestR
         return $this->getFactory()
             ->createQuoteRequestMapper()
             ->mapQuoteRequestEntityToQuoteRequestTransfer($quoteRequestEntity, new QuoteRequestTransfer());
+    }
+
+    /**
+     * @param int $idCompanyUser
+     *
+     * @return int[]
+     */
+    public function findQuoteRequestIdsByIdCompanyUser(int $idCompanyUser): array
+    {
+        return $this->getFactory()
+            ->getQuoteRequestPropelQuery()
+            ->filterByFkCompanyUser($idCompanyUser)
+            ->select(SpyQuoteRequestTableMap::COL_ID_QUOTE_REQUEST)
+            ->find()
+            ->toArray();
     }
 
     /**

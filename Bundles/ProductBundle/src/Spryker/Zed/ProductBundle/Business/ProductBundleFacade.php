@@ -7,6 +7,7 @@
 
 namespace Spryker\Zed\ProductBundle\Business;
 
+use Generated\Shared\Transfer\CalculableObjectTransfer;
 use Generated\Shared\Transfer\CartChangeTransfer;
 use Generated\Shared\Transfer\CartPreCheckResponseTransfer;
 use Generated\Shared\Transfer\CheckoutResponseTransfer;
@@ -27,7 +28,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -43,7 +44,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -59,7 +60,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -75,7 +76,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -91,7 +92,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -107,7 +108,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -123,7 +124,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -139,7 +140,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -158,7 +159,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -174,7 +175,23 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CalculableObjectTransfer $calculableObjectTransfer
+     *
+     * @return \Generated\Shared\Transfer\CalculableObjectTransfer
+     */
+    public function calculateBundlePriceForCalculableObjectTransfer(CalculableObjectTransfer $calculableObjectTransfer): CalculableObjectTransfer
+    {
+        return $this->getFactory()
+            ->createProductBundlePriceCalculator()
+            ->calculateForCalculableObjectTransfer($calculableObjectTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * @api
      *
@@ -190,7 +207,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -206,7 +223,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -222,11 +239,27 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @deprecated Use saveOrderBundleItems() instead
+     * @param \Generated\Shared\Transfer\ProductConcreteTransfer $productConcreteTransfer
+     *
+     * @return \Generated\Shared\Transfer\ProductConcreteTransfer
+     */
+    public function deactivateRelatedProductBundles(ProductConcreteTransfer $productConcreteTransfer): ProductConcreteTransfer
+    {
+        return $this->getFactory()
+            ->createProductBundleStatusUpdater()
+            ->deactivateRelatedProductBundles($productConcreteTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @deprecated Use {@link saveOrderBundleItems()} instead
      *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\CheckoutResponseTransfer $checkoutResponse
@@ -241,7 +274,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -258,7 +291,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -274,7 +307,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -290,7 +323,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -298,14 +331,15 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
      *
      * @return \Generated\Shared\Transfer\ProductBundleCollectionTransfer
      */
-    public function getProductBundleCollectionByCriteriaFilter(ProductBundleCriteriaFilterTransfer $productBundleCriteriaFilterTransfer): ProductBundleCollectionTransfer
-    {
+    public function getProductBundleCollectionByCriteriaFilter(
+        ProductBundleCriteriaFilterTransfer $productBundleCriteriaFilterTransfer
+    ): ProductBundleCollectionTransfer {
         return $this->getRepository()
             ->getProductBundleCollectionByCriteriaFilter($productBundleCriteriaFilterTransfer);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -321,7 +355,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -337,7 +371,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -353,7 +387,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -369,7 +403,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -385,7 +419,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -403,7 +437,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -420,7 +454,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -438,7 +472,7 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -449,5 +483,70 @@ class ProductBundleFacade extends AbstractFacade implements ProductBundleFacadeI
     public function extractQuoteItems(QuoteTransfer $quoteTransfer): ItemCollectionTransfer
     {
         return $this->getFactory()->createQuoteItemsGrouper()->extractQuoteItems($quoteTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return \Generated\Shared\Transfer\OrderTransfer
+     */
+    public function expandOrderProductBundlesWithProductOptions(OrderTransfer $orderTransfer): OrderTransfer
+    {
+        return $this->getFactory()
+            ->createProductOptionExpander()
+            ->expandOrderProductBundlesWithProductOptions($orderTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\ItemTransfer[] $itemTransfers
+     * @param \Generated\Shared\Transfer\OrderTransfer $orderTransfer
+     *
+     * @return \Generated\Shared\Transfer\ItemTransfer[]
+     */
+    public function expandUniqueOrderItemsWithProductBundles(array $itemTransfers, OrderTransfer $orderTransfer): array
+    {
+        return $this->getFactory()
+            ->createProductBundleExpander()
+            ->expandUniqueOrderItemsWithProductBundles($itemTransfers, $orderTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\ItemTransfer[] $itemTransfers
+     *
+     * @return \Generated\Shared\Transfer\ItemTransfer[]
+     */
+    public function expandItemsWithProductBundles(array $itemTransfers): array
+    {
+        return $this->getFactory()
+            ->createProductBundleItemExpander()
+            ->expandItemsWithProductBundles($itemTransfers);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\ItemTransfer[] $itemTransfers
+     *
+     * @return \Generated\Shared\Transfer\ItemTransfer[]
+     */
+    public function expandItemProductBundlesWithProductOptions(array $itemTransfers): array
+    {
+        return $this->getFactory()
+            ->createProductOptionExpander()
+            ->expandItemProductBundlesWithProductOptions($itemTransfers);
     }
 }

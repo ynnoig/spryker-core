@@ -11,7 +11,8 @@ use Spryker\Glue\Kernel\AbstractBundleDependencyProvider;
 use Spryker\Glue\Kernel\Container;
 use Spryker\Glue\RelatedProductsRestApi\Dependency\Client\RelatedProductsRestApiToProductRelationStorageClientBridge;
 use Spryker\Glue\RelatedProductsRestApi\Dependency\Client\RelatedProductsRestApiToProductStorageClientBridge;
-use Spryker\Glue\RelatedProductsRestApi\Dependency\Resource\RelatedProductsRestApiToProductsRestApiResourceBridge;
+use Spryker\Glue\RelatedProductsRestApi\Dependency\Client\RelatedProductsRestApiToStoreClientBridge;
+use Spryker\Glue\RelatedProductsRestApi\Dependency\RestApiResource\RelatedProductsRestApiToProductsRestApiResourceBridge;
 
 /**
  * @method \Spryker\Glue\RelatedProductsRestApi\RelatedProductsRestApiConfig getConfig()
@@ -20,6 +21,7 @@ class RelatedProductsRestApiDependencyProvider extends AbstractBundleDependencyP
 {
     public const CLIENT_PRODUCT_RELATION_STORAGE = 'CLIENT_PRODUCT_RELATION_STORAGE';
     public const CLIENT_PRODUCT_STORAGE = 'CLIENT_PRODUCT_STORAGE';
+    public const CLIENT_STORE = 'CLIENT_STORE';
 
     public const RESOURCE_PRODUCTS_REST_API = 'RESOURCE_PRODUCTS_REST_API';
 
@@ -35,6 +37,23 @@ class RelatedProductsRestApiDependencyProvider extends AbstractBundleDependencyP
         $container = $this->addProductRelationStorageClient($container);
         $container = $this->addProductStorageClient($container);
         $container = $this->addProductsRestApiResource($container);
+        $container = $this->addStoreClient($container);
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Glue\Kernel\Container $container
+     *
+     * @return \Spryker\Glue\Kernel\Container
+     */
+    protected function addStoreClient(Container $container): Container
+    {
+        $container->set(static::CLIENT_STORE, function (Container $container) {
+            return new RelatedProductsRestApiToStoreClientBridge(
+                $container->getLocator()->store()->client()
+            );
+        });
 
         return $container;
     }

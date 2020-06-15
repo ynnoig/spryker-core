@@ -7,6 +7,8 @@
 
 namespace Spryker\Zed\ProductListGui\Communication\Controller;
 
+use Generated\Shared\Transfer\ProductListTransfer;
+use Spryker\Service\UtilText\Model\Url\Url;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +19,8 @@ use Symfony\Component\HttpFoundation\Request;
 class EditController extends ProductListAbstractController
 {
     public const MESSAGE_PRODUCT_LIST_UPDATE_SUCCESS = 'Product List "%s" has been successfully updated.';
+
+    protected const ROUTE_REDIRTECT = '/product-list-gui/edit';
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
@@ -32,7 +36,11 @@ class EditController extends ProductListAbstractController
         );
 
         if ($productListTransfer === null) {
-            return $this->viewResponse($this->executeEditAction($request, $productListAggregateForm));
+            $productListTransfer = (new ProductListTransfer())->setIdProductList(
+                $this->castId($request->get(static::URL_PARAM_ID_PRODUCT_LIST))
+            );
+
+            return $this->viewResponse($this->executeEditAction($productListTransfer, $productListAggregateForm));
         }
 
         $productListResponseTransfer = $this->getFactory()
@@ -47,7 +55,12 @@ class EditController extends ProductListAbstractController
             ]);
         }
 
-        return $this->viewResponse($this->executeEditAction($request, $productListAggregateForm));
+        $redirectUrl = Url::generate(
+            static::ROUTE_REDIRTECT,
+            [static::URL_PARAM_ID_PRODUCT_LIST => $productListTransfer->getIdProductList()]
+        )->build();
+
+        return $this->redirectResponse($redirectUrl);
     }
 
     /**
@@ -75,16 +88,23 @@ class EditController extends ProductListAbstractController
     }
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param \Generated\Shared\Transfer\ProductListTransfer $productListTransfer
      * @param \Symfony\Component\Form\FormInterface $productListAggregateForm
      *
      * @return array
      */
-    protected function executeEditAction(Request $request, FormInterface $productListAggregateForm)
+    protected function executeEditAction(ProductListTransfer $productListTransfer, FormInterface $productListAggregateForm)
     {
-        $idProductList = $this->castId($request->get(static::URL_PARAM_ID_PRODUCT_LIST));
         $data = $this->prepareTemplateVariables($productListAggregateForm);
-        $data['idProductList'] = $idProductList;
+        $data['idProductList'] = $productListTransfer->getIdProductList();
+
+        $data['productListUsedByTable'] = $this->getFactory()
+            ->createProductListUsedByTableProvider()
+            ->getTableData($productListTransfer);
+
+        $data['productListAggregationTabs'] = $this->getFactory()
+            ->createProductListEditAggregationTabs()
+            ->createView();
 
         return $data;
     }

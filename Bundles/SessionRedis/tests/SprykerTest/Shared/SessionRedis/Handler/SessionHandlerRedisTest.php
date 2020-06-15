@@ -10,11 +10,13 @@ namespace SprykerTest\Shared\SessionRedis\Handler;
 use Codeception\Test\Unit;
 use Spryker\Shared\SessionRedis\Dependency\Service\SessionRedisToMonitoringServiceInterface;
 use Spryker\Shared\SessionRedis\Handler\KeyBuilder\SessionKeyBuilder;
+use Spryker\Shared\SessionRedis\Handler\LifeTime\SessionRedisLifeTimeCalculator;
 use Spryker\Shared\SessionRedis\Handler\SessionHandlerRedis;
 use Spryker\Shared\SessionRedis\Redis\SessionRedisWrapperInterface;
 
 /**
  * Auto-generated group annotations
+ *
  * @group SprykerTest
  * @group Shared
  * @group SessionRedis
@@ -42,14 +44,20 @@ class SessionHandlerRedisTest extends Unit
     protected $monitoringServiceMock;
 
     /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Shared\SessionRedis\Handler\LifeTime\SessionRedisLifeTimeCalculator
+     */
+    protected $sessionRedisLifeTimeCalculatorMock;
+
+    /**
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->setupRedisClientMock();
         $this->setupMonitoringServiceMock();
+        $this->setupSessionRedisLifeTimeCalculatorMock();
         $this->setupSessionHandler();
     }
 
@@ -171,13 +179,26 @@ class SessionHandlerRedisTest extends Unit
     /**
      * @return void
      */
+    protected function setupSessionRedisLifeTimeCalculatorMock(): void
+    {
+        $this->sessionRedisLifeTimeCalculatorMock = $this->getMockBuilder(SessionRedisLifeTimeCalculator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->sessionRedisLifeTimeCalculatorMock->method('getSessionLifeTime')
+            ->willReturn(static::SESSION_LIFETIME);
+    }
+
+    /**
+     * @return void
+     */
     protected function setupSessionHandler(): void
     {
         $this->sessionHandler = new SessionHandlerRedis(
             $this->redisClientMock,
             new SessionKeyBuilder(),
             $this->monitoringServiceMock,
-            static::SESSION_LIFETIME
+            $this->sessionRedisLifeTimeCalculatorMock
         );
     }
 }

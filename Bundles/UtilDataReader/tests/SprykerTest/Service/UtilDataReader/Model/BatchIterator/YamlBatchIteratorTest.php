@@ -16,6 +16,7 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * Auto-generated group annotations
+ *
  * @group SprykerTest
  * @group Service
  * @group UtilDataReader
@@ -29,18 +30,18 @@ class YamlBatchIteratorTest extends Unit
     /**
      * @return void
      */
-    public function testThrowsExceptionIfFileNotValid()
+    public function testThrowsExceptionIfFileNotValid(): void
     {
+        $this->expectException(ResourceNotFoundException::class);
         $yamlBatchIterator = $this->getYamlBatchIteratorWithInvalidFile();
 
-        $this->expectException(ResourceNotFoundException::class);
         $this->assertNotNull($yamlBatchIterator->current());
     }
 
     /**
      * @return void
      */
-    public function testCurrentReturnsValidEntry()
+    public function testCurrentReturnsValidEntry(): void
     {
         $yamlBatchIterator = $this->getYamlBatchIterator();
 
@@ -50,7 +51,7 @@ class YamlBatchIteratorTest extends Unit
     /**
      * @return void
      */
-    public function testNextIncreasesOffset()
+    public function testNextIncreasesOffset(): void
     {
         $yamlBatchIterator = $this->getYamlBatchIterator();
 
@@ -63,7 +64,7 @@ class YamlBatchIteratorTest extends Unit
     /**
      * @return void
      */
-    public function testKeyReturnsCurrentOffset()
+    public function testKeyReturnsCurrentOffset(): void
     {
         $yamlBatchIterator = $this->getYamlBatchIterator();
 
@@ -73,7 +74,7 @@ class YamlBatchIteratorTest extends Unit
     /**
      * @return void
      */
-    public function testValidReturnsFalseIfBatchDataIsNotInitialized()
+    public function testValidReturnsFalseIfBatchDataIsNotInitialized(): void
     {
         $yamlBatchIterator = $this->getYamlBatchIterator();
 
@@ -83,7 +84,7 @@ class YamlBatchIteratorTest extends Unit
     /**
      * @return void
      */
-    public function testValidReturnsTrueIfBatchDataIsInitialized()
+    public function testValidReturnsTrueIfBatchDataIsInitialized(): void
     {
         $yamlBatchIterator = $this->getYamlBatchIterator();
         $yamlBatchIterator->current();
@@ -94,7 +95,7 @@ class YamlBatchIteratorTest extends Unit
     /**
      * @return void
      */
-    public function testRewindResetOffset()
+    public function testRewindResetOffset(): void
     {
         $yamlBatchIterator = $this->getYamlBatchIterator();
         $yamlBatchIterator->next();
@@ -106,7 +107,7 @@ class YamlBatchIteratorTest extends Unit
     /**
      * @return void
      */
-    public function testCountReturnsNumberOfRowsInBatchData()
+    public function testCountReturnsNumberOfRowsInBatchData(): void
     {
         $yamlBatchIterator = $this->getYamlBatchIterator();
 
@@ -114,9 +115,28 @@ class YamlBatchIteratorTest extends Unit
     }
 
     /**
+     * @return void
+     */
+    public function testIteratorWillReturnExpectedData(): void
+    {
+        //Arrange
+        $expectedData = [
+            'foo' => 'bar',
+            'baz' => 'bat',
+        ];
+
+        //Act
+        $yamlBatchIterator = $this->getYamlBatchIterator();
+        $resultedData = $yamlBatchIterator->current();
+
+        //Assert
+        $this->assertEquals($expectedData, $resultedData, 'Resulted data does not match expected result.');
+    }
+
+    /**
      * @return \Spryker\Service\UtilDataReader\Model\BatchIterator\YamlBatchIterator
      */
-    protected function getYamlBatchIterator()
+    protected function getYamlBatchIterator(): YamlBatchIterator
     {
         $fileName = Configuration::dataDir() . '/BatchIterator/batchIterator.yml';
 
@@ -126,7 +146,7 @@ class YamlBatchIteratorTest extends Unit
     /**
      * @return \Spryker\Service\UtilDataReader\Model\BatchIterator\YamlBatchIterator
      */
-    protected function getYamlBatchIteratorWithInvalidFile()
+    protected function getYamlBatchIteratorWithInvalidFile(): YamlBatchIterator
     {
         $fileName = Configuration::dataDir() . '/BatchIterator/notValid.yml';
 
@@ -138,7 +158,7 @@ class YamlBatchIteratorTest extends Unit
      *
      * @return \Spryker\Service\UtilDataReader\Model\BatchIterator\YamlBatchIterator
      */
-    protected function getBatchIterator($fileName)
+    protected function getBatchIterator(string $fileName): YamlBatchIterator
     {
         $yamlReader = new YamlReaderBridge(new Yaml());
         $yamlBatchIterator = new YamlBatchIterator($yamlReader, $fileName);

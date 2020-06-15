@@ -24,6 +24,8 @@ class SalesConfig extends AbstractBundleConfig
     /**
      * Separator for the sequence number
      *
+     * @api
+     *
      * @return string
      */
     public function getUniqueIdentifierSeparator()
@@ -41,6 +43,8 @@ class SalesConfig extends AbstractBundleConfig
 
     /**
      * Defines the prefix for the sequence number which is the public id of an order.
+     *
+     * @api
      *
      * @return \Generated\Shared\Transfer\SequenceNumberSettingsTransfer
      */
@@ -62,22 +66,25 @@ class SalesConfig extends AbstractBundleConfig
     /**
      * Defines logic to determine if order is placed for testing purposes. When order is persisted, is_test flag is set.
      *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
      * @return bool
      */
     public function isTestOrder(QuoteTransfer $quoteTransfer)
     {
-        $shippingAddressTransfer = $quoteTransfer->getShippingAddress();
-        if ($shippingAddressTransfer === null || $shippingAddressTransfer->getFirstName() !== self::TEST_CUSTOMER_FIRST_NAME) {
-            return false;
+        if (!$this->hasItemLevelShipment($quoteTransfer)) {
+            return $this->isTestOrderWithoutMultiShippingAddress($quoteTransfer);
         }
 
-        return true;
+        return $this->isTestOrderWithMultiShippingAddress($quoteTransfer);
     }
 
     /**
      * This method determines state machine process from the given quote transfer and order item.
+     *
+     * @api
      *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\ItemTransfer $itemTransfer
@@ -101,10 +108,77 @@ class SalesConfig extends AbstractBundleConfig
      *    'discount' => '/discount/sales/index',
      * ]
      *
-     * @return array
+     * @api
+     *
+     * @return string[]
      */
     public function getSalesDetailExternalBlocksUrls()
     {
         return [];
+    }
+
+    /**
+     * @api
+     *
+     * @return bool
+     */
+    public function isHydrateOrderHistoryToItems(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return bool
+     */
+    protected function hasItemLevelShipment(QuoteTransfer $quoteTransfer): bool
+    {
+        foreach ($quoteTransfer->getItems() as $itemTransfer) {
+            if ($itemTransfer->getShipment() === null) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @deprecated Exists for Backward Compatibility reasons only.
+     *
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return bool
+     */
+    protected function isTestOrderWithoutMultiShippingAddress(QuoteTransfer $quoteTransfer): bool
+    {
+        $shippingAddressTransfer = $quoteTransfer->getShippingAddress();
+        if ($shippingAddressTransfer === null || $shippingAddressTransfer->getFirstName() !== static::TEST_CUSTOMER_FIRST_NAME) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return bool
+     */
+    protected function isTestOrderWithMultiShippingAddress(QuoteTransfer $quoteTransfer): bool
+    {
+        foreach ($quoteTransfer->getItems() as $itemTransfer) {
+            $shipmentTransfer = $itemTransfer->getShipment();
+
+            if (
+                $shipmentTransfer === null
+                || $shipmentTransfer->getShippingAddress() === null
+                || $shipmentTransfer->getShippingAddress()->getFirstName() !== static::TEST_CUSTOMER_FIRST_NAME
+            ) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

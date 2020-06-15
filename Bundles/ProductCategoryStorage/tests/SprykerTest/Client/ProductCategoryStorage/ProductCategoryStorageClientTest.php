@@ -10,9 +10,12 @@ namespace SprykerTest\Client\ProductCategoryStorage;
 use Codeception\Test\Unit;
 use Spryker\Client\ProductCategoryStorage\ProductCategoryStorageClient;
 use Spryker\Client\ProductCategoryStorage\ProductCategoryStorageClientInterface;
+use Spryker\Client\Storage\StorageDependencyProvider;
+use Spryker\Client\StorageRedis\Plugin\StorageRedisPlugin;
 
 /**
  * Auto-generated group annotations
+ *
  * @group SprykerTest
  * @group Client
  * @group ProductCategoryStorage
@@ -33,7 +36,10 @@ class ProductCategoryStorageClientTest extends Unit
      */
     public function testFindInvalidProductAbstractCategoryReturnsNull(): void
     {
-        // Action
+        // Arrange
+        $this->tester->setDependency(StorageDependencyProvider::PLUGIN_STORAGE, new StorageRedisPlugin());
+
+        // Act
         $returnValue = $this->createProductCategoryStorageClient()
             ->findProductAbstractCategory(static::INVALID_ID_PRODUCT_ABSTRACT, 'de_DE');
 

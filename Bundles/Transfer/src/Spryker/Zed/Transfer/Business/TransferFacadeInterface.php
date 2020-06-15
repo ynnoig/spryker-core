@@ -30,9 +30,32 @@ interface TransferFacadeInterface
      *
      * @api
      *
+     * @deprecated Use {@link deleteGeneratedDataTransferObjects()} instead to generate data transfers.
+     *   Use {@link deleteGeneratedEntityTransferObjects()} instead to generate entity transfers.
+     *
      * @return void
      */
     public function deleteGeneratedTransferObjects();
+
+    /**
+     * Specification:
+     * - Deletes all generated data transfer objects.
+     *
+     * @api
+     *
+     * @return void
+     */
+    public function deleteGeneratedDataTransferObjects(): void;
+
+    /**
+     * Specification:
+     * - Deletes generated entity transfer objects.
+     *
+     * @api
+     *
+     * @return void
+     */
+    public function deleteGeneratedEntityTransferObjects(): void;
 
     /**
      * Specification:

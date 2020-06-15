@@ -15,14 +15,18 @@ use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener;
 class WebProfilerConfig extends AbstractBundleConfig
 {
     /**
+     * @api
+     *
      * @return bool
      */
     public function isWebProfilerEnabled()
     {
-        return $this->get(WebProfilerConstants::ENABLE_WEB_PROFILER, false);
+        return $this->get(WebProfilerConstants::IS_WEB_PROFILER_ENABLED, false);
     }
 
     /**
+     * @api
+     *
      * @return string[]
      */
     public function getWebProfilerTemplatePaths(): array
@@ -32,5 +36,17 @@ class WebProfilerConfig extends AbstractBundleConfig
         return [
             dirname(dirname((string)$reflectionClass->getFileName())) . '/Resources/views',
         ];
+    }
+
+    /**
+     * @api
+     *
+     * @return string
+     */
+    public function getProfilerCacheDirectory(): string
+    {
+        $defaultPath = APPLICATION_ROOT_DIR . '/data/cache/codeBucket/profiler';
+
+        return $this->get(WebProfilerConstants::PROFILER_CACHE_DIRECTORY, $defaultPath);
     }
 }

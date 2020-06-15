@@ -12,9 +12,12 @@ use Spryker\Shared\SessionRedis\Handler\Lock\SessionLockerInterface;
 use Spryker\Zed\SessionRedis\Communication\Lock\SessionLockReaderInterface;
 use Spryker\Zed\SessionRedis\Communication\Plugin\Session\ZedSessionRedisLockReleaserPlugin;
 use Spryker\Zed\SessionRedis\Communication\SessionRedisCommunicationFactory;
+use Spryker\Zed\SessionRedis\SessionRedisDependencyProvider;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Auto-generated group annotations
+ *
  * @group SprykerTest
  * @group Zed
  * @group SessionRedis
@@ -26,6 +29,21 @@ use Spryker\Zed\SessionRedis\Communication\SessionRedisCommunicationFactory;
  */
 class SessionLockReleaserPluginTest extends Unit
 {
+    /**
+     * @var \SprykerTest\Zed\SessionRedis\SessionRedisCommunicationTester
+     */
+    protected $tester;
+
+    /**
+     * @return void
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tester->setDependency(SessionRedisDependencyProvider::REQUEST_STACK, new RequestStack());
+    }
+
     /**
      * @return void
      */

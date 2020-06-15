@@ -27,12 +27,13 @@ class ImageSetCollectionTransformer implements DataTransformerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @phpstan-param \ArrayObject<\Generated\Shared\Transfer\CategoryImageSetTransfer>|null $value
      *
      * @param \Generated\Shared\Transfer\CategoryImageSetTransfer[]|\ArrayObject $value The value in the original representation
      *
      * @return array|null The value in the transformed representation
-     *
      */
     public function transform($value)
     {
@@ -53,12 +54,11 @@ class ImageSetCollectionTransformer implements DataTransformerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @param array|null $value The value in the transformed representation
      *
      * @return \ArrayObject|null The value in the original representation
-     *
      */
     public function reverseTransform($value)
     {

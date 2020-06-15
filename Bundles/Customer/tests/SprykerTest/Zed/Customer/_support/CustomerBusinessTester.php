@@ -8,9 +8,11 @@
 namespace SprykerTest\Zed\Customer;
 
 use Codeception\Actor;
+use Symfony\Component\Security\Core\Encoder\NativePasswordEncoder;
 
 /**
  * Inherited Methods
+ *
  * @method void wantToTest($text)
  * @method void wantTo($text)
  * @method void execute($callable)
@@ -23,12 +25,24 @@ use Codeception\Actor;
  * @method \Codeception\Lib\Friend haveFriend($name, $actorClass = NULL)
  *
  * @SuppressWarnings(PHPMD)
+ *
+ * @method \Spryker\Zed\Customer\Business\CustomerFacadeInterface getFacade()
  */
 class CustomerBusinessTester extends Actor
 {
     use _generated\CustomerBusinessTesterActions;
 
-   /**
-    * Define custom actions here
-    */
+    /**
+     * @param string $hash
+     * @param string $rowPassword
+     * @param string $salt
+     *
+     * @return void
+     */
+    public function assertPasswordsEqual(string $hash, string $rowPassword, string $salt = ''): void
+    {
+        $nativePasswordEncoder = new NativePasswordEncoder();
+
+        $this->assertTrue($nativePasswordEncoder->isPasswordValid($hash, $rowPassword, $salt), 'Passwords are now equal.');
+    }
 }

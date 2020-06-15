@@ -9,6 +9,11 @@ namespace Spryker\Zed\Transfer\Business\Model\Generator;
 
 use Symfony\Component\Finder\Finder;
 
+/**
+ * @deprecated Use {@link \Spryker\Zed\Transfer\Business\Transfer\Definition\TransferDefinitionFinder} instead.
+ * @deprecated Use {@link \Spryker\Zed\Transfer\Business\EntityTransfer\Definition\EntityTransferDefinitionFinder} instead.
+ * @deprecated Use {@link \Spryker\Zed\Transfer\Business\DataBuilder\Definition\DataBuilderDefinitionFinder} instead.
+ */
 class TransferDefinitionFinder implements FinderInterface
 {
     /**
@@ -74,7 +79,7 @@ class TransferDefinitionFinder implements FinderInterface
     protected function getExistingSourceDirectories()
     {
         return array_filter($this->sourceDirectories, function ($directory) {
-            return (bool)glob($directory, GLOB_ONLYDIR);
+            return (bool)glob($directory, GLOB_ONLYDIR | GLOB_NOSORT);
         });
     }
 }

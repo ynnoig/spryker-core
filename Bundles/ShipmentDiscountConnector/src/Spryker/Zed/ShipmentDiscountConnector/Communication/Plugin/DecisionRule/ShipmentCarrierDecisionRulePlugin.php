@@ -24,7 +24,7 @@ class ShipmentCarrierDecisionRulePlugin extends AbstractPlugin implements Decisi
     public const DECISION_RULE_FIELD_NAME = 'shipment-carrier';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -44,7 +44,7 @@ class ShipmentCarrierDecisionRulePlugin extends AbstractPlugin implements Decisi
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -56,11 +56,11 @@ class ShipmentCarrierDecisionRulePlugin extends AbstractPlugin implements Decisi
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @return array
+     * @return string[]
      */
     public function acceptedDataTypes()
     {
@@ -70,11 +70,11 @@ class ShipmentCarrierDecisionRulePlugin extends AbstractPlugin implements Decisi
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @return array
+     * @return string[]
      */
     public function getQueryStringValueOptions()
     {

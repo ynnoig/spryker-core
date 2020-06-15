@@ -12,7 +12,7 @@ use Orm\Zed\ProductCategory\Persistence\SpyProductCategoryQuery;
 use Orm\Zed\ProductList\Persistence\SpyProductListProductConcreteQuery;
 use Spryker\Zed\Kernel\AbstractBundleDependencyProvider;
 use Spryker\Zed\Kernel\Container;
-use Spryker\Zed\ProductListStorage\Dependency\Facade\ProductListStorageToEventBehaviourFacadeBridge;
+use Spryker\Zed\ProductListStorage\Dependency\Facade\ProductListStorageToEventBehaviorFacadeBridge;
 use Spryker\Zed\ProductListStorage\Dependency\Facade\ProductListStorageToProductListFacadeBridge;
 
 /**
@@ -76,7 +76,7 @@ class ProductListStorageDependencyProvider extends AbstractBundleDependencyProvi
     protected function addEventBehaviorFacade(Container $container): Container
     {
         $container[static::FACADE_EVENT_BEHAVIOR] = function (Container $container) {
-            return new ProductListStorageToEventBehaviourFacadeBridge(
+            return new ProductListStorageToEventBehaviorFacadeBridge(
                 $container->getLocator()->eventBehavior()->facade()
             );
         };
@@ -105,9 +105,9 @@ class ProductListStorageDependencyProvider extends AbstractBundleDependencyProvi
      */
     protected function addProductPropelQuery(Container $container): Container
     {
-        $container[static::PROPEL_QUERY_PRODUCT] = function () {
+        $container->set(static::PROPEL_QUERY_PRODUCT, $container->factory(function () {
             return SpyProductQuery::create();
-        };
+        }));
 
         return $container;
     }
@@ -119,9 +119,9 @@ class ProductListStorageDependencyProvider extends AbstractBundleDependencyProvi
      */
     protected function addProductCategoryPropelQuery(Container $container): Container
     {
-        $container[static::PROPEL_QUERY_PRODUCT_CATEGORY] = function () {
+        $container->set(static::PROPEL_QUERY_PRODUCT_CATEGORY, $container->factory(function () {
             return SpyProductCategoryQuery::create();
-        };
+        }));
 
         return $container;
     }
@@ -133,9 +133,9 @@ class ProductListStorageDependencyProvider extends AbstractBundleDependencyProvi
      */
     protected function addProductListProductConcretePropelQuery(Container $container): Container
     {
-        $container[static::PROPEL_QUERY_PRODUCT_LIST_PRODUCT_CONCRETE] = function () {
+        $container->set(static::PROPEL_QUERY_PRODUCT_LIST_PRODUCT_CONCRETE, $container->factory(function () {
             return SpyProductListProductConcreteQuery::create();
-        };
+        }));
 
         return $container;
     }

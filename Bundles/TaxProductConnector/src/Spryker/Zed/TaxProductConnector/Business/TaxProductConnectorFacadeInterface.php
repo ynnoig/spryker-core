@@ -7,6 +7,7 @@
 
 namespace Spryker\Zed\TaxProductConnector\Business;
 
+use Generated\Shared\Transfer\CalculableObjectTransfer;
 use Generated\Shared\Transfer\ProductAbstractTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use Generated\Shared\Transfer\TaxSetResponseTransfer;
@@ -39,7 +40,7 @@ interface TaxProductConnectorFacadeInterface
 
     /**
      * Specification:
-     *  - Set tax rate for each item
+     *  - Set tax rate for each item based on quote level (BC) or item level shipments.
      *
      * @api
      *
@@ -51,10 +52,24 @@ interface TaxProductConnectorFacadeInterface
 
     /**
      * Specification:
+     *  - Set tax rate for each item based on quote level (BC) or item level shipments.
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CalculableObjectTransfer $calculableObjectTransfer
+     *
+     * @return \Generated\Shared\Transfer\CalculableObjectTransfer
+     */
+    public function calculateProductItemTaxRateForCalculableObjectTransfer(CalculableObjectTransfer $calculableObjectTransfer): CalculableObjectTransfer;
+
+    /**
+     * Specification:
      *  - Returns response with tax set for abstract product.
      *  - If tax set is null - sets error message and isSuccess to false.
      *
      * @api
+     *
+     * @deprecated Will be removed without replacement.
      *
      * @param \Generated\Shared\Transfer\ProductAbstractTransfer $productAbstractTransfer
      *

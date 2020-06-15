@@ -12,10 +12,15 @@ namespace Spryker\Shared\ZedRequest;
  */
 interface ZedRequestConstants
 {
+    /**
+     * @deprecated Will be removed without replacement.
+     */
     public const AUTH_ZED_ENABLED = 'AUTH_ZED_ENABLED';
     public const AUTH_DEFAULT_CREDENTIALS = 'AUTH_DEFAULT_CREDENTIALS';
 
-    /** @deprecated Please use ZedRequestConstants::BASE_URL_SSL_ZED_API instead */
+    /**
+     * @deprecated Please use ZedRequestConstants::BASE_URL_SSL_ZED_API instead
+     */
     public const HOST_SSL_ZED_API = 'HOST_SSL_ZED_API';
 
     public const HOST_ZED_API = 'HOST_ZED_API';
@@ -36,7 +41,13 @@ interface ZedRequestConstants
 
     public const TRANSFER_DEBUG_SESSION_FORWARD_ENABLED = 'TRANSFER_DEBUG_SESSION_FORWARD_ENABLED';
     public const TRANSFER_DEBUG_SESSION_NAME = 'TRANSFER_DEBUG_SESSION_NAME';
+    /**
+     * @deprecated Will be removed without replacement.
+     */
     public const TRANSFER_PASSWORD = 'TRANSFER_PASSWORD';
+    /**
+     * @deprecated Will be removed without replacement.
+     */
     public const TRANSFER_USERNAME = 'TRANSFER_USERNAME';
 
     public const ZED_API_SSL_ENABLED = 'ZED_API_SSL_ENABLED';
@@ -68,4 +79,20 @@ interface ZedRequestConstants
      * @api
      */
     public const ENABLE_REPEAT = 'ZED_REQUEST:ENABLE_REPEAT';
+
+    /**
+     * Specification:
+     * - Enables forwarding of Xdebug profiling.
+     *
+     * @api
+     */
+    public const XDEBUG_PROFILER_FORWARD_ENABLED = 'ZED_REQUEST:XDEBUG_PROFILER_FORWARD_ENABLED';
+
+    /**
+     * Specification:
+     * - Xdebug profiler name.
+     *
+     * @api
+     */
+    public const XDEBUG_PROFILER_NAME = 'ZED_REQUEST:XDEBUG_PROFILER_NAME';
 }

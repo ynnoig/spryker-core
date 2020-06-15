@@ -58,6 +58,7 @@ class SynchronizationBusinessFactory extends AbstractBusinessFactory
         return new RepositoryExporter(
             $this->getQueueClient(),
             $this->createQueueMessageCreator(),
+            $this->getUtilEncodingService(),
             $this->getConfig()->getSyncExportChunkSize()
         );
     }
@@ -133,7 +134,9 @@ class SynchronizationBusinessFactory extends AbstractBusinessFactory
      */
     protected function createQueueMessageCreator()
     {
-        return new QueueMessageCreator();
+        return new QueueMessageCreator(
+            $this->getUtilEncodingService()
+        );
     }
 
     /**

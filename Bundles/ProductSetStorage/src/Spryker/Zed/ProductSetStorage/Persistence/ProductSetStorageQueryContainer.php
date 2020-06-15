@@ -25,7 +25,11 @@ class ProductSetStorageQueryContainer extends AbstractQueryContainer implements 
     public const FK_PRODUCT_RESOURCE_SET = 'fkProductSet';
 
     /**
+     * {@inheritDoc}
+     *
      * @api
+     *
+     * @deprecated Use {@link queryProductSetDataByProductSetIds()} instead.
      *
      * @param array $productSetIds
      *
@@ -60,6 +64,45 @@ class ProductSetStorageQueryContainer extends AbstractQueryContainer implements 
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param int[] $productSetIds
+     *
+     * @return \Orm\Zed\ProductSet\Persistence\SpyProductSetDataQuery
+     */
+    public function queryProductSetDataByProductSetIds(array $productSetIds): SpyProductSetDataQuery
+    {
+        $productSetDataQuery = $this->getFactory()
+            ->getProductSetQueryContainer()
+            ->queryAllProductSetData()
+            ->joinWithSpyLocale()
+            ->joinWithSpyProductSet()
+            ->leftJoinWith('SpyProductSet.SpyProductAbstractSet')
+            ->joinWith('SpyProductSet.SpyProductImageSet', Criteria::LEFT_JOIN)
+            ->addJoinCondition('SpyProductImageSet', sprintf('(spy_product_image_set.fk_locale = %s or spy_product_image_set.fk_locale is null)', SpyProductSetDataTableMap::COL_FK_LOCALE))
+            ->joinWith('SpyProductImageSet.SpyProductImageSetToProductImage', Criteria::LEFT_JOIN)
+            ->joinWith('SpyProductImageSetToProductImage.SpyProductImage', Criteria::LEFT_JOIN)
+            ->filterByFkProductSet_In($productSetIds)
+            ->addJoin(
+                SpyProductSetTableMap::COL_ID_PRODUCT_SET,
+                SpyUrlTableMap::COL_FK_RESOURCE_PRODUCT_SET,
+                Criteria::INNER_JOIN
+            )
+            ->where(SpyUrlTableMap::COL_FK_LOCALE . ' = ' . SpyProductSetDataTableMap::COL_FK_LOCALE)
+            ->withColumn(SpyUrlTableMap::COL_URL, 'url')
+            ->orderBy(SpyProductAbstractSetTableMap::COL_POSITION, Criteria::ASC)
+            ->setFormatter(ModelCriteria::FORMAT_ARRAY);
+
+        $productSetDataQuery = $this->sortProductImageSetToProductImageQuery($productSetDataQuery);
+
+        return $productSetDataQuery;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param array $productSetIds
@@ -74,6 +117,8 @@ class ProductSetStorageQueryContainer extends AbstractQueryContainer implements 
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param array $productImageIds
@@ -92,6 +137,8 @@ class ProductSetStorageQueryContainer extends AbstractQueryContainer implements 
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param array $productImageSetToProductImageIds
@@ -112,6 +159,8 @@ class ProductSetStorageQueryContainer extends AbstractQueryContainer implements 
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param int[] $productSetIds

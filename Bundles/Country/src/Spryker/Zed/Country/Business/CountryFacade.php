@@ -7,6 +7,8 @@
 
 namespace Spryker\Zed\Country\Business;
 
+use Generated\Shared\Transfer\CheckoutDataTransfer;
+use Generated\Shared\Transfer\CheckoutResponseTransfer;
 use Generated\Shared\Transfer\CountryCollectionTransfer;
 use Spryker\Zed\Kernel\Business\AbstractFacade;
 
@@ -17,6 +19,8 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class CountryFacade extends AbstractFacade implements CountryFacadeInterface
 {
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @return void
@@ -27,6 +31,8 @@ class CountryFacade extends AbstractFacade implements CountryFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $iso2Code
@@ -39,11 +45,11 @@ class CountryFacade extends AbstractFacade implements CountryFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @deprecated Use getCountryByIso2Code() instead.
+     * @deprecated Use {@link getCountryByIso2Code()} instead.
      *
      * @param string $iso2Code
      *
@@ -55,7 +61,7 @@ class CountryFacade extends AbstractFacade implements CountryFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -69,6 +75,22 @@ class CountryFacade extends AbstractFacade implements CountryFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CheckoutDataTransfer $checkoutDataTransfer
+     *
+     * @return \Generated\Shared\Transfer\CheckoutResponseTransfer
+     */
+    public function validateCountryCheckoutData(CheckoutDataTransfer $checkoutDataTransfer): CheckoutResponseTransfer
+    {
+        return $this->getFactory()->createCountryCheckoutDataValidator()->validateCountryCheckoutData($checkoutDataTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $iso3Code
@@ -81,6 +103,8 @@ class CountryFacade extends AbstractFacade implements CountryFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @return \Generated\Shared\Transfer\CountryCollectionTransfer
@@ -95,6 +119,8 @@ class CountryFacade extends AbstractFacade implements CountryFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param string $countryName
@@ -111,7 +137,7 @@ class CountryFacade extends AbstractFacade implements CountryFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

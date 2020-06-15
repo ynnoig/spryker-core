@@ -16,7 +16,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class TransferFacade extends AbstractFacade implements TransferFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -30,6 +30,8 @@ class TransferFacade extends AbstractFacade implements TransferFacadeInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param \Psr\Log\LoggerInterface $messenger
@@ -42,7 +44,7 @@ class TransferFacade extends AbstractFacade implements TransferFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -56,9 +58,12 @@ class TransferFacade extends AbstractFacade implements TransferFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
+     *
+     * @deprecated Use {@link deleteGeneratedDataTransferObjects()} instead to generate data transfers.
+     *   Use {@link deleteGeneratedEntityTransferObjects()} instead to generate entity transfers.
      *
      * @return void
      */
@@ -68,7 +73,31 @@ class TransferFacade extends AbstractFacade implements TransferFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @return void
+     */
+    public function deleteGeneratedDataTransferObjects(): void
+    {
+        $this->getFactory()->createDataTransferGeneratedDirectory()->clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @return void
+     */
+    public function deleteGeneratedEntityTransferObjects(): void
+    {
+        $this->getFactory()->createEntityTransferGeneratedDirectory()->clear();
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * @api
      *
@@ -80,7 +109,7 @@ class TransferFacade extends AbstractFacade implements TransferFacadeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

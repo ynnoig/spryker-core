@@ -9,8 +9,8 @@ namespace Spryker\Zed\Kernel\Communication\Console;
 
 use RuntimeException;
 use Spryker\Zed\Kernel\Business\AbstractFacade;
+use Spryker\Zed\Kernel\ClassResolver\Communication\CommunicationFactoryResolver;
 use Spryker\Zed\Kernel\ClassResolver\Facade\FacadeResolver;
-use Spryker\Zed\Kernel\ClassResolver\Factory\FactoryResolver;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
 use Spryker\Zed\Kernel\Container;
 use Spryker\Zed\Kernel\Persistence\AbstractQueryContainer;
@@ -31,10 +31,10 @@ use Symfony\Component\Console\Terminal;
  */
 class Console extends SymfonyCommand
 {
+    use RepositoryResolverAwareTrait;
+
     public const CODE_SUCCESS = 0;
     public const CODE_ERROR = 1;
-
-    use RepositoryResolverAwareTrait;
 
     /**
      * @var \Symfony\Component\Console\Input\InputInterface
@@ -140,11 +140,11 @@ class Console extends SymfonyCommand
     }
 
     /**
-     * @return \Spryker\Zed\Kernel\ClassResolver\Factory\FactoryResolver
+     * @return \Spryker\Zed\Kernel\ClassResolver\Communication\CommunicationFactoryResolver
      */
     private function getFactoryResolver()
     {
-        return new FactoryResolver();
+        return new CommunicationFactoryResolver();
     }
 
     /**
@@ -302,11 +302,11 @@ class Console extends SymfonyCommand
      */
     public function error($message)
     {
-        $message = $message . str_repeat(' ', $this->getTerminalWidth() - strlen($message) - 1);
+        $width = $this->getTerminalWidth() - mb_strlen($message) - 1;
+        $width = max(0, $width);
+        $message .= str_repeat(' ', $width);
 
-        $this->output->writeln('<error>' . str_repeat(' ', $this->getTerminalWidth()) . '</error>');
         $this->output->writeln(sprintf('<error> %s</error>', $message));
-        $this->output->writeln('<error>' . str_repeat(' ', $this->getTerminalWidth()) . '</error>');
     }
 
     /**
@@ -319,11 +319,11 @@ class Console extends SymfonyCommand
         $style = new OutputFormatterStyle('black', 'yellow');
         $this->output->getFormatter()->setStyle('warning', $style);
 
-        $message = $message . str_repeat(' ', $this->getTerminalWidth() - strlen($message) - 1);
+        $width = $this->getTerminalWidth() - mb_strlen($message) - 1;
+        $width = max(0, $width);
+        $message .= str_repeat(' ', $width);
 
-        $this->output->writeln('<warning>' . str_repeat(' ', $this->getTerminalWidth()) . '</warning>');
         $this->output->writeln(sprintf('<warning> %s</warning>', $message));
-        $this->output->writeln('<warning>' . str_repeat(' ', $this->getTerminalWidth()) . '</warning>');
     }
 
     /**
@@ -336,11 +336,11 @@ class Console extends SymfonyCommand
         $style = new OutputFormatterStyle('black', 'green');
         $this->output->getFormatter()->setStyle('success', $style);
 
-        $message = $message . str_repeat(' ', $this->getTerminalWidth() - strlen($message) - 1);
+        $width = $this->getTerminalWidth() - mb_strlen($message) - 1;
+        $width = max(0, $width);
+        $message .= str_repeat(' ', $width);
 
-        $this->output->writeln('<success>' . str_repeat(' ', $this->getTerminalWidth()) . '</success>');
         $this->output->writeln(sprintf('<success> %s</success>', $message));
-        $this->output->writeln('<success>' . str_repeat(' ', $this->getTerminalWidth()) . '</success>');
     }
 
     /**
@@ -419,9 +419,9 @@ class Console extends SymfonyCommand
     {
         $questionHelper = $this->getQuestionHelper();
 
-        $question = new ChoiceQuestion($question, $options, $default);
+        $choiceQuestion = new ChoiceQuestion($question, $options, $default);
 
-        return $questionHelper->ask($this->input, $this->output, $question);
+        return $questionHelper->ask($this->input, $this->output, $choiceQuestion);
     }
 
     /**

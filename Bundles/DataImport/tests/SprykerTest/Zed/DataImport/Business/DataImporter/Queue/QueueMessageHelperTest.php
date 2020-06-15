@@ -17,6 +17,7 @@ use Spryker\Zed\DataImport\Dependency\Service\DataImportToUtilEncodingServiceInt
 
 /**
  * Auto-generated group annotations
+ *
  * @group SprykerTest
  * @group Zed
  * @group DataImport
@@ -38,14 +39,14 @@ class QueueMessageHelperTest extends Unit
     protected $tester;
 
     /**
-     * @var \Spryker\Zed\DataImport\Business\DataImporter\Queue\QueueMessageHelperInterface;
+     * @var \Spryker\Zed\DataImport\Business\DataImporter\Queue\QueueMessageHelperInterface
      */
     protected $queueMessageHelper;
 
     /**
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

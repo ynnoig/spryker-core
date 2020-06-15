@@ -39,7 +39,14 @@ interface StorageRedisToRedisClientInterface
      *
      * @return bool
      */
-    public function set(string $connectionKey, string $key, string $value, ?string $expireResolution = null, ?int $expireTTL = null, ?string $flag = null): bool;
+    public function set(
+        string $connectionKey,
+        string $key,
+        string $value,
+        ?string $expireResolution = null,
+        ?int $expireTTL = null,
+        ?string $flag = null
+    ): bool;
 
     /**
      * @param string $connectionKey
@@ -111,6 +118,29 @@ interface StorageRedisToRedisClientInterface
      * @return string[]
      */
     public function keys(string $connectionKey, string $pattern): array;
+
+    /**
+     * @param string $connectionKey
+     * @param int $cursor
+     * @param array $options
+     *
+     * @return array [string, string[]]
+     */
+    public function scan(string $connectionKey, int $cursor, array $options): array;
+
+    /**
+     * @param string $connectionKey
+     *
+     * @return int
+     */
+    public function dbSize(string $connectionKey): int;
+
+    /**
+     * @param string $connectionKey
+     *
+     * @return void
+     */
+    public function flushDb(string $connectionKey): void;
 
     /**
      * @param string $connectionKey

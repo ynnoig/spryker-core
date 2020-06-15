@@ -46,6 +46,8 @@ class NavigationStorageWriter implements NavigationStorageWriterInterface
     protected $store;
 
     /**
+     * @deprecated Use {@link \Spryker\Zed\SynchronizationBehavior\SynchronizationBehaviorConfig::isSynchronizationEnabled()} instead.
+     *
      * @var bool
      */
     protected $isSendingToQueue = true;
@@ -100,7 +102,7 @@ class NavigationStorageWriter implements NavigationStorageWriterInterface
     }
 
     /**
-     * @param array $navigationTreeTransfers
+     * @param \Generated\Shared\Transfer\NavigationTreeTransfer[][] $navigationTreeTransfers
      * @param array $spyNavigationMenuTranslationStorageEntities
      *
      * @return void
@@ -147,23 +149,43 @@ class NavigationStorageWriter implements NavigationStorageWriterInterface
     /**
      * @param array $navigationIds
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\NavigationTreeTransfer[][]
      */
     protected function getNavigationTreeTransfer(array $navigationIds)
     {
         $navigationTrees = [];
-        $localeNames = $this->store->getLocales();
+        $localeNames = $this->getSharedPersistenceLocaleNames();
         $locales = $this->queryContainer->queryLocalesWithLocaleNames($localeNames)->find()->getData();
         foreach ($navigationIds as $navigationId) {
             $navigationTransfer = new NavigationTransfer();
             $navigationTransfer->setIdNavigation($navigationId);
             foreach ($locales as $locale) {
                 $localeTransfer = (new LocaleTransfer())->fromArray($locale->toArray(), true);
-                $navigationTrees[$navigationId][$localeTransfer->getLocaleName()] = $this->navigationFacade->findNavigationTree($navigationTransfer, $localeTransfer);
+                $navigationTreeTransfer = $this->navigationFacade->findNavigationTree($navigationTransfer, $localeTransfer);
+                if (!$navigationTreeTransfer) {
+                    continue;
+                }
+                
+                $navigationTrees[$navigationId][$localeTransfer->getLocaleName()] = $navigationTreeTransfer;
             }
         }
 
         return $navigationTrees;
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getSharedPersistenceLocaleNames(): array
+    {
+        $localeNames = $this->store->getLocales();
+        foreach ($this->store->getStoresWithSharedPersistence() as $storeName) {
+            foreach ($this->store->getLocalesPerStore($storeName) as $localeName) {
+                $localeNames[] = $localeName;
+            }
+        }
+
+        return array_unique($localeNames);
     }
 
     /**
@@ -204,17 +226,22 @@ class NavigationStorageWriter implements NavigationStorageWriterInterface
     /**
      * @param \Generated\Shared\Transfer\NavigationTreeNodeTransfer[]|\ArrayObject $navigationTreeNodeTransfers
      *
-     * @return \ArrayObject
+     * @return \ArrayObject|\Generated\Shared\Transfer\NavigationNodeStorageTransfer[]
      */
     protected function mapToNavigationNodeStorageTransfer(ArrayObject $navigationTreeNodeTransfers)
     {
         $nodes = new ArrayObject();
         foreach ($navigationTreeNodeTransfers as $navigationTreeNodeTransfer) {
+            $navigationNodeLocalizedAttributes = $navigationTreeNodeTransfer->getNavigationNode()->getNavigationNodeLocalizedAttributes()->getIterator()->current();
+            if (!$navigationNodeLocalizedAttributes instanceof NavigationNodeLocalizedAttributesTransfer) {
+                continue;
+            }
+
             $nodeTransfer = new NavigationNodeStorageTransfer();
             $nodeTransfer->setId($navigationTreeNodeTransfer->getNavigationNode()->getIdNavigationNode());
-            $nodeTransfer->setTitle($navigationTreeNodeTransfer->getNavigationNode()->getNavigationNodeLocalizedAttributes()[0]->getTitle());
-            $nodeTransfer->setCssClass($navigationTreeNodeTransfer->getNavigationNode()->getNavigationNodeLocalizedAttributes()[0]->getCssClass());
-            $nodeTransfer->setUrl($this->getNavigationNodeUrl($navigationTreeNodeTransfer->getNavigationNode()->getNavigationNodeLocalizedAttributes()[0]));
+            $nodeTransfer->setTitle($navigationNodeLocalizedAttributes->getTitle());
+            $nodeTransfer->setCssClass($navigationNodeLocalizedAttributes->getCssClass());
+            $nodeTransfer->setUrl($this->getNavigationNodeUrl($navigationNodeLocalizedAttributes));
             $nodeTransfer->setNodeType($navigationTreeNodeTransfer->getNavigationNode()->getNodeType());
             $nodeTransfer->setIsActive($navigationTreeNodeTransfer->getNavigationNode()->getIsActive());
             $nodeTransfer->setValidFrom($navigationTreeNodeTransfer->getNavigationNode()->getValidFrom());

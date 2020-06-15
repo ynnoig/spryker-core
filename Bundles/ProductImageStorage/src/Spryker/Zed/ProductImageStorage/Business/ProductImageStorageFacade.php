@@ -16,11 +16,11 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class ProductImageStorageFacade extends AbstractFacade implements ProductImageStorageFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @param array $productAbstractIds
+     * @param int[] $productAbstractIds
      *
      * @return void
      */
@@ -30,11 +30,11 @@ class ProductImageStorageFacade extends AbstractFacade implements ProductImageSt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @param array $productAbstractIds
+     * @param int[] $productAbstractIds
      *
      * @return void
      */
@@ -44,7 +44,7 @@ class ProductImageStorageFacade extends AbstractFacade implements ProductImageSt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -58,7 +58,7 @@ class ProductImageStorageFacade extends AbstractFacade implements ProductImageSt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

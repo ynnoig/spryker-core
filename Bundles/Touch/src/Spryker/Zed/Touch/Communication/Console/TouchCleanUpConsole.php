@@ -12,6 +12,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
+ * @deprecated Use TouchCleanDataConsole instead.
+ *
  * @method \Spryker\Zed\Touch\Business\TouchFacadeInterface getFacade()
  * @method \Spryker\Zed\Touch\Persistence\TouchQueryContainerInterface getQueryContainer()
  */
@@ -48,5 +50,7 @@ class TouchCleanUpConsole extends Console
         $output->writeln('');
         $output->writeln('<fg=green>Finished. All Done.</fg=green>');
         $output->writeln('');
+
+        return static::CODE_SUCCESS;
     }
 }

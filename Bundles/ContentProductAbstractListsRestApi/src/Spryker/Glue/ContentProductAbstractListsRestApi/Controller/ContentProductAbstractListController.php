@@ -18,13 +18,12 @@ class ContentProductAbstractListController extends AbstractController
 {
     /**
      * @Glue({
-     *     "getResourceByKey": {
+     *     "getResourceById": {
      *          "summary": [
      *              "Retrieves content item abstract products."
      *          ],
      *          "parameters": [{
-     *              "name": "Accept-Language",
-     *              "in": "header"
+     *              "ref": "acceptLanguage"
      *          }],
      *          "responses": {
      *              "400": "Content key is missing.",

@@ -57,12 +57,13 @@ class QuoteItemReader implements QuoteItemReaderInterface
         }
 
         $ifRequestedItemIsInQuote = $this->checkRequestedItemIsInQuote(
-            $cartItemRequestTransfer->getSku(),
+            $cartItemRequestTransfer,
             $quoteResponseTransfer->getQuoteTransfer()->getItems()->getArrayCopy()
         );
 
         if (!$ifRequestedItemIsInQuote) {
             $quoteResponseTransfer
+                ->setIsSuccessful(false)
                 ->addError((new QuoteErrorTransfer())
                     ->setErrorIdentifier(CartsRestApiSharedConfig::ERROR_IDENTIFIER_ITEM_NOT_FOUND));
         }
@@ -71,19 +72,23 @@ class QuoteItemReader implements QuoteItemReaderInterface
     }
 
     /**
-     * @param string $itemSku
-     * @param \Generated\Shared\Transfer\ItemTransfer[] $items
+     * @param \Generated\Shared\Transfer\CartItemRequestTransfer $cartItemRequestTransfer
+     * @param \Generated\Shared\Transfer\ItemTransfer[] $itemTransfers
      *
      * @return bool
      */
-    protected function checkRequestedItemIsInQuote(string $itemSku, array $items): bool
+    protected function checkRequestedItemIsInQuote(CartItemRequestTransfer $cartItemRequestTransfer, array $itemTransfers): bool
     {
-        if (count($items) === 0) {
+        if (count($itemTransfers) === 0) {
             return false;
         }
 
-        foreach ($items as $item) {
-            if ($item->getSku() === $itemSku) {
+        foreach ($itemTransfers as $itemTransfer) {
+            if ($cartItemRequestTransfer->getGroupKey()) {
+                return $itemTransfer->getGroupKey() === $cartItemRequestTransfer->getGroupKey();
+            }
+
+            if ($itemTransfer->getSku() === $cartItemRequestTransfer->getSku()) {
                 return true;
             }
         }

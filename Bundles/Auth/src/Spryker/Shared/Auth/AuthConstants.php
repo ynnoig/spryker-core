@@ -13,6 +13,10 @@ namespace Spryker\Shared\Auth;
 interface AuthConstants
 {
     public const AUTH_DEFAULT_CREDENTIALS = 'AUTH_DEFAULT_CREDENTIALS';
+
+    /**
+     * @deprecated Will be removed without replacement.
+     */
     public const AUTH_ZED_ENABLED = 'AUTH_ZED_ENABLED';
 
     public const AUTH_SESSION_KEY = 'auth';
@@ -20,4 +24,6 @@ interface AuthConstants
     public const AUTHORIZATION_WILDCARD = '*';
     public const DAY_IN_SECONDS = 86400;
     public const AUTH_TOKEN = 'Auth-Token';
+
+    public const SYSTEM_USER_SESSION_REDIS_LIFE_TIME = 'AUTH:SYSTEM_USER_SESSION_REDIS_LIFE_TIME';
 }

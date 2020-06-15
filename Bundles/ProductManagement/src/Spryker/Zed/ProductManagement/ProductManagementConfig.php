@@ -18,6 +18,7 @@ class ProductManagementConfig extends AbstractBundleConfig
     /**
      * Used for validity datetimes transformation and displaying in messages.
      * Hydration validity format is described in ProductValidity module.
+     *
      * @see \Spryker\Zed\ProductValidity\Business\Validity\ProductValidityHydrator::VALIDITY_DATE_TIME_FORMAT
      */
     public const VALIDITY_DATE_TIME_FORMAT = 'Y-m-d G:i';
@@ -28,6 +29,8 @@ class ProductManagementConfig extends AbstractBundleConfig
     protected const PRICE_TYPE_DEFAULT = 'DEFAULT';
 
     /**
+     * @api
+     *
      * @return string
      */
     public function getImageUrlPrefix()
@@ -36,6 +39,8 @@ class ProductManagementConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return string
      */
     public function getHostYves()
@@ -44,6 +49,8 @@ class ProductManagementConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return string
      */
     public function getValidityTimeFormat()
@@ -52,6 +59,8 @@ class ProductManagementConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return string
      */
     public function getPriceTypeDefault(): string

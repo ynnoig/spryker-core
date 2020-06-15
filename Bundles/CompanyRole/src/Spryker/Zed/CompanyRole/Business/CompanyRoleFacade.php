@@ -25,7 +25,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -40,7 +40,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -56,7 +56,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -72,7 +72,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -88,7 +88,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -104,7 +104,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -117,7 +117,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -132,7 +132,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -148,7 +148,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -164,7 +164,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -179,7 +179,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -195,21 +195,22 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
      * @param string $permissionKey
+     * @param int|null $idCompany
      *
      * @return int[]
      */
-    public function getCompanyUserIdsByPermissionKey(string $permissionKey): array
+    public function getCompanyUserIdsByPermissionKey(string $permissionKey, ?int $idCompany = null): array
     {
-        return $this->getRepository()->getCompanyUserIdsByPermissionKey($permissionKey);
+        return $this->getRepository()->getCompanyUserIdsByPermissionKey($permissionKey, $idCompany);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -225,7 +226,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -239,11 +240,11 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
-     * @deprecated Use CompanyRoleFacade::findDefaultCompanyRoleByIdCompany() instead.
+     * @deprecated Use {@link \Spryker\Zed\CompanyRole\Business\CompanyRoleFacadeInterface::findDefaultCompanyRoleByIdCompany()} instead.
      *
      * @return \Generated\Shared\Transfer\CompanyRoleTransfer
      */
@@ -253,7 +254,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -268,7 +269,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -283,7 +284,7 @@ class CompanyRoleFacade extends AbstractFacade implements CompanyRoleFacadeInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

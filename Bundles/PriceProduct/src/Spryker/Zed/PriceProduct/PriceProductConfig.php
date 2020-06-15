@@ -15,6 +15,13 @@ use Spryker\Zed\Kernel\AbstractBundleConfig;
 class PriceProductConfig extends AbstractBundleConfig
 {
     /**
+     * Decides if orphan store prices need to be cleared after every product price update.
+     */
+    protected const IS_DELETE_ORPHAN_STORE_PRICES_ON_SAVE_ENABLED = false;
+
+    /**
+     * @api
+     *
      * @return string
      */
     public function getPriceTypeDefaultName()
@@ -23,6 +30,8 @@ class PriceProductConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return string
      */
     public function getPriceDimensionDefault()
@@ -31,6 +40,8 @@ class PriceProductConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return string
      */
     public function getPriceModeIdentifierForBothType()
@@ -39,10 +50,42 @@ class PriceProductConfig extends AbstractBundleConfig
     }
 
     /**
+     * @api
+     *
      * @return string
      */
     public function getPriceDimensionDefaultName(): string
     {
         return $this->getSharedConfig()->getPriceDimensionDefaultName();
+    }
+
+    /**
+     * @api
+     *
+     * @return string
+     */
+    public function getPriceModeIdentifierForNetType(): string
+    {
+        return $this->getSharedConfig()->getPriceModeIdentifierForNetType();
+    }
+
+    /**
+     * @api
+     *
+     * @return string
+     */
+    public function getPriceModeIdentifierForGrossType(): string
+    {
+        return $this->getSharedConfig()->getPriceModeIdentifierForGrossType();
+    }
+
+    /**
+     * @api
+     *
+     * @return bool
+     */
+    public function getIsDeleteOrphanStorePricesOnSaveEnabled(): bool
+    {
+        return static::IS_DELETE_ORPHAN_STORE_PRICES_ON_SAVE_ENABLED;
     }
 }

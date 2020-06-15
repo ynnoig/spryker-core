@@ -9,6 +9,9 @@ namespace Spryker\Shared\CmsContentWidgetProductSetConnector\ContentWidgetConfig
 
 use Spryker\Shared\CmsContentWidget\Dependency\CmsContentWidgetConfigurationProviderInterface;
 
+/**
+ * @deprecated Use {@link SprykerShop\Shared\CmsContentWidgetProductSetConnector\ContentWidgetConfigurationProvider\CmsProductSetContentWidgetConfigurationProvider} instead.
+ */
 class CmsProductSetContentWidgetConfigurationProvider implements CmsContentWidgetConfigurationProviderInterface
 {
     public const FUNCTION_NAME = 'product_set';
@@ -22,7 +25,7 @@ class CmsProductSetContentWidgetConfigurationProvider implements CmsContentWidge
     }
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getAvailableTemplates()
     {

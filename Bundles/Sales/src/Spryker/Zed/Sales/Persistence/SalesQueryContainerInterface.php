@@ -8,6 +8,7 @@
 namespace Spryker\Zed\Sales\Persistence;
 
 use Generated\Shared\Transfer\FilterTransfer;
+use Orm\Zed\Sales\Persistence\SpySalesOrderQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
 use Spryker\Zed\Kernel\Persistence\QueryContainer\QueryContainerInterface;
@@ -93,11 +94,22 @@ interface SalesQueryContainerInterface extends QueryContainerInterface
     /**
      * @api
      *
+     * @deprecated Use {@link querySalesOrderDetailsWithoutShippingAddress()} instead.
+     *
      * @param int $idSalesOrder
      *
      * @return \Orm\Zed\Sales\Persistence\SpySalesOrderQuery
      */
     public function querySalesOrderDetails($idSalesOrder);
+
+    /**
+     * @api
+     *
+     * @param int $idSalesOrder
+     *
+     * @return \Orm\Zed\Sales\Persistence\SpySalesOrderQuery
+     */
+    public function querySalesOrderDetailsWithoutShippingAddress($idSalesOrder): SpySalesOrderQuery;
 
     /**
      * @api
@@ -119,6 +131,11 @@ interface SalesQueryContainerInterface extends QueryContainerInterface
     public function queryCustomerOrders($idCustomer, ?FilterTransfer $filterTransfer = null);
 
     /**
+     * Specification:
+     * - Hydrates order items with latest states.
+     *
+     * Note: For performance reasons, the state history join is separated into this method.
+
      * @api
      *
      * @param \Orm\Zed\Sales\Persistence\SpySalesOrderItem[]|\Propel\Runtime\Collection\ObjectCollection $salesOrderItems

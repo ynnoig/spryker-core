@@ -25,9 +25,11 @@ use Spryker\Client\Kernel\AbstractClient;
 class SharedCartClient extends AbstractClient implements SharedCartClientInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
+     *
+     * @param \Generated\Shared\Transfer\QuotePermissionGroupCriteriaFilterTransfer $criteriaFilterTransfer
      *
      * @return \Generated\Shared\Transfer\QuotePermissionGroupResponseTransfer
      */
@@ -37,7 +39,7 @@ class SharedCartClient extends AbstractClient implements SharedCartClientInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -53,7 +55,7 @@ class SharedCartClient extends AbstractClient implements SharedCartClientInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -67,7 +69,7 @@ class SharedCartClient extends AbstractClient implements SharedCartClientInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -83,7 +85,7 @@ class SharedCartClient extends AbstractClient implements SharedCartClientInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -99,7 +101,7 @@ class SharedCartClient extends AbstractClient implements SharedCartClientInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -115,7 +117,7 @@ class SharedCartClient extends AbstractClient implements SharedCartClientInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -131,10 +133,7 @@ class SharedCartClient extends AbstractClient implements SharedCartClientInterfa
     }
 
     /**
-     * Specification:
-     *  - Sends Zed Request to get share detail collection by quote id.
-     *  - Filters quote share detail from share details by company user id.
-     *  - Sends Zed request to update quote.
+     * {@inheritDoc}
      *
      * @api
      *
@@ -150,7 +149,7 @@ class SharedCartClient extends AbstractClient implements SharedCartClientInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -166,7 +165,7 @@ class SharedCartClient extends AbstractClient implements SharedCartClientInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -182,7 +181,7 @@ class SharedCartClient extends AbstractClient implements SharedCartClientInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

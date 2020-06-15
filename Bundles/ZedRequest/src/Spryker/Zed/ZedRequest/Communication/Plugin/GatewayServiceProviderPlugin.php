@@ -11,11 +11,13 @@ use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 use Spryker\Zed\ZedRequest\Communication\Plugin\TransferObject\TransferServer;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
+ * @deprecated Use {@link \Spryker\Zed\ZedRequest\Communication\Plugin\EventDispatcher\GatewayControllerEventDispatcherPlugin} instead.
+ *
  * @method \Spryker\Zed\ZedRequest\Communication\ZedRequestCommunicationFactory getFactory()
  * @method \Spryker\Zed\ZedRequest\Business\ZedRequestFacadeInterface getFacade()
  * @method \Spryker\Zed\ZedRequest\ZedRequestConfig getConfig()
@@ -30,6 +32,8 @@ class GatewayServiceProviderPlugin extends AbstractPlugin implements ServiceProv
     protected $controllerListener;
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @deprecated Please remove usage of this setter. The needed ControllerListenerInterface is now retrieved by the Factory.
@@ -44,6 +48,8 @@ class GatewayServiceProviderPlugin extends AbstractPlugin implements ServiceProv
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param \Silex\Application $app
@@ -52,7 +58,7 @@ class GatewayServiceProviderPlugin extends AbstractPlugin implements ServiceProv
      */
     public function register(Application $app)
     {
-        $app->extend('dispatcher', function (EventDispatcher $eventDispatcher) {
+        $app->extend('dispatcher', function (EventDispatcherInterface $eventDispatcher) {
             $eventDispatcher->addListener(
                 KernelEvents::CONTROLLER,
                 [
@@ -78,6 +84,8 @@ class GatewayServiceProviderPlugin extends AbstractPlugin implements ServiceProv
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @param \Silex\Application $app

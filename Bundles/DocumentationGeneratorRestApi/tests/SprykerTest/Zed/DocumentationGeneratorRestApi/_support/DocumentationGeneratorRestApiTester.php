@@ -17,6 +17,7 @@ use SprykerTest\Zed\DocumentationGeneratorRestApi\Business\Stub\RestTestAttribut
 
 /**
  * Inherited Methods
+ *
  * @method void wantToTest($text)
  * @method void wantTo($text)
  * @method void execute($callable)
@@ -79,7 +80,7 @@ class DocumentationGeneratorRestApiTester extends Actor
     protected const SCHEMA_REF_REST_ERROR_MESSAGE = '#/components/schemas/RestErrorMessage';
     protected const SCHEMA_REF_REST_RESPONSE = '#/components/schemas/RestTestResponse';
     protected const SCHEMA_REF_REST_LINKS = '#/components/schemas/RestLinks';
-    protected const SCHEMA_REF_REST_RELATIONSHIPS = '#/components/schemas/RestRelationships';
+    protected const SCHEMA_REF_REST_RELATIONSHIPS_DATA = '#/components/schemas/RestRelationshipsData';
     protected const SCHEMA_REF_REST_TEST_ALTERNATIVE_RELATIONSHIPS = '#/components/schemas/RestTestAlternativeRelationships';
     protected const SCHEMA_REF_REST_TEST_ALTERNATIVE_RESPONSE_ATTRIBUTES = '#/components/schemas/RestTestAlternativeAttributes';
     protected const SCHEMA_REF_REST_TEST_ALTERNATIVE_RESPONSE_RESOURCE_DATA = '#/components/schemas/RestTestAlternativeResponseData';
@@ -219,14 +220,15 @@ class DocumentationGeneratorRestApiTester extends Actor
 
     /**
      * @param int $code
+     * @param string|null $description
      *
      * @return \Generated\Shared\Transfer\PathSchemaDataTransfer
      */
-    public function getResponseSchemaDataTransfer(int $code): PathSchemaDataTransfer
+    public function getResponseSchemaDataTransfer(int $code, ?string $description = null): PathSchemaDataTransfer
     {
         return (new PathSchemaDataTransfer())
             ->setCode($code)
-            ->setDescription(static::RESPONSE_DESCRIPTION_SUCCESS)
+            ->setDescription($description ?? static::RESPONSE_DESCRIPTION_SUCCESS)
             ->setSchemaReference(static::SCHEMA_REF_REST_RESPONSE);
     }
 
@@ -263,9 +265,12 @@ class DocumentationGeneratorRestApiTester extends Actor
     }
 
     /**
+     * @param int|null $code
+     * @param string|null $description
+     *
      * @return array
      */
-    public function getPathGeneratorExpectedGetPathData(): array
+    public function getPathGeneratorExpectedGetPathData(?int $code = null, ?string $description = null): array
     {
         return [
             static::METHOD_GET => [
@@ -284,8 +289,8 @@ class DocumentationGeneratorRestApiTester extends Actor
                     ],
                 ],
                 'responses' => [
-                    static::RESPONSE_CODE_OK => [
-                        'description' => static::RESPONSE_DESCRIPTION_SUCCESS,
+                    $code ?? static::RESPONSE_CODE_OK => [
+                        'description' => $description ?? static::RESPONSE_DESCRIPTION_SUCCESS,
                         'content' => [
                             'application/json' => [
                                 'schema' => [
@@ -330,9 +335,12 @@ class DocumentationGeneratorRestApiTester extends Actor
     }
 
     /**
+     * @param int|null $code
+     * @param string|null $description
+     *
      * @return array
      */
-    public function getPathGeneratorExpectedPostPathData(): array
+    public function getPathGeneratorExpectedPostPathData(?int $code = null, ?string $description = null): array
     {
         return [
             static::METHOD_POST => [
@@ -351,8 +359,8 @@ class DocumentationGeneratorRestApiTester extends Actor
                     ],
                 ],
                 'responses' => [
-                    static::RESPONSE_CODE_CREATED => [
-                        'description' => static::RESPONSE_DESCRIPTION_SUCCESS,
+                    $code ?? static::RESPONSE_CODE_CREATED => [
+                        'description' => $description ?? static::RESPONSE_DESCRIPTION_SUCCESS,
                         'content' => [
                             'application/json' => [
                                 'schema' => [
@@ -377,9 +385,12 @@ class DocumentationGeneratorRestApiTester extends Actor
     }
 
     /**
+     * @param int|null $code
+     * @param string|null $description
+     *
      * @return array
      */
-    public function getPathGeneratorExpectedPatchPathData(): array
+    public function getPathGeneratorExpectedPatchPathData(?int $code = null, ?string $description = null): array
     {
         return [
             static::METHOD_PATCH => [
@@ -406,8 +417,8 @@ class DocumentationGeneratorRestApiTester extends Actor
                     ],
                 ],
                 'responses' => [
-                    static::RESPONSE_CODE_OK => [
-                        'description' => static::RESPONSE_DESCRIPTION_SUCCESS,
+                    $code ?? static::RESPONSE_CODE_OK => [
+                        'description' => $description ?? static::RESPONSE_DESCRIPTION_SUCCESS,
                         'content' => [
                             'application/json' => [
                                 'schema' => [
@@ -432,9 +443,12 @@ class DocumentationGeneratorRestApiTester extends Actor
     }
 
     /**
+     * @param int|null $code
+     * @param string|null $description
+     *
      * @return array
      */
-    public function getPathGeneratorExpectedDeletePathData(): array
+    public function getPathGeneratorExpectedDeletePathData(?int $code = null, ?string $description = null): array
     {
         return [
             static::METHOD_DELETE => [
@@ -453,8 +467,8 @@ class DocumentationGeneratorRestApiTester extends Actor
                     ],
                 ],
                 'responses' => [
-                    static::RESPONSE_CODE_NO_CONTENT => [
-                        'description' => static::RESPONSE_DESCRIPTION_SUCCESS,
+                    $code ?? static::RESPONSE_CODE_NO_CONTENT => [
+                        'description' => $description ?? static::RESPONSE_DESCRIPTION_SUCCESS,
                     ],
                     static::RESPONSE_CODE_DEFAULT => [
                         'description' => static::RESPONSE_DESCRIPTION_DEFAULT,
@@ -769,9 +783,7 @@ class DocumentationGeneratorRestApiTester extends Actor
             static::SCHEMA_NAME_REST_TEST_ALTERNATIVE_RELATIONSHIPS => [
                 'properties' => [
                     'test-resource-with-relationship' => [
-                        'items' => [
-                            '$ref' => static::SCHEMA_REF_REST_RELATIONSHIPS,
-                        ],
+                        '$ref' => static::SCHEMA_REF_REST_RELATIONSHIPS_DATA,
                     ],
                 ],
             ],

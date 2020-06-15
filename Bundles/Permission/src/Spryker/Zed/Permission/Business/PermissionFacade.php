@@ -19,7 +19,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class PermissionFacade extends AbstractFacade implements PermissionFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -31,7 +31,7 @@ class PermissionFacade extends AbstractFacade implements PermissionFacadeInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -49,6 +49,8 @@ class PermissionFacade extends AbstractFacade implements PermissionFacadeInterfa
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @api
      *
      * @return void
@@ -61,7 +63,7 @@ class PermissionFacade extends AbstractFacade implements PermissionFacadeInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -75,7 +77,7 @@ class PermissionFacade extends AbstractFacade implements PermissionFacadeInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -89,7 +91,7 @@ class PermissionFacade extends AbstractFacade implements PermissionFacadeInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

@@ -27,7 +27,7 @@ class DefaultKeyGeneratorPlugin extends BaseKeyGenerator implements Synchronizat
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      *
      * @param \Generated\Shared\Transfer\SynchronizationDataTransfer $dataTransfer
      *
@@ -47,6 +47,6 @@ class DefaultKeyGeneratorPlugin extends BaseKeyGenerator implements Synchronizat
             return $this->getResource();
         }
 
-        return sprintf("%s:%s", $this->getResource(), $keySuffix);
+        return sprintf('%s:%s', $this->getResource(), $keySuffix);
     }
 }

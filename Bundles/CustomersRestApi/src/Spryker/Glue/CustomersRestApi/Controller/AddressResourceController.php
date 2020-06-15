@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright © 2017-present Spryker Systems GmbH. All rights reserved.
+ * Copyright © 2016-present Spryker Systems GmbH. All rights reserved.
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
@@ -24,8 +24,7 @@ class AddressResourceController extends AbstractController
      *              "Retrieves customer address by id."
      *          ],
      *          "parameters": [{
-     *              "name": "Accept-Language",
-     *              "in": "header"
+     *              "ref": "acceptLanguage"
      *          }],
      *          "responses": {
      *              "404": "Address not found."
@@ -36,8 +35,7 @@ class AddressResourceController extends AbstractController
      *              "Retrieves list of all customer addresses."
      *          ],
      *          "parameters": [{
-     *              "name": "Accept-Language",
-     *              "in": "header"
+     *              "ref": "acceptLanguage"
      *          }],
      *          "responses": {
      *              "400": "Customer not found.",
@@ -65,8 +63,7 @@ class AddressResourceController extends AbstractController
      *              "Creates customer address."
      *          ],
      *          "parameters": [{
-     *              "name": "Accept-Language",
-     *              "in": "header"
+     *              "ref": "acceptLanguage"
      *          }],
      *          "responses": {
      *              "403": "Unauthorized request.",
@@ -90,12 +87,12 @@ class AddressResourceController extends AbstractController
     /**
      * @Glue({
      *     "patch": {
+     *          "path": "/customers/{customerId}/addresses/{addressId}",
      *          "summary": [
      *              "Updates customer address."
      *          ],
      *          "parameters": [{
-     *              "name": "Accept-Language",
-     *              "in": "header"
+     *              "ref": "acceptLanguage"
      *          }],
      *          "responses": {
      *              "400": "Address id is not specified.",
@@ -119,12 +116,12 @@ class AddressResourceController extends AbstractController
     /**
      * @Glue({
      *     "delete": {
+     *          "path": "/customers/{customerId}/addresses/{addressId}",
      *          "summary": [
      *              "Deletes customer address."
      *          ],
      *          "parameters": [{
-     *              "name": "Accept-Language",
-     *              "in": "header"
+     *              "ref": "acceptLanguage"
      *          }],
      *          "responses": {
      *              "400": "Address id is not specified.",

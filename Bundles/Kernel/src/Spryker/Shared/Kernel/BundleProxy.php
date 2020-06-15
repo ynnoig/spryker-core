@@ -15,11 +15,11 @@ use Spryker\Shared\Kernel\Locator\LocatorInterface;
  */
 class BundleProxy
 {
+    use SharedConfigResolverAwareTrait;
+
     protected const LOCATOR_MATCHER_SUFFIX = 'Matcher';
     protected const INSTANCE = 'instance';
     protected const CLASS_NAME = 'className';
-
-    use SharedConfigResolverAwareTrait;
 
     /**
      * @var string
@@ -35,6 +35,11 @@ class BundleProxy
      * @var \Spryker\Shared\Kernel\Locator\LocatorMatcherInterface[]
      */
     protected $locatorMatcherMap = [];
+
+    /**
+     * @var \Spryker\Shared\Kernel\Locator\LocatorInterface[]
+     */
+    protected $locatorMatcherByMethodNameMap = [];
 
     /**
      * @var bool|null
@@ -98,8 +103,6 @@ class BundleProxy
      * @param string $methodName
      * @param array $arguments
      *
-     * @throws \LogicException
-     *
      * @return object
      */
     public function __call(string $methodName, array $arguments)
@@ -114,19 +117,38 @@ class BundleProxy
             return new static::$instanceCache[$cacheKey][static::CLASS_NAME]();
         }
 
+        $locator = $this->getLocator($methodName);
+        $located = $locator->locate(ucfirst($this->moduleName));
+
+        if (!isset(static::$instanceCache[$cacheKey])) {
+            static::$instanceCache[$cacheKey] = [];
+        }
+
+        static::$instanceCache[$cacheKey][static::INSTANCE] = $located;
+        static::$instanceCache[$cacheKey][static::CLASS_NAME] = get_class($located);
+
+        return $located;
+    }
+
+    /**
+     * @param string $methodName
+     *
+     * @throws \LogicException
+     *
+     * @return \Spryker\Shared\Kernel\Locator\LocatorInterface
+     */
+    protected function getLocator(string $methodName): LocatorInterface
+    {
+        if (isset($this->locatorMatcherByMethodNameMap[$methodName])) {
+            return $this->locatorMatcherByMethodNameMap[$methodName];
+        }
+
         foreach ($this->locators as $locator) {
             $matcher = $this->locatorMatcherMap[get_class($locator)];
             if ($matcher->match($methodName)) {
-                $located = $locator->locate(ucfirst($this->moduleName));
+                $this->locatorMatcherByMethodNameMap[$methodName] = $locator;
 
-                if (!isset(static::$instanceCache[$cacheKey])) {
-                    static::$instanceCache[$cacheKey] = [];
-                }
-
-                static::$instanceCache[$cacheKey][static::INSTANCE] = $located;
-                static::$instanceCache[$cacheKey][static::CLASS_NAME] = get_class($located);
-
-                return $located;
+                return $locator;
             }
         }
 

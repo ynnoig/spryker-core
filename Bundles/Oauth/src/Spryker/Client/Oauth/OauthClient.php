@@ -11,6 +11,8 @@ use Generated\Shared\Transfer\OauthAccessTokenValidationRequestTransfer;
 use Generated\Shared\Transfer\OauthAccessTokenValidationResponseTransfer;
 use Generated\Shared\Transfer\OauthRequestTransfer;
 use Generated\Shared\Transfer\OauthResponseTransfer;
+use Generated\Shared\Transfer\RevokeRefreshTokenRequestTransfer;
+use Generated\Shared\Transfer\RevokeRefreshTokenResponseTransfer;
 use Spryker\Client\Kernel\AbstractClient;
 
 /**
@@ -19,7 +21,7 @@ use Spryker\Client\Kernel\AbstractClient;
 class OauthClient extends AbstractClient implements OauthClientInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -33,7 +35,7 @@ class OauthClient extends AbstractClient implements OauthClientInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -41,8 +43,45 @@ class OauthClient extends AbstractClient implements OauthClientInterface
      *
      * @return \Generated\Shared\Transfer\OauthAccessTokenValidationResponseTransfer
      */
-    public function validateAccessToken(OauthAccessTokenValidationRequestTransfer $authAccessTokenValidationRequestTransfer): OauthAccessTokenValidationResponseTransfer
-    {
+    public function validateAccessToken(
+        OauthAccessTokenValidationRequestTransfer $authAccessTokenValidationRequestTransfer
+    ): OauthAccessTokenValidationResponseTransfer {
         return $this->getFactory()->createAccessTokenValidator()->validate($authAccessTokenValidationRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param string $refreshTokenIdentifier
+     * @param string $customerReference
+     *
+     * @return \Generated\Shared\Transfer\RevokeRefreshTokenResponseTransfer
+     */
+    public function revokeRefreshToken(string $refreshTokenIdentifier, string $customerReference): RevokeRefreshTokenResponseTransfer
+    {
+        $revokeRefreshTokenRequestTransfer = (new RevokeRefreshTokenRequestTransfer())
+            ->setCustomerReference($customerReference)
+            ->setRefreshToken($refreshTokenIdentifier);
+
+        return $this->getFactory()->createOauthStub()->revokeRefreshToken($revokeRefreshTokenRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param string $customerReference
+     *
+     * @return \Generated\Shared\Transfer\RevokeRefreshTokenResponseTransfer
+     */
+    public function revokeAllRefreshTokens(string $customerReference): RevokeRefreshTokenResponseTransfer
+    {
+        $revokeRefreshTokenRequestTransfer = (new RevokeRefreshTokenRequestTransfer())
+            ->setCustomerReference($customerReference);
+
+        return $this->getFactory()->createOauthStub()->revokeAllRefreshTokens($revokeRefreshTokenRequestTransfer);
     }
 }

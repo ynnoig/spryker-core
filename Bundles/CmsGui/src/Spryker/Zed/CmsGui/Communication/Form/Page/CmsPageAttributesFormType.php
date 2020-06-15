@@ -161,7 +161,7 @@ class CmsPageAttributesFormType extends AbstractType
     /**
      * @param \Symfony\Component\Form\FormEvent $event
      *
-     * @return \Generated\Shared\Transfer\CmsPageAttributesTransfer
+     * @return \Generated\Shared\Transfer\CmsPageAttributesTransfer|null
      */
     protected function getCmsPageAttributesTransfer(FormEvent $event)
     {
@@ -177,7 +177,7 @@ class CmsPageAttributesFormType extends AbstractType
     }
 
     /**
-     * @deprecated Use `getBlockPrefix()` instead.
+     * @deprecated Use {@link getBlockPrefix()} instead.
      *
      * @return string
      */

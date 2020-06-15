@@ -8,12 +8,14 @@
 namespace Spryker\Zed\Url\Business\Url;
 
 use Generated\Shared\Transfer\UrlTransfer;
-use Orm\Zed\Url\Persistence\SpyUrl;
+use Spryker\Zed\Kernel\Persistence\EntityManager\TransactionTrait;
 use Spryker\Zed\Url\Business\Exception\UrlExistsException;
 use Spryker\Zed\Url\Persistence\UrlQueryContainerInterface;
 
 class UrlCreator extends AbstractUrlCreatorSubject implements UrlCreatorInterface
 {
+    use TransactionTrait;
+
     /**
      * @var \Spryker\Zed\Url\Persistence\UrlQueryContainerInterface
      */
@@ -50,20 +52,24 @@ class UrlCreator extends AbstractUrlCreatorSubject implements UrlCreatorInterfac
     {
         $this->assertUrlTransferForCreate($urlTransfer);
 
-        $this->urlQueryContainer
-            ->getConnection()
-            ->beginTransaction();
+        return $this->getTransactionHandler()->handleTransaction(function () use ($urlTransfer): UrlTransfer {
+            return $this->executeCreateUrlTransaction($urlTransfer);
+        });
+    }
 
+    /**
+     * @param \Generated\Shared\Transfer\UrlTransfer $urlTransfer
+     *
+     * @return \Generated\Shared\Transfer\UrlTransfer
+     */
+    protected function executeCreateUrlTransaction(UrlTransfer $urlTransfer): UrlTransfer
+    {
         $this->notifyBeforeSaveObservers($urlTransfer);
 
         $urlTransfer = $this->persistUrlEntity($urlTransfer);
         $this->urlActivator->activateUrl($urlTransfer);
 
         $this->notifyAfterSaveObservers($urlTransfer);
-
-        $this->urlQueryContainer
-            ->getConnection()
-            ->commit();
 
         return $urlTransfer;
     }
@@ -106,23 +112,14 @@ class UrlCreator extends AbstractUrlCreatorSubject implements UrlCreatorInterfac
      */
     protected function persistUrlEntity(UrlTransfer $urlTransfer)
     {
-        $urlEntity = $this->createEntityFromTransfer($urlTransfer);
+        $urlTransfer->requireUrl();
+        $urlEntity = $this->urlQueryContainer->queryUrl($urlTransfer->getUrl())->findOneOrCreate();
+
+        $urlEntity->fromArray($urlTransfer->modifiedToArray());
         $urlEntity->save();
+
         $urlTransfer->fromArray($urlEntity->toArray(), true);
 
         return $urlTransfer;
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\UrlTransfer $urlTransfer
-     *
-     * @return \Orm\Zed\Url\Persistence\SpyUrl
-     */
-    protected function createEntityFromTransfer(UrlTransfer $urlTransfer)
-    {
-        $urlEntity = new SpyUrl();
-        $urlEntity->fromArray($urlTransfer->modifiedToArray());
-
-        return $urlEntity;
     }
 }

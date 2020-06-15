@@ -18,6 +18,8 @@ use Spryker\Client\Search\Dependency\Plugin\QueryExpanderPluginInterface;
 use Spryker\Client\Search\Dependency\Plugin\QueryInterface;
 
 /**
+ * @deprecated Use {@link \Spryker\Client\SearchElasticsearch\Plugin\QueryExpander\FacetQueryExpanderPlugin} instead.
+ *
  * @method \Spryker\Client\Search\SearchFactory getFactory()
  */
 class FacetQueryExpanderPlugin extends AbstractPlugin implements QueryExpanderPluginInterface
@@ -26,7 +28,7 @@ class FacetQueryExpanderPlugin extends AbstractPlugin implements QueryExpanderPl
     public const AGGREGATION_GLOBAL_PREFIX = 'global-';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      * - Applies facet filters to query
      * - Facet filter values that equal null, empty string or false are dropped other values are kept including 0(zero)
      *
@@ -195,8 +197,12 @@ class FacetQueryExpanderPlugin extends AbstractPlugin implements QueryExpanderPl
      *
      * @return \Elastica\Aggregation\AbstractAggregation
      */
-    protected function createGlobalAggregation(array $facetFilters, FacetConfigTransfer $facetConfigTransfer, BoolQuery $boolQuery, AbstractAggregation $facetAggregation)
-    {
+    protected function createGlobalAggregation(
+        array $facetFilters,
+        FacetConfigTransfer $facetConfigTransfer,
+        BoolQuery $boolQuery,
+        AbstractAggregation $facetAggregation
+    ) {
         $aggregationFilterQuery = $this->getGlobalAggregationFilters($facetConfigTransfer, $boolQuery, $facetFilters);
 
         $filterAggregation = $this

@@ -8,36 +8,56 @@
 namespace Spryker\Glue\CartsRestApi\Processor\RestResponseBuilder;
 
 use ArrayObject;
-use Generated\Shared\Transfer\QuoteErrorTransfer;
+use Generated\Shared\Transfer\ItemTransfer;
+use Generated\Shared\Transfer\QuoteCollectionTransfer;
+use Generated\Shared\Transfer\QuoteTransfer;
 use Generated\Shared\Transfer\RestErrorMessageTransfer;
 use Spryker\Glue\CartsRestApi\CartsRestApiConfig;
+use Spryker\Glue\CartsRestApi\Processor\Mapper\CartMapperInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface;
+use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class CartRestResponseBuilder implements CartRestResponseBuilderInterface
 {
-    /**
-     * @var \Spryker\Glue\CartsRestApi\CartsRestApiConfig
-     */
-    protected $config;
-
     /**
      * @var \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface
      */
     protected $restResourceBuilder;
 
     /**
-     * @param \Spryker\Glue\CartsRestApi\CartsRestApiConfig $config
+     * @var \Spryker\Glue\CartsRestApi\Processor\Mapper\CartMapperInterface
+     */
+    protected $cartMapper;
+
+    /**
+     * @var \Spryker\Glue\CartsRestApi\Processor\RestResponseBuilder\ItemResponseBuilderInterface
+     */
+    protected $itemResponseBuilder;
+
+    /**
+     * @var \Spryker\Glue\CartsRestApi\CartsRestApiConfig
+     */
+    protected $cartsRestApiConfig;
+
+    /**
      * @param \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface $restResourceBuilder
+     * @param \Spryker\Glue\CartsRestApi\Processor\Mapper\CartMapperInterface $cartMapper
+     * @param \Spryker\Glue\CartsRestApi\Processor\RestResponseBuilder\ItemResponseBuilderInterface $itemResponseBuilder
+     * @param \Spryker\Glue\CartsRestApi\CartsRestApiConfig $cartsRestApiConfig
      */
     public function __construct(
-        CartsRestApiConfig $config,
-        RestResourceBuilderInterface $restResourceBuilder
+        RestResourceBuilderInterface $restResourceBuilder,
+        CartMapperInterface $cartMapper,
+        ItemResponseBuilderInterface $itemResponseBuilder,
+        CartsRestApiConfig $cartsRestApiConfig
     ) {
-        $this->config = $config;
         $this->restResourceBuilder = $restResourceBuilder;
+        $this->cartMapper = $cartMapper;
+        $this->itemResponseBuilder = $itemResponseBuilder;
+        $this->cartsRestApiConfig = $cartsRestApiConfig;
     }
 
     /**
@@ -49,13 +69,37 @@ class CartRestResponseBuilder implements CartRestResponseBuilderInterface
     }
 
     /**
-     * @param \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface $cartRestResource
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param string $localeName
      *
      * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
      */
-    public function createCartRestResponse(RestResourceInterface $cartRestResource): RestResponseInterface
+    public function createCartRestResponse(QuoteTransfer $quoteTransfer, string $localeName): RestResponseInterface
     {
-        return $this->createRestResponse()->addResource($cartRestResource);
+        return $this->createRestResponse()->addResource($this->createCartResourceWithItems($quoteTransfer, $localeName));
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteCollectionTransfer $quoteCollectionTransfer
+     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
+     *
+     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
+     */
+    public function createRestQuoteCollectionResponse(
+        QuoteCollectionTransfer $quoteCollectionTransfer,
+        RestRequestInterface $restRequest
+    ): RestResponseInterface {
+        $restResponse = $this->createRestResponse();
+        foreach ($quoteCollectionTransfer->getQuotes() as $quoteTransfer) {
+            $restResponse->addResource(
+                $this->createCartResourceWithItems(
+                    $quoteTransfer,
+                    $restRequest->getMetadata()->getLocale()
+                )
+            );
+        }
+
+        return $restResponse;
     }
 
     /**
@@ -69,7 +113,7 @@ class CartRestResponseBuilder implements CartRestResponseBuilderInterface
 
         foreach ($errors as $quoteErrorTransfer) {
             $restResponse->addError(
-                $this->mapQuoteErrorTransferToRestErrorMessageTransfer(
+                $this->cartMapper->mapQuoteErrorTransferToRestErrorMessageTransfer(
                     $quoteErrorTransfer,
                     new RestErrorMessageTransfer()
                 )
@@ -80,40 +124,65 @@ class CartRestResponseBuilder implements CartRestResponseBuilderInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\QuoteErrorTransfer $quoteErrorTransfer
-     * @param \Generated\Shared\Transfer\RestErrorMessageTransfer $restErrorMessageTransfer
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param string $localeName
      *
-     * @return \Generated\Shared\Transfer\RestErrorMessageTransfer
+     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface
      */
-    protected function mapQuoteErrorTransferToRestErrorMessageTransfer(
-        QuoteErrorTransfer $quoteErrorTransfer,
-        RestErrorMessageTransfer $restErrorMessageTransfer
-    ): RestErrorMessageTransfer {
-        $errorIdentifier = $quoteErrorTransfer->getErrorIdentifier();
-        if ($errorIdentifier) {
-            $errorIdentifierMapping = $this->config->getErrorIdentifierToRestErrorMapping()[$quoteErrorTransfer->getErrorIdentifier()];
-            $restErrorMessageTransfer->fromArray($errorIdentifierMapping, true);
+    protected function createCartResourceWithItems(QuoteTransfer $quoteTransfer, string $localeName): RestResourceInterface
+    {
+        $cartResource = $this->restResourceBuilder->createRestResource(
+            CartsRestApiConfig::RESOURCE_CARTS,
+            $quoteTransfer->getUuid(),
+            $this->cartMapper->mapQuoteTransferToRestCartsAttributesTransfer($quoteTransfer)
+        );
 
-            return $restErrorMessageTransfer;
+        $cartResource->setPayload($quoteTransfer);
+
+        foreach ($quoteTransfer->getItems() as $itemTransfer) {
+            $this->addCartItemRelationships($cartResource, $itemTransfer, $localeName);
         }
 
-        if ($quoteErrorTransfer->getMessage()) {
-            return $this->createErrorMessageTransfer($quoteErrorTransfer);
-        }
-
-        return $restErrorMessageTransfer;
+        return $cartResource;
     }
 
     /**
-     * @param \Generated\Shared\Transfer\QuoteErrorTransfer $quoteErrorTransfer
+     * @param \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface $cartResource
+     * @param \Generated\Shared\Transfer\ItemTransfer $itemTransfer
+     * @param string $localeName
      *
-     * @return \Generated\Shared\Transfer\RestErrorMessageTransfer
+     * @return void
      */
-    protected function createErrorMessageTransfer(QuoteErrorTransfer $quoteErrorTransfer): RestErrorMessageTransfer
+    protected function addCartItemRelationships(
+        RestResourceInterface $cartResource,
+        ItemTransfer $itemTransfer,
+        string $localeName
+    ): void {
+        if (!$this->cartsRestApiConfig->getAllowedCartItemEagerRelationship()) {
+            return;
+        }
+
+        $itemResource = $this->itemResponseBuilder->createCartItemResource(
+            $cartResource,
+            $itemTransfer,
+            $localeName
+        );
+
+        $cartResource->addRelationship($itemResource);
+    }
+
+    /**
+     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
+     */
+    public function createCartIdMissingErrorResponse(): RestResponseInterface
     {
-        return (new RestErrorMessageTransfer())
-            ->setCode(CartsRestApiConfig::RESPONSE_CODE_ITEM_VALIDATION)
-            ->setStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->setDetail($quoteErrorTransfer->getMessage());
+        $restErrorMessageTransfer = (new RestErrorMessageTransfer())
+            ->setStatus(Response::HTTP_BAD_REQUEST)
+            ->setCode(CartsRestApiConfig::RESPONSE_CODE_CART_ID_MISSING)
+            ->setDetail(CartsRestApiConfig::EXCEPTION_MESSAGE_CART_ID_MISSING);
+
+        return $this->restResourceBuilder
+            ->createRestResponse()
+            ->addError($restErrorMessageTransfer);
     }
 }

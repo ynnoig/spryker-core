@@ -12,14 +12,14 @@ use Spryker\Zed\CartExtension\Dependency\Plugin\PreReloadItemsPluginInterface;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 
 /**
- * @deprecated Use \Spryker\Zed\SalesOrderThreshold\Communication\Plugin\Cart\AddThresholdMessagesCartPostReloadItemsPlugin if you need to add threshold message.
+ * @deprecated Use {@link \Spryker\Zed\SalesOrderThreshold\Communication\Plugin\Cart\AddThresholdMessagesCartPostReloadItemsPlugin} if you need to add threshold message.
  * @method \Spryker\Zed\SalesOrderThreshold\Business\SalesOrderThresholdFacadeInterface getFacade()
  * @method \Spryker\Zed\SalesOrderThreshold\SalesOrderThresholdConfig getConfig()
  */
 class AddThresholdMessagesCartPreReloadItemsPlugin extends AbstractPlugin implements PreReloadItemsPluginInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      * - Adds the soft threshold messages to the messenger for the applicable thresholds.
      *
      * @api

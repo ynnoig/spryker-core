@@ -13,7 +13,7 @@ use Spryker\Shared\ApplicationExtension\Dependency\Plugin\BootableApplicationPlu
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 
 /**
- * @deprecated Use `Spryker\Zed\UserLocale\Communication\Plugin\Locale\UserLocaleLocalePlugin` instead.
+ * @deprecated Use {@link \Spryker\Zed\UserLocale\Communication\Plugin\Locale\UserLocaleLocalePlugin} instead.
  *
  * @method \Spryker\Zed\UserLocale\Communication\UserLocaleCommunicationFactory getFactory()
  * @method \Spryker\Zed\UserLocale\UserLocaleConfig getConfig()
@@ -22,7 +22,7 @@ use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 class UserLocalePlugin extends AbstractPlugin implements ApplicationPluginInterface, BootableApplicationPluginInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      * - Replaces default Application locale with User Locale.
      *
      * @api
@@ -43,7 +43,7 @@ class UserLocalePlugin extends AbstractPlugin implements ApplicationPluginInterf
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

@@ -17,7 +17,7 @@ use Spryker\Client\Kernel\AbstractClient;
 class AvailabilityNotificationClient extends AbstractClient implements AvailabilityNotificationClientInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -25,15 +25,16 @@ class AvailabilityNotificationClient extends AbstractClient implements Availabil
      *
      * @return \Generated\Shared\Transfer\AvailabilityNotificationSubscriptionResponseTransfer
      */
-    public function subscribe(AvailabilityNotificationSubscriptionTransfer $availabilityNotificationSubscriptionTransfer): AvailabilityNotificationSubscriptionResponseTransfer
-    {
+    public function subscribe(
+        AvailabilityNotificationSubscriptionTransfer $availabilityNotificationSubscriptionTransfer
+    ): AvailabilityNotificationSubscriptionResponseTransfer {
         return $this->getFactory()
             ->createZedAvailabilityNotificationStub()
             ->subscribe($availabilityNotificationSubscriptionTransfer);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -41,15 +42,16 @@ class AvailabilityNotificationClient extends AbstractClient implements Availabil
      *
      * @return \Generated\Shared\Transfer\AvailabilityNotificationSubscriptionResponseTransfer
      */
-    public function unsubscribeByCustomerReferenceAndSku(AvailabilityNotificationSubscriptionTransfer $availabilityNotificationSubscriptionTransfer): AvailabilityNotificationSubscriptionResponseTransfer
-    {
+    public function unsubscribeByCustomerReferenceAndSku(
+        AvailabilityNotificationSubscriptionTransfer $availabilityNotificationSubscriptionTransfer
+    ): AvailabilityNotificationSubscriptionResponseTransfer {
         return $this->getFactory()
             ->createZedAvailabilityNotificationStub()
             ->unsubscribeByCustomerReferenceAndSku($availabilityNotificationSubscriptionTransfer);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -57,8 +59,9 @@ class AvailabilityNotificationClient extends AbstractClient implements Availabil
      *
      * @return \Generated\Shared\Transfer\AvailabilityNotificationSubscriptionResponseTransfer
      */
-    public function unsubscribeBySubscriptionKey(AvailabilityNotificationSubscriptionTransfer $availabilityNotificationSubscriptionTransfer): AvailabilityNotificationSubscriptionResponseTransfer
-    {
+    public function unsubscribeBySubscriptionKey(
+        AvailabilityNotificationSubscriptionTransfer $availabilityNotificationSubscriptionTransfer
+    ): AvailabilityNotificationSubscriptionResponseTransfer {
         return $this->getFactory()
             ->createZedAvailabilityNotificationStub()
             ->unsubscribeBySubscriptionKey($availabilityNotificationSubscriptionTransfer);

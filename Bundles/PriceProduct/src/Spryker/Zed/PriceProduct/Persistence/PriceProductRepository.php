@@ -12,6 +12,7 @@ use Generated\Shared\Transfer\PriceProductTransfer;
 use Generated\Shared\Transfer\QueryCriteriaTransfer;
 use Generated\Shared\Transfer\SpyPriceProductDefaultEntityTransfer;
 use Orm\Zed\PriceProduct\Persistence\Map\SpyPriceProductTableMap;
+use Orm\Zed\PriceProduct\Persistence\SpyPriceProductQuery;
 use Orm\Zed\PriceProduct\Persistence\SpyPriceProductStoreQuery;
 use Orm\Zed\Product\Persistence\Map\SpyProductAbstractTableMap;
 use Orm\Zed\Product\Persistence\Map\SpyProductTableMap;
@@ -129,6 +130,16 @@ class PriceProductRepository extends AbstractRepository implements PriceProductR
         return $this->getFactory()
             ->createDefaultPriceQueryExpander()
             ->buildDefaultPriceDimensionQueryCriteria($priceProductCriteriaTransfer);
+    }
+
+    /**
+     * @return \Generated\Shared\Transfer\QueryCriteriaTransfer
+     */
+    public function buildUnconditionalDefaultPriceDimensionQueryCriteria(): QueryCriteriaTransfer
+    {
+        return $this->getFactory()
+            ->createDefaultPriceQueryExpander()
+            ->buildDefaultPriceDimensionQueryCriteria(new PriceProductCriteriaTransfer());
     }
 
     /**
@@ -285,8 +296,10 @@ class PriceProductRepository extends AbstractRepository implements PriceProductR
      *
      * @return \Orm\Zed\PriceProduct\Persistence\SpyPriceProductStore[]|\Propel\Runtime\Collection\ObjectCollection
      */
-    public function findProductAbstractPricesByIdInAndCriteria(array $productAbstractIds, ?PriceProductCriteriaTransfer $priceProductCriteriaTransfer = null): ObjectCollection
-    {
+    public function findProductAbstractPricesByIdInAndCriteria(
+        array $productAbstractIds,
+        ?PriceProductCriteriaTransfer $priceProductCriteriaTransfer = null
+    ): ObjectCollection {
         $priceProductStoreQuery = $this->createBasePriceProductStoreQuery($priceProductCriteriaTransfer);
 
         $priceProductStoreQuery
@@ -398,7 +411,9 @@ class PriceProductRepository extends AbstractRepository implements PriceProductR
             return [];
         }
 
-        return $this->mapPriceProductStoreEntitiesToPriceProductTransfers($priceProductStoreEntities);
+        return $this->getFactory()
+            ->createPriceProductMapper()
+            ->mapPriceProductStoreEntitiesToPriceProductTransfers($priceProductStoreEntities, $concreteSkus);
     }
 
     /**
@@ -412,6 +427,7 @@ class PriceProductRepository extends AbstractRepository implements PriceProductR
         PriceProductCriteriaTransfer $priceProductCriteriaTransfer
     ): array {
         $priceProductStoreQuery = $this->createBasePriceProductStoreQuery($priceProductCriteriaTransfer);
+        /** @var \Propel\Runtime\Collection\ObjectCollection|\Orm\Zed\PriceProduct\Persistence\SpyPriceProductStore[] $priceProductStoreEntities */
         $priceProductStoreEntities = $priceProductStoreQuery
             ->joinWithCurrency()
             ->joinWithPriceProduct()
@@ -444,5 +460,41 @@ class PriceProductRepository extends AbstractRepository implements PriceProductR
         }
 
         return $priceProductTransfers;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\PriceProductTransfer $priceProductTransfer
+     *
+     * @return bool
+     */
+    public function isPriceProductByProductIdentifierAndPriceTypeExists(PriceProductTransfer $priceProductTransfer): bool
+    {
+        $priceProductQuery = $this->getFactory()
+            ->createPriceProductQuery()
+            ->filterByFkPriceType($priceProductTransfer->getFkPriceType());
+
+        $priceProductQuery = $this->addProductIdentifierToQuery(
+            $priceProductTransfer,
+            $priceProductQuery
+        );
+
+        return $priceProductQuery->count() > 0;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\PriceProductTransfer $priceProductTransfer
+     * @param \Orm\Zed\PriceProduct\Persistence\SpyPriceProductQuery $priceProductQuery
+     *
+     * @return \Orm\Zed\PriceProduct\Persistence\SpyPriceProductQuery
+     */
+    protected function addProductIdentifierToQuery(PriceProductTransfer $priceProductTransfer, SpyPriceProductQuery $priceProductQuery): SpyPriceProductQuery
+    {
+        $idProduct = $priceProductTransfer->getIdProduct();
+
+        if ($idProduct !== null) {
+            return $priceProductQuery->filterByFkProduct($idProduct);
+        }
+
+        return $priceProductQuery->filterByFkProductAbstract($priceProductTransfer->getIdProductAbstract());
     }
 }
