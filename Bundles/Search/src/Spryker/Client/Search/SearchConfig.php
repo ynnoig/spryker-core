@@ -28,7 +28,7 @@ class SearchConfig extends AbstractBundleConfig
      */
     public function getSearchIndexName()
     {
-        return $this->get(SearchConstants::ELASTICA_PARAMETER__INDEX_NAME);
+        return $this->get(SearchConstants::ELASTICA_PARAMETER__INDEX_NAME, sprintf('%s_search', strtolower(APPLICATION_STORE)));
     }
 
     /**
@@ -40,7 +40,7 @@ class SearchConfig extends AbstractBundleConfig
      */
     public function getSearchDocumentType()
     {
-        return $this->get(SearchConstants::ELASTICA_PARAMETER__DOCUMENT_TYPE);
+        return $this->get(SearchConstants::ELASTICA_PARAMETER__DOCUMENT_TYPE, 'page');
     }
 
     /**
@@ -64,8 +64,9 @@ class SearchConfig extends AbstractBundleConfig
         $config['port'] = $this->get(SearchConstants::ELASTICA_PARAMETER__PORT);
         $config['host'] = $this->get(SearchConstants::ELASTICA_PARAMETER__HOST);
 
-        $authHeader = $this->get(SearchConstants::ELASTICA_PARAMETER__AUTH_HEADER, null);
-        if ($authHeader !== null) {
+        $authHeader = (string)$this->get(SearchConstants::ELASTICA_PARAMETER__AUTH_HEADER, '');
+
+        if ($authHeader !== '') {
             $config['headers'] = [
                 'Authorization' => 'Basic ' . $authHeader,
             ];

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation, OnChanges, SimpleChanges } from '@angular/core';
-import { Image } from '../image-slider/image-slider.component'
+import { Image } from '../image-slider/image-slider.component';
 import { ToJson } from '@spryker/utils';
 
 export interface ProductDetails {
@@ -24,7 +24,7 @@ export interface ProductDetails {
 export class EditOfferComponent implements OnChanges {
     @Input() @ToJson() product?: ProductDetails;
     @Input() productDetailsTitle?: string;
-    @Input() images?: Image[];
+    @Input() @ToJson() images?: Image[];
 
     validFrom?: string | Date;
     validTo?: string | Date;

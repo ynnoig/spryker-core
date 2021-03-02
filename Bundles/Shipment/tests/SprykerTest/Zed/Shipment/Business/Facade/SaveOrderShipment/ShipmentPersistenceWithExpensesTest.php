@@ -65,7 +65,7 @@ class ShipmentPersistenceWithExpensesTest extends Test
         $salesExpenseEntity = $salesExpenseQuery->findOne();
 
         $this->assertNotNull($salesExpenseEntity, 'Shipment expense should have been saved.');
-        $this->assertEquals($salesShipmentEntity->getFkSalesExpense(), $salesExpenseEntity->getIdSalesExpense(), 'Shipment expense ID should have been connected to shipment entity.');
+        $this->assertSame($salesShipmentEntity->getFkSalesExpense(), $salesExpenseEntity->getIdSalesExpense(), 'Shipment expense ID should have been connected to shipment entity.');
     }
 
     /**
@@ -96,7 +96,10 @@ class ShipmentPersistenceWithExpensesTest extends Test
 
         // Assert
         $salesShipmentEntities = $salesShipmentQuery->find();
-        $idSalesShipmentExpenseList = $idSalesShipmentExpenseQuery->find()->getData();
+        $idSalesShipmentExpenseList = array_map(
+            'intval',
+            $idSalesShipmentExpenseQuery->find()->getData()
+        );
 
         $this->assertCount($countOfNewShipmentExpenses, $idSalesShipmentExpenseList, 'Expected number of shipment expenses does not match the actual number.');
         foreach ($salesShipmentEntities as $i => $salesShipmentEntity) {

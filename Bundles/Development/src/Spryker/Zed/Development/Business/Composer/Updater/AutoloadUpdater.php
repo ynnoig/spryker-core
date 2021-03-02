@@ -7,10 +7,10 @@
 
 namespace Spryker\Zed\Development\Business\Composer\Updater;
 
+use Laminas\Filter\FilterChain;
+use Laminas\Filter\Word\DashToCamelCase;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Zend\Filter\FilterChain;
-use Zend\Filter\Word\DashToCamelCase;
 
 class AutoloadUpdater implements UpdaterInterface
 {
@@ -215,7 +215,11 @@ class AutoloadUpdater implements UpdaterInterface
      */
     protected function getNonEmptyDirectoriesWithHelpers($directory)
     {
-        $files = (new Finder())->files()->in($directory)->name('/Helper.php$/');
+        $files = (new Finder())->files()->in($directory)
+            ->exclude('_generated')
+            ->name('*.php$')
+            ->notName('/Tester.php$/');
+
         $directories = [];
         foreach ($files as $file) {
             $directoryName = dirname(str_replace('//', '/', $file));

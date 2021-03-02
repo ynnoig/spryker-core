@@ -13,8 +13,6 @@ use Orm\Zed\Merchant\Persistence\SpyMerchantQuery;
 use Orm\Zed\StateMachine\Persistence\SpyStateMachineProcessQuery;
 
 /**
- * Inherited Methods
- *
  * @method void wantToTest($text)
  * @method void wantTo($text)
  * @method void execute($callable)
@@ -24,7 +22,7 @@ use Orm\Zed\StateMachine\Persistence\SpyStateMachineProcessQuery;
  * @method void am($role)
  * @method void lookForwardTo($achieveValue)
  * @method void comment($description)
- * @method \Codeception\Lib\Friend haveFriend($name, $actorClass = NULL)
+ * @method \Codeception\Lib\Friend haveFriend($name, $actorClass = null)
  *
  * @SuppressWarnings(PHPMD)
  */
@@ -44,13 +42,13 @@ class MerchantOmsDataImportCommunicationTester extends Actor
     }
 
     /**
-     * @param string $key
+     * @param string $reference
      *
      * @return \Orm\Zed\Merchant\Persistence\SpyMerchant|null
      */
-    public function findMerchantByKey(string $key): ?SpyMerchant
+    public function findMerchantByReference(string $reference): ?SpyMerchant
     {
-        return $this->getMerchantPropelQuery()->filterByMerchantKey($key)->findOne();
+        return $this->getMerchantPropelQuery()->filterByMerchantReference($reference)->findOne();
     }
 
     /**

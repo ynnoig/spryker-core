@@ -41,13 +41,13 @@ class UpdateMerchantTest extends Unit
     {
         // Arrange
         $merchantTransfer = $this->tester->haveMerchant([
-            MerchantTransfer::MERCHANT_KEY => 'one-key',
+            MerchantTransfer::MERCHANT_REFERENCE => 'one-reference',
             MerchantTransfer::NAME => 'One Company',
         ]);
 
         $expectedIdMerchant = $merchantTransfer->getIdMerchant();
         $merchantTransfer
-            ->setMerchantKey('second-key')
+            ->setMerchantReference('second-reference')
             ->setName('Second Company');
 
         // Act
@@ -56,8 +56,8 @@ class UpdateMerchantTest extends Unit
 
         // Assert
         $this->assertSame($expectedIdMerchant, $updatedMerchant->getIdMerchant());
-        $this->assertEquals('second-key', $updatedMerchant->getMerchantKey());
-        $this->assertEquals('Second Company', $updatedMerchant->getName());
+        $this->assertSame('second-reference', $updatedMerchant->getMerchantReference());
+        $this->assertSame('Second Company', $updatedMerchant->getName());
     }
 
     /**

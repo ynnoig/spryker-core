@@ -55,6 +55,8 @@ class PriceProductFacadeTest extends Unit
 
     protected const COUNT_PRODUCT_WITH_PRICES = 5;
 
+    protected const FAKE_CURRENCY = 'FAKE_CURRENCY';
+
     /**
      * @var \SprykerTest\Zed\PriceProduct\PriceProductBusinessTester
      */
@@ -491,7 +493,7 @@ class PriceProductFacadeTest extends Unit
         $actualResult = $priceProductFacade->groupPriceProductCollection($priceProductCollection);
 
         // Assert
-        $this->assertEquals($expectedPriceData, $actualResult['dummy currency 1']['priceData']);
+        $this->assertSame($expectedPriceData, $actualResult['dummy currency 1']['priceData']);
     }
 
     /**
@@ -503,7 +505,7 @@ class PriceProductFacadeTest extends Unit
 
         $actualResult = $priceProductFacade->getPriceModeIdentifierForBothType();
 
-        $this->assertEquals('BOTH', $actualResult);
+        $this->assertSame('BOTH', $actualResult);
     }
 
     /**
@@ -515,7 +517,7 @@ class PriceProductFacadeTest extends Unit
 
         $actualResult = $priceProductFacade->generatePriceDataChecksum(['11', '22']);
 
-        $this->assertEquals('3b513d6f', $actualResult);
+        $this->assertSame('3b513d6f', $actualResult);
     }
 
     /**
@@ -587,7 +589,7 @@ class PriceProductFacadeTest extends Unit
 
         $foundPrices = $priceProductFacade->findProductAbstractPricesWithoutPriceExtractionByIdProductAbstractIn([$productAbstractTransfer->getIdProductAbstract()]);
 
-        $this->assertEquals(
+        $this->assertSame(
             count($foundPrices),
             count($prices)
         );
@@ -605,7 +607,7 @@ class PriceProductFacadeTest extends Unit
         $priceProductCriteriaTransfer = $this->getPriceProductFacade()
             ->buildCriteriaFromFilter($priceProductFilterTransfer);
 
-        $this->assertEquals($priceProductFilterTransfer->getQuantity(), $priceProductCriteriaTransfer->getQuantity());
+        $this->assertSame($priceProductFilterTransfer->getQuantity(), $priceProductCriteriaTransfer->getQuantity());
     }
 
     /**
@@ -862,7 +864,7 @@ class PriceProductFacadeTest extends Unit
 
         $findedPriceTypeTransfer = $this->getPriceProductFacade()->findPriceTypeByName($priceTypeTransfer->getName());
 
-        $this->assertEquals($priceTypeTransfer->getIdPriceType(), $findedPriceTypeTransfer->getIdPriceType());
+        $this->assertSame($priceTypeTransfer->getIdPriceType(), $findedPriceTypeTransfer->getIdPriceType());
     }
 
     /**
@@ -959,7 +961,7 @@ class PriceProductFacadeTest extends Unit
         /** @var \Generated\Shared\Transfer\PriceProductTransfer $resultPriceProductTransfer */
         $resultPriceProductTransfer = $resultPriceProductTransfers[0];
 
-        $this->assertEquals($priceProductTransfer->getIdProductAbstract(), $resultPriceProductTransfer->getIdProductAbstract());
+        $this->assertSame($priceProductTransfer->getIdProductAbstract(), $resultPriceProductTransfer->getIdProductAbstract());
         $this->assertSame(
             $priceProductTransfer->getMoneyValue()->getNetAmount(),
             $resultPriceProductTransfer->getMoneyValue()->getNetAmount()
@@ -996,7 +998,7 @@ class PriceProductFacadeTest extends Unit
         /** @var \Generated\Shared\Transfer\PriceProductTransfer $resultPriceProductTransfer */
         $resultPriceProductTransfer = $resultPriceProductTransfers[0];
 
-        $this->assertEquals($priceProductTransfer->getIdProduct(), $resultPriceProductTransfer->getIdProduct());
+        $this->assertSame($priceProductTransfer->getIdProduct(), $resultPriceProductTransfer->getIdProduct());
         $this->assertSame(
             $priceProductTransfer->getMoneyValue()->getNetAmount(),
             $resultPriceProductTransfer->getMoneyValue()->getNetAmount()
@@ -1144,6 +1146,165 @@ class PriceProductFacadeTest extends Unit
 
         //Assert
         $this->assertSame(0, $productConcreteTransfer->getPrices()->count());
+    }
+
+    /**
+     * @return void
+     */
+    public function testValidatePricesIsSuccessful(): void
+    {
+        // Arrange
+        $priceProductTransfer = $this->tester->havePriceProduct([PriceProductTransfer::SKU_PRODUCT_ABSTRACT => 'sku']);
+        $priceProductTransfer->getMoneyValue()->setNetAmount(10);
+        $priceProductTransfer->getMoneyValue()->setGrossAmount(100);
+
+        // Act
+        $validationResponseTransfer = $this->getPriceProductFacade()
+            ->validatePrices(new ArrayObject([$priceProductTransfer]));
+
+        // Assert
+        $this->assertTrue($validationResponseTransfer->getIsSuccess());
+        $this->assertCount(0, $validationResponseTransfer->getValidationErrors());
+    }
+
+    /**
+     * @return void
+     */
+    public function testValidatePricesFailsValidUniqueStoreCurrencyGrossNetConstraint(): void
+    {
+        // Arrange
+        $productTransfer = $this->tester->haveProduct();
+
+        $priceProductTransfer1 = $this->tester->havePriceProductAbstract($productTransfer->getFkProductAbstract(), [
+            PriceProductTransfer::SKU_PRODUCT_ABSTRACT => 'sku',
+        ]);
+        $priceProductTransfer2 = clone $priceProductTransfer1;
+
+        $priceProductTransfer2->getMoneyValue()->setStore($priceProductTransfer1->getMoneyValue()->getStore());
+        $priceProductTransfer2->getMoneyValue()->setFkStore($priceProductTransfer1->getMoneyValue()->getFkStore());
+        $priceProductTransfer2->getMoneyValue()->setCurrency($priceProductTransfer1->getMoneyValue()->getCurrency());
+        $priceProductTransfer2->getMoneyValue()->setIdEntity(null);
+        $priceProductTransfer2->setPriceType($priceProductTransfer1->getPriceType());
+        $priceProductTransfer2->setIdProductAbstract($priceProductTransfer1->getIdProductAbstract());
+
+        // Act
+        $validationResponseTransfer = $this->getPriceProductFacade()
+            ->validatePrices(new ArrayObject([$priceProductTransfer2]));
+
+        // Assert
+        $this->assertFalse($validationResponseTransfer->getIsSuccess());
+        $this->assertCount(1, $validationResponseTransfer->getValidationErrors());
+        $this->assertSame(
+            'The set of inputs Store and Currency needs to be unique.',
+            $validationResponseTransfer->getValidationErrors()->offsetGet(0)->getMessage()
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testValidatePricesFailsValidCurrencyAssignedToStoreConstraint(): void
+    {
+        // Arrange
+        $storeTransfer = $this->tester->getLocator()->store()->facade()->getCurrentStore();
+        $currencyTransfer = $this->tester->haveCurrencyTransfer();
+        $priceProductTransfer = (new PriceProductTransfer())
+            ->setPriceType($this->tester->havePriceType())
+            ->setMoneyValue(
+                (new MoneyValueTransfer())
+                    ->setStore($storeTransfer)
+                    ->setCurrency((new CurrencyTransfer())->setCode(static::FAKE_CURRENCY)->setName(static::FAKE_CURRENCY))
+                    ->setFkStore($storeTransfer->getIdStore())
+                    ->setFkCurrency($currencyTransfer->getIdCurrency())
+                    ->setGrossAmount(1)
+                    ->setNetAmount(1)
+            );
+
+        // Act
+        $validationResponseTransfer = $this->getPriceProductFacade()
+            ->validatePrices(new ArrayObject([$priceProductTransfer]));
+
+        // Assert
+        $this->assertFalse($validationResponseTransfer->getIsSuccess());
+        $this->assertCount(1, $validationResponseTransfer->getValidationErrors());
+        $this->assertSame(
+            sprintf(
+                'Currency "%s" is not assigned to the store "%s"',
+                static::FAKE_CURRENCY,
+                $priceProductTransfer->getMoneyValue()->getStore()->getName()
+            ),
+            $validationResponseTransfer->getValidationErrors()->offsetGet(0)->getMessage()
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testValidateFailsValidNetAmountValue(): void
+    {
+        // Arrange
+        $productTransfer = $this->tester->haveProduct();
+        $priceProductTransfer = $this->tester->havePriceProductAbstract($productTransfer->getFkProductAbstract(), [
+            PriceProductTransfer::SKU_PRODUCT_ABSTRACT => 'sku',
+        ]);
+        $priceProductTransfer->getMoneyValue()->setNetAmount(-1);
+
+        // Act
+        $validationResponseTransfer = $this->getPriceProductFacade()
+            ->validatePrices(new ArrayObject([$priceProductTransfer]));
+
+        // Assert
+        $this->assertFalse($validationResponseTransfer->getIsSuccess());
+        $this->assertSame(
+            'This value is not valid.',
+            $validationResponseTransfer->getValidationErrors()->offsetGet(0)->getMessage()
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testValidatePricesFailsValidCurrencyValue(): void
+    {
+        // Arrange
+        $productTransfer = $this->tester->haveProduct();
+        $priceProductTransfer = $this->tester->havePriceProductAbstract($productTransfer->getFkProductAbstract(), [
+            PriceProductTransfer::SKU_PRODUCT_ABSTRACT => 'sku',
+        ]);
+        $priceProductTransfer->getMoneyValue()->setFkCurrency(null);
+
+        // Act
+        $validationResponseTransfer = $this->getPriceProductFacade()
+            ->validatePrices(new ArrayObject([$priceProductTransfer]));
+
+        // Assert
+        $validationError = $validationResponseTransfer->getValidationErrors()->offsetGet(0);
+        $this->assertFalse($validationResponseTransfer->getIsSuccess());
+        $this->assertSame('This field is missing.', $validationError->getMessage());
+        $this->assertSame('[0][moneyValue][fkCurrency]', $validationError->getPropertyPath());
+    }
+
+    /**
+     * @return void
+     */
+    public function testValidatePricesFailsValidStoreValue(): void
+    {
+        // Arrange
+        $productTransfer = $this->tester->haveProduct();
+        $priceProductTransfer = $this->tester->havePriceProductAbstract($productTransfer->getFkProductAbstract(), [
+            PriceProductTransfer::SKU_PRODUCT_ABSTRACT => 'sku',
+        ]);
+        $priceProductTransfer->getMoneyValue()->setFkStore(null);
+
+        // Act
+        $collectionValidationResponseTransfer = $this->getPriceProductFacade()
+            ->validatePrices(new ArrayObject([$priceProductTransfer]));
+
+        // Assert
+        $validationError = $collectionValidationResponseTransfer->getValidationErrors()->offsetGet(0);
+        $this->assertFalse($collectionValidationResponseTransfer->getIsSuccess());
+        $this->assertSame('This field is missing.', $validationError->getMessage());
+        $this->assertSame('[0][moneyValue][fkStore]', $validationError->getPropertyPath());
     }
 
     /**

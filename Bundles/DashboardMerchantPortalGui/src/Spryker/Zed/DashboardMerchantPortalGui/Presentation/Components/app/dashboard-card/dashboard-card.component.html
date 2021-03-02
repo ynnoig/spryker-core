@@ -1,10 +1,10 @@
-<spy-card [title]="title" [extra]="actions">
+<spy-card [spyTitle]="title" [extra]="actions">
     <ng-content></ng-content>
 </spy-card>
 
 <ng-template #title>
     <ng-content select="[title]"></ng-content>
-    
+
     <spy-chips *ngIf="count" color="grey">{{ count }}</spy-chips>
 </ng-template>
 

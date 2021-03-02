@@ -10,16 +10,19 @@ namespace Spryker\Zed\MerchantSalesOrder\Persistence;
 use ArrayObject;
 use Generated\Shared\Transfer\MerchantOrderCollectionTransfer;
 use Generated\Shared\Transfer\MerchantOrderCriteriaTransfer;
+use Generated\Shared\Transfer\MerchantOrderItemCollectionTransfer;
 use Generated\Shared\Transfer\MerchantOrderItemCriteriaTransfer;
 use Generated\Shared\Transfer\MerchantOrderItemTransfer;
 use Generated\Shared\Transfer\MerchantOrderTransfer;
 use Generated\Shared\Transfer\PaginationTransfer;
 use Generated\Shared\Transfer\TotalsTransfer;
 use Orm\Zed\Merchant\Persistence\Map\SpyMerchantTableMap;
+use Orm\Zed\MerchantSalesOrder\Persistence\Map\SpyMerchantSalesOrderItemTableMap;
 use Orm\Zed\MerchantSalesOrder\Persistence\Map\SpyMerchantSalesOrderTableMap;
 use Orm\Zed\MerchantSalesOrder\Persistence\Map\SpyMerchantSalesOrderTotalsTableMap;
 use Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItemQuery;
 use Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery;
+use Orm\Zed\Sales\Persistence\Map\SpySalesOrderItemTableMap;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Collection\ObjectCollection;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
@@ -43,12 +46,15 @@ class MerchantSalesOrderRepository extends AbstractRepository implements Merchan
             $merchantSalesOrderQuery
         );
         $merchantSalesOrderQuery = $this->applyMerchantOrderFilters($merchantSalesOrderQuery, $merchantOrderCriteriaTransfer);
-        /** @var \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery $merchantSalesOrderQuery */
+
+        /** @var \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrder> $merchantSalesOrderQuery */
         $merchantSalesOrderQuery = $this->buildQueryFromCriteria(
             $merchantSalesOrderQuery,
             $merchantOrderCriteriaTransfer->getFilter()
         );
         $merchantSalesOrderQuery->setFormatter(ModelCriteria::FORMAT_OBJECT);
+
+        /** @var \Propel\Runtime\Collection\ObjectCollection<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrder> $merchantSalesOrderEntityCollection */
         $merchantSalesOrderEntityCollection = $this
             ->applyMerchantOrderPagination($merchantSalesOrderQuery, $merchantOrderCriteriaTransfer->getPagination())
             ->find();
@@ -107,7 +113,7 @@ class MerchantSalesOrderRepository extends AbstractRepository implements Merchan
     /**
      * @param int[] $merchantOrderIds
      *
-     * @return \Propel\Runtime\Collection\ObjectCollection
+     * @return \Propel\Runtime\Collection\ObjectCollection|\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItem[]
      */
     protected function getMerchantSalesOrderItemEntityCollectionByMerchantOrderIds(
         array $merchantOrderIds
@@ -140,7 +146,11 @@ class MerchantSalesOrderRepository extends AbstractRepository implements Merchan
         }
 
         if ($merchantOrderCriteriaTransfer->getWithItems()) {
-            $merchantSalesOrderEntity->getMerchantSalesOrderItems();
+            $criteria = new Criteria();
+            $criteria->addAscendingOrderByColumn(SpyMerchantSalesOrderItemTableMap::COL_ID_MERCHANT_SALES_ORDER_ITEM);
+
+            $merchantSalesOrderItems = $merchantSalesOrderEntity->getMerchantSalesOrderItems($criteria);
+            $merchantSalesOrderEntity->setMerchantSalesOrderItems($merchantSalesOrderItems);
         }
 
         return $this->getFactory()
@@ -149,6 +159,30 @@ class MerchantSalesOrderRepository extends AbstractRepository implements Merchan
     }
 
     /**
+     * @module Sales
+     *
+     * @param int $idMerchantOrder
+     *
+     * @return int
+     */
+    public function getUniqueProductsCount(int $idMerchantOrder): int
+    {
+        return $this->getFactory()
+            ->createMerchantSalesOrderItemQuery()
+            ->filterByFkMerchantSalesOrder($idMerchantOrder)
+            ->useSalesOrderItemQuery()
+                ->groupBySku()
+            ->endUse()
+            ->withColumn(SpySalesOrderItemTableMap::COL_SKU)
+            ->select([SpySalesOrderItemTableMap::COL_SKU])
+            ->count();
+    }
+
+    /**
+     * @phpstan-param \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrder> $merchantSalesOrderQuery
+     *
+     * @phpstan-return \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrder>
+     *
      * @param \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery $merchantSalesOrderQuery
      *
      * @return \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery
@@ -170,6 +204,10 @@ class MerchantSalesOrderRepository extends AbstractRepository implements Merchan
     }
 
     /**
+     * @phpstan-param \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrder> $merchantSalesOrderQuery
+     *
+     * @phpstan-return \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrder>
+     *
      * @param \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery $merchantSalesOrderQuery
      * @param \Generated\Shared\Transfer\MerchantOrderCriteriaTransfer $merchantOrderCriteriaTransfer
      *
@@ -215,10 +253,20 @@ class MerchantSalesOrderRepository extends AbstractRepository implements Merchan
             );
         }
 
+        if ($merchantOrderCriteriaTransfer->getCustomerReference()) {
+            $merchantSalesOrderQuery->useOrderQuery()
+                    ->filterByCustomerReference($merchantOrderCriteriaTransfer->getCustomerReference())
+                ->endUse();
+        }
+
         return $merchantSalesOrderQuery;
     }
 
     /**
+     * @phpstan-param \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrder> $merchantSalesOrderQuery
+     *
+     * @phpstan-return \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrder>
+     *
      * @param \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery $merchantSalesOrderQuery
      * @param \Generated\Shared\Transfer\PaginationTransfer|null $paginationTransfer
      *
@@ -238,6 +286,8 @@ class MerchantSalesOrderRepository extends AbstractRepository implements Merchan
         $maxPerPage = $paginationTransfer
             ->requireMaxPerPage()
             ->getMaxPerPage();
+
+        /** @var \Propel\Runtime\Util\PropelModelPager<mixed> $paginationModel */
         $paginationModel = $merchantSalesOrderQuery->paginate($page, $maxPerPage);
 
         $paginationTransfer->setNbResults($paginationModel->getNbResults());
@@ -248,7 +298,10 @@ class MerchantSalesOrderRepository extends AbstractRepository implements Merchan
         $paginationTransfer->setNextPage($paginationModel->getNextPage());
         $paginationTransfer->setPreviousPage($paginationModel->getPreviousPage());
 
-        return $paginationModel->getQuery();
+        /** @var \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderQuery<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrder> $query */
+        $query = $paginationModel->getQuery();
+
+        return $query;
     }
 
     /**
@@ -280,6 +333,47 @@ class MerchantSalesOrderRepository extends AbstractRepository implements Merchan
     }
 
     /**
+     * @param \Generated\Shared\Transfer\MerchantOrderCriteriaTransfer $merchantOrderCriteriaTransfer
+     *
+     * @return int
+     */
+    public function getMerchantOrdersCount(MerchantOrderCriteriaTransfer $merchantOrderCriteriaTransfer): int
+    {
+        return $this->applyMerchantOrderFilters(
+            $this->getFactory()->createMerchantSalesOrderQuery(),
+            $merchantOrderCriteriaTransfer
+        )->count();
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\MerchantOrderItemCriteriaTransfer $merchantOrderItemCriteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\MerchantOrderItemCollectionTransfer
+     */
+    public function getMerchantOrderItemCollection(MerchantOrderItemCriteriaTransfer $merchantOrderItemCriteriaTransfer): MerchantOrderItemCollectionTransfer
+    {
+        $merchantSalesOrderItemQuery = $this->getFactory()->createMerchantSalesOrderItemQuery();
+        $merchantSalesOrderItemQuery = $this->applyMerchantOrderItemFilters(
+            $merchantOrderItemCriteriaTransfer,
+            $merchantSalesOrderItemQuery
+        );
+
+        /** @var \Propel\Runtime\Collection\ObjectCollection|\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItem[] $merchantSalesOrderEntities */
+        $merchantSalesOrderEntities = $merchantSalesOrderItemQuery->find();
+
+        return $this->getFactory()
+            ->createMerchantSalesOrderMapper()
+            ->mapMerchantSalesOrderItemEntitiesToMerchantOrderItemCollectionTransfer(
+                $merchantSalesOrderEntities,
+                new MerchantOrderItemCollectionTransfer()
+            );
+    }
+
+    /**
+     * @phpstan-param \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItemQuery<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItem> $merchantSalesOrderItemQuery
+     *
+     * @phpstan-return \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItemQuery<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItem>
+     *
      * @param \Generated\Shared\Transfer\MerchantOrderItemCriteriaTransfer $merchantOrderItemCriteriaTransfer
      * @param \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItemQuery $merchantSalesOrderItemQuery
      *
@@ -291,6 +385,9 @@ class MerchantSalesOrderRepository extends AbstractRepository implements Merchan
     ): SpyMerchantSalesOrderItemQuery {
         if ($merchantOrderItemCriteriaTransfer->getIdMerchantOrderItem()) {
             $merchantSalesOrderItemQuery->filterByIdMerchantSalesOrderItem($merchantOrderItemCriteriaTransfer->getIdMerchantOrderItem());
+        }
+        if ($merchantOrderItemCriteriaTransfer->getMerchantOrderItemIds()) {
+            $merchantSalesOrderItemQuery->filterByIdMerchantSalesOrderItem_In($merchantOrderItemCriteriaTransfer->getMerchantOrderItemIds());
         }
 
         if ($merchantOrderItemCriteriaTransfer->getIdOrderItem()) {

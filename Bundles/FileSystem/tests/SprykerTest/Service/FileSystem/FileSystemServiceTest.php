@@ -20,6 +20,7 @@ use Generated\Shared\Transfer\FileSystemRenameTransfer;
 use Generated\Shared\Transfer\FileSystemResourceMetadataTransfer;
 use Generated\Shared\Transfer\FileSystemStreamTransfer;
 use Generated\Shared\Transfer\FileSystemVisibilityTransfer;
+use PHPUnit\Framework\Assert;
 use Spryker\Service\FileSystem\Dependency\Exception\FileSystemReadException;
 use Spryker\Service\FileSystem\FileSystemDependencyProvider;
 use Spryker\Service\FileSystem\FileSystemService;
@@ -429,7 +430,26 @@ class FileSystemServiceTest extends Unit
 
         $this->fileSystemService->deleteDirectory($fileSystemDeleteDirectoryTransfer);
 
-        $this->assertDirectoryNotExists($dir);
+        $this->assertDirectoryDoesNotExist($dir);
+    }
+
+    /**
+     * @deprecated Will be removed once PHPUnit 8 support is dropped.
+     *
+     * @param string $directory
+     * @param string $message
+     *
+     * @return void
+     */
+    public static function assertDirectoryDoesNotExist(string $directory, string $message = ''): void
+    {
+        if (method_exists(Assert::class, 'assertDirectoryDoesNotExist')) {
+            parent::assertDirectoryDoesNotExist($directory, $message);
+
+            return;
+        }
+
+        static::assertDirectoryNotExists($directory, $message);
     }
 
     /**
@@ -445,7 +465,7 @@ class FileSystemServiceTest extends Unit
 
         $this->fileSystemService->putStream($fileSystemStreamTransfer, $stream);
 
-        if (is_resource($stream)) {
+        if ($stream !== false) {
             fclose($stream);
         }
 
@@ -467,7 +487,7 @@ class FileSystemServiceTest extends Unit
         $stream = $this->fileSystemService->readStream($fileSystemStreamTransfer);
 
         $content = stream_get_contents($stream);
-        if (is_resource($stream)) {
+        if ($stream !== false) {
             fclose($stream);
         }
 
@@ -488,7 +508,7 @@ class FileSystemServiceTest extends Unit
 
         $this->fileSystemService->updateStream($fileSystemStreamTransfer, $stream);
 
-        if (is_resource($stream)) {
+        if ($stream !== false) {
             fclose($stream);
         }
 
@@ -511,7 +531,7 @@ class FileSystemServiceTest extends Unit
 
         $this->fileSystemService->writeStream($fileSystemStreamTransfer, $stream);
 
-        if (is_resource($stream)) {
+        if ($stream !== false) {
             fclose($stream);
         }
 

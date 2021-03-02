@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Copyright © 2016-present Spryker Systems GmbH. All rights reserved.
- * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
+ * MIT License
+ * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
 namespace Spryker\Zed\ProductOfferValidityDataImport\Business\Step;
@@ -17,6 +17,8 @@ use Spryker\Zed\ProductOfferValidityDataImport\Dependency\Facade\ProductOfferVal
 
 class ProductOfferReferenceToIdProductOfferStep implements DataImportStepInterface
 {
+    protected const PRODUCT_OFFER_REFERENCE = ProductOfferValidityDataSetInterface::PRODUCT_OFFER_REFERENCE;
+
     /**
      * @var \Spryker\Zed\ProductOfferValidityDataImport\Dependency\Facade\ProductOfferValidityDataImportToProductOfferFacadeInterface
      */
@@ -40,12 +42,12 @@ class ProductOfferReferenceToIdProductOfferStep implements DataImportStepInterfa
      */
     public function execute(DataSetInterface $dataSet): void
     {
-        $productOfferReference = $dataSet[ProductOfferValidityDataSetInterface::PRODUCT_OFFER_REFERENCE];
+        $productOfferReference = $dataSet[static::PRODUCT_OFFER_REFERENCE];
 
         if (!$productOfferReference) {
             throw new DataKeyNotFoundInDataSetException(sprintf(
                 '"%s" key must be in the data set. Given: "%s"',
-                ProductOfferValidityDataSetInterface::PRODUCT_OFFER_REFERENCE,
+                static::PRODUCT_OFFER_REFERENCE,
                 implode(', ', array_keys($dataSet->getArrayCopy()))
             ));
         }

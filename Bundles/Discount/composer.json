@@ -4,7 +4,7 @@
   "description": "Discount module",
   "license": "proprietary",
   "require": {
-    "php": ">=7.2",
+    "php": ">=7.3",
     "spryker/cart-code-extension": "^1.1.0",
     "spryker/cart-extension": "^1.0.0 || ^2.0.0 || ^4.0.0",
     "spryker/currency": "^3.1.0",
@@ -26,9 +26,15 @@
     "spryker/checkout": "*",
     "spryker/code-sniffer": "*",
     "spryker/config": "*",
+    "spryker/container": "*",
+    "spryker/event-dispatcher": "*",
+    "spryker/form": "*",
     "spryker/oms": "*",
     "spryker/propel": "*",
+    "spryker/router": "*",
     "spryker/testify": "*",
+    "spryker/twig": "*",
+    "spryker/validator": "*",
     "spryker/zed-navigation": "*"
   },
   "suggest": {
@@ -37,7 +43,8 @@
   "autoload": {
     "psr-4": {
       "Spryker\\": "src/Spryker/",
-      "SprykerTest\\Shared\\Discount\\Helper\\": "tests/SprykerTest/Shared/Discount/_support/Helper/"
+      "SprykerTest\\Shared\\Discount\\Helper\\": "tests/SprykerTest/Shared/Discount/_support/Helper/",
+      "SprykerTest\\Zed\\Discount\\PageObject\\": "tests/SprykerTest/Zed/Discount/_support/PageObject/"
     }
   },
   "autoload-dev": {

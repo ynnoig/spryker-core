@@ -16,6 +16,15 @@ interface CategoryEvents
     public const CATEGORY_AFTER_CREATE = 'Category.after.create';
     public const CATEGORY_AFTER_UPDATE = 'Category.after.update';
     public const CATEGORY_AFTER_DELETE = 'Category.after.delete';
+    public const CATEGORY_AFTER_PUBLISH_UPDATE = 'Category.after.publish_update';
+
+    /**
+     * Specification:
+     * - This events will be used for Category publish
+     *
+     * @api
+     */
+    public const ENTITY_CATEGORY_PUBLISH = 'Entity.spy_category.publish';
 
     /**
      * Specification:

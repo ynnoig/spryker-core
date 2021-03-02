@@ -8,8 +8,8 @@
 namespace Spryker\Zed\MerchantOms\Persistence;
 
 use Generated\Shared\Transfer\StateMachineItemTransfer;
-use Orm\Zed\MerchantSalesOrder\Persistence\Map\SpyMerchantSalesOrderItemTableMap;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
+use Spryker\Zed\PropelOrm\Business\Runtime\ActiveQuery\Criteria;
 
 /**
  * @method \Spryker\Zed\MerchantOms\Persistence\MerchantOmsPersistenceFactory getFactory()
@@ -17,27 +17,86 @@ use Spryker\Zed\Kernel\Persistence\AbstractRepository;
 class MerchantOmsRepository extends AbstractRepository implements MerchantOmsRepositoryInterface
 {
     /**
+     * @phpstan-param mixed[] $stateIds
+     *
      * @param array $stateIds
      *
      * @return \Generated\Shared\Transfer\StateMachineItemTransfer[]
      */
     public function getStateMachineItemsByStateIds(array $stateIds): array
     {
-        $merchantSalesOrderItemQuery = $this->getFactory()->getMerchantSalesOrderItemPropelQuery();
+        /** @var \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItemQuery<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItem> $merchantSalesOrderItemQuery */
+        $merchantSalesOrderItemQuery = $this->getFactory()
+            ->getMerchantSalesOrderItemPropelQuery()
+            ->joinWithStateMachineItemState()
+            ->useStateMachineItemStateQuery()
+                ->joinWithProcess()
+            ->endUse();
 
-        $merchantSalesOrderItemEntities = $merchantSalesOrderItemQuery->filterByFkStateMachineItemState_In($stateIds)
-            ->select([
-                SpyMerchantSalesOrderItemTableMap::COL_ID_MERCHANT_SALES_ORDER_ITEM,
-                SpyMerchantSalesOrderItemTableMap::COL_FK_STATE_MACHINE_ITEM_STATE,
-            ])
+        /** @var \Propel\Runtime\Collection\ObjectCollection<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItem> $merchantSalesOrderItemEntities */
+        $merchantSalesOrderItemEntities = $merchantSalesOrderItemQuery
+            ->filterByFkStateMachineItemState_In($stateIds)
             ->find();
 
+        return $this->getFactory()->createMerchantOmsMapper()->mapMerchantSalesOrderItemEntityCollectionToStateMachineItemTransfers(
+            $merchantSalesOrderItemEntities
+        );
+    }
+
+    /**
+     * @module StateMachine
+     * @module MerchantSalesOrder
+     *
+     * @param int $idSalesOrderItem
+     *
+     * @return \Generated\Shared\Transfer\StateMachineItemTransfer|null
+     */
+    public function findCurrentStateByIdSalesOrderItem(int $idSalesOrderItem): ?StateMachineItemTransfer
+    {
+        $merchantSalesOrderItemEntity = $this->getFactory()->getMerchantSalesOrderItemPropelQuery()
+            ->joinStateMachineItemState()
+            ->findOneByFkSalesOrderItem($idSalesOrderItem);
+        if ($merchantSalesOrderItemEntity === null) {
+            return null;
+        }
+        /** @var \Orm\Zed\StateMachine\Persistence\SpyStateMachineItemState $stateMachineItemState */
+        $stateMachineItemState = $merchantSalesOrderItemEntity->getStateMachineItemState();
+
+        return $this->getFactory()
+            ->createStateMachineItemMapper()
+            ->mapStateMachineItemEntityToStateMachineItemTransfer(
+                $stateMachineItemState,
+                (new StateMachineItemTransfer())
+            );
+    }
+
+    /**
+     * @module StateMachine
+     *
+     * @param int[] $merchantOrderItemIds
+     *
+     * @return \Generated\Shared\Transfer\StateMachineItemTransfer[]
+     */
+    public function findStateHistoryByMerchantOrderIds(array $merchantOrderItemIds): array
+    {
         $stateMachineItemTransfers = [];
 
-        foreach ($merchantSalesOrderItemEntities as $merchantSalesOrderItemEntity) {
-            $stateMachineItemTransfers[] = (new StateMachineItemTransfer())
-                ->setIdentifier($merchantSalesOrderItemEntity[SpyMerchantSalesOrderItemTableMap::COL_ID_MERCHANT_SALES_ORDER_ITEM])
-                ->setIdItemState($merchantSalesOrderItemEntity[SpyMerchantSalesOrderItemTableMap::COL_FK_STATE_MACHINE_ITEM_STATE]);
+        $stateMachineItemStateHistoryEntities = $this->getFactory()
+            ->getStateMachineItemStateHistoryPropelQuery()
+            ->joinState()
+            ->filterByIdentifier_In($merchantOrderItemIds)
+            ->orderByCreatedAt(Criteria::DESC)
+            ->find();
+
+        foreach ($stateMachineItemStateHistoryEntities as $stateMachineItemStateHistoryEntity) {
+            $stateMachineItemTransfer = $this->getFactory()
+                ->createStateMachineItemMapper()
+                ->mapStateMachineItemStateHistoryEntityToStateMachineItemTransfer(
+                    $stateMachineItemStateHistoryEntity,
+                    new StateMachineItemTransfer()
+                );
+
+            $stateMachineItemTransfers[] = $stateMachineItemTransfer;
         }
 
         return $stateMachineItemTransfers;

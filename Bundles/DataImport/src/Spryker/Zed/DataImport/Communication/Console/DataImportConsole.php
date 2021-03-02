@@ -119,7 +119,7 @@ class DataImportConsole extends Console
      *
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$this->checkImportTypeAndGroupConfiguration($input)) {
             $this->error(
@@ -315,7 +315,7 @@ class DataImportConsole extends Console
      */
     protected function getYamlConfigPath(InputInterface $input): ?string
     {
-        if ($input->hasParameterOption('--' . static::OPTION_CONFIG) || $input->hasParameterOption('--' . static::OPTION_CONFIG_SHORT)) {
+        if ($input->hasParameterOption('--' . static::OPTION_CONFIG) || $input->hasParameterOption('-' . static::OPTION_CONFIG_SHORT)) {
             return $input->getOption(static::OPTION_CONFIG);
         }
 

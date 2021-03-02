@@ -15,6 +15,7 @@ use Generated\Shared\Transfer\MoneyValueTransfer;
 use Generated\Shared\Transfer\PriceProductDimensionTransfer;
 use Generated\Shared\Transfer\PriceProductTransfer;
 use Generated\Shared\Transfer\PriceTypeTransfer;
+use Generated\Shared\Transfer\ProductAbstractTransfer;
 use Generated\Shared\Transfer\StoreTransfer;
 use Spryker\Shared\PriceProduct\PriceProductConfig;
 use Spryker\Zed\Currency\Business\CurrencyFacadeInterface;
@@ -61,6 +62,34 @@ class PriceProductDataHelper extends Module
         $this->getDataCleanupHelper()->_addCleanup(function () use ($priceProductTransfer): void {
             $this->cleanupPriceProduct($priceProductTransfer->getIdPriceProduct());
         });
+
+        return $priceProductTransfer;
+    }
+
+    /**
+     * @param int $idProductAbstract
+     * @param array $priceProductOverride
+     *
+     * @return \Generated\Shared\Transfer\PriceProductTransfer
+     */
+    public function havePriceProductAbstract(int $idProductAbstract, array $priceProductOverride = []): PriceProductTransfer
+    {
+        $priceProductTransfer = $this->createPriceProductTransfer(
+            $priceProductOverride,
+            static::NET_PRICE,
+            static::GROSS_PRICE,
+            static::EUR_ISO_CODE
+        );
+
+        $this->getPriceProductFacade()->persistProductAbstractPriceCollection(
+            (new ProductAbstractTransfer())->setIdProductAbstract($idProductAbstract)->addPrice($priceProductTransfer)
+        );
+
+        $this->getDataCleanupHelper()->_addCleanup(function () use ($priceProductTransfer): void {
+            $this->cleanupPriceProduct($priceProductTransfer->getIdPriceProduct());
+        });
+
+        $priceProductTransfer->setIdProductAbstract($idProductAbstract);
 
         return $priceProductTransfer;
     }
@@ -167,7 +196,8 @@ class PriceProductDataHelper extends Module
             $grossPrice,
             $netPrice,
             $storeTransfer,
-            $currencyTransfer
+            $currencyTransfer,
+            $priceProductOverride[PriceProductTransfer::MONEY_VALUE] ?? []
         );
 
         $priceProductTransfer->setMoneyValue($moneyValueTransfer);
@@ -180,6 +210,7 @@ class PriceProductDataHelper extends Module
      * @param int $netAmount
      * @param \Generated\Shared\Transfer\StoreTransfer $storeTransfer
      * @param \Generated\Shared\Transfer\CurrencyTransfer $currencyTransfer
+     * @param array $moneyValueOverride
      *
      * @return \Generated\Shared\Transfer\MoneyValueTransfer
      */
@@ -187,14 +218,18 @@ class PriceProductDataHelper extends Module
         int $grossAmount,
         int $netAmount,
         StoreTransfer $storeTransfer,
-        CurrencyTransfer $currencyTransfer
+        CurrencyTransfer $currencyTransfer,
+        array $moneyValueOverride = []
     ): MoneyValueTransfer {
-        return (new MoneyValueTransfer())
+        $moneyValueTransfer = (new MoneyValueTransfer())->fromArray($moneyValueOverride, true);
+
+        return $moneyValueTransfer
             ->setNetAmount($netAmount)
             ->setGrossAmount($grossAmount)
             ->setFkStore($storeTransfer->getIdStore())
             ->setFkCurrency($currencyTransfer->getIdCurrency())
-            ->setCurrency($currencyTransfer);
+            ->setCurrency($currencyTransfer)
+            ->setStore($storeTransfer);
     }
 
     /**

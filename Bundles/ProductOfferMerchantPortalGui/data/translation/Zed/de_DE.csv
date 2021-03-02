@@ -7,12 +7,13 @@ Created,Erstellt
 "Created to","Erstellt bis"
 "At least one store must be selected.","At least one store must be selected."
 "Create Offer","Angebot erstellen"
-Denied,Verweigert
+Denied,Abgelehnt
 "Expiring in %daysNumber% days","Expiring in %daysNumber% days"
 From,Von
-"Has stock","Has stock"
+"Has stock","Auf Lager"
 Image,Bild
 Inactive,Inaktiv
+"List of Products",Produktliste
 "Low on Stock","Low on Stock"
 "Manage Offers","Manage Offers"
 "Manage Offer","Manage Offer"
@@ -21,7 +22,7 @@ Name,Name
 "Never out of stock","Immer auf Lager"
 "Offer is online","Angebot ist online"
 "Offer is offline","Angebot ist offline"
-Offers,Angeboten
+Offers,Angebote
 Offline,Offline
 "On Marketplace","On Marketplace"
 Online,Online
@@ -33,7 +34,7 @@ Search,Suche
 Price,Preis
 Quantity,Menge
 "Search by SKU, Name","Suche nach SKU, Name"
-Sku,SKU
+SKU,SKU
 Status,Status
 Stock,Bestand
 Stores,Stores
@@ -47,10 +48,10 @@ Valid,Gültig
 "Valid, online & with Stock","Valid, online & with Stock"
 "Valid To","Gültig Bis"
 Visibility,Sichtbarkeit
-"With Offers","Mit Angeboten"
+"With Offers","Mit Angebote"
 "With Stock","With Stock"
-"Without Offers","Ohne Angeboten"
-"Details & Description","Details & Description"
+"Without Offers","Ohne Angebote"
+"Description & Details","Description & Details"
 "The first date cannot be later than the second one.","The first date cannot be later than the second one."
 "The first date is the same as the second one.","The first date is the same as the second one."
 "The second date cannot be earlier than the first one.","The second date cannot be earlier than the first one."
@@ -68,3 +69,12 @@ Create,Erstellen
 select.default.placeholder,Auswählen
 "Enter SKU","Enter SKU"
 "Enter quantity","Enter quantity"
+"To create your offer, choose a product from the list below.","To create your offer, choose a product from the list below."
+"This value is not valid.","Dieser Wert ist ungültig."
+"This field is missing.","Dieses Feld fehlt."
+"The set of inputs Store and Currency needs to be unique.","Die Kombination aus Store und Währung wird bereits verwendet."
+"Success! The Price is deleted.","Der Preis wurde gelöscht."
+"Something went wrong, please try again.","Etwas ist schief gelaufen, bitte versuchen Sie es noch einmal."
+"Offer prices saved successfully.","Angebotspreise wurden gespeichert."
+Cancel,Stornieren
+Add,Hinzufügen

@@ -73,12 +73,20 @@ class DataTableActionHelper extends Module
     public function clickDataTableLinkInDropDownOfButton(string $buttonName, string $linkName, int $rowPosition = 1): void
     {
         $this->clickButton($buttonName, $rowPosition);
-        $this->getDriver()->click(sprintf(
-            '(//tr[@role="row"]//button[contains(., "%s")])[%s]/following::ul[1]//a[contains(., "%s")]',
+
+        $elementInRoot = sprintf(
+            '//body/ul[@class="dropdown-menu"][1]//following::li/a[contains(., "%s")]',
+            $linkName
+        );
+
+        $elementInList = sprintf(
+            '(//table[@data-qa="data-table"]//button[contains(., "%s")])[%s]/following::ul[1]//a[contains(., "%s")]',
             $buttonName,
             $rowPosition,
             $linkName
-        ));
+        );
+
+        $this->getDriver()->click(sprintf('%s | %s', $elementInRoot, $elementInList));
     }
 
     /**
@@ -104,10 +112,10 @@ class DataTableActionHelper extends Module
     {
         $driver = $this->getDriver();
 
-        $selector = sprintf('(//tr[@role="row"]//a[contains(., "%1$s")] | //button[contains(., "%1$s")])[%2$d]', $name, $rowPosition);
+        $selector = sprintf('(//table[@data-qa="data-table"]//a[contains(., "%1$s")] | //button[contains(., "%1$s")])[%2$d]', $name, $rowPosition);
 
         if ($gridId) {
-            $selector = sprintf('(//div[@id="%3$s"]//tr[@role="row"]//a[contains(., "%1$s")] | //button[contains(., "%1$s")])[%2$d]', $name, $rowPosition, $gridId);
+            $selector = sprintf('(//div[@id="%3$s"]//table[@data-qa="data-table"]//a[contains(., "%1$s")] | //button[contains(., "%1$s")])[%2$d]', $name, $rowPosition, $gridId);
         }
 
         if (method_exists($driver, 'waitForElementVisible')) {

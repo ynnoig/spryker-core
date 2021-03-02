@@ -15,10 +15,12 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
 use Spryker\Service\UtilSanitize\UtilSanitizeService;
 use Spryker\Service\UtilText\Model\Url\Url;
+use Spryker\Shared\Kernel\Container\GlobalContainer;
+use Spryker\Shared\Kernel\Container\GlobalContainerInterface;
 use Spryker\Zed\Gui\Communication\Form\DeleteForm;
-use Spryker\Zed\Kernel\Communication\Plugin\Pimple;
 use Spryker\Zed\PropelOrm\Business\Runtime\ActiveQuery\Criteria;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -35,6 +37,16 @@ abstract class AbstractTable
     public const SORT_BY_COLUMN = 'column';
     public const SORT_BY_DIRECTION = 'dir';
     public const URL_ANCHOR = '#';
+
+    /**
+     * @uses \Spryker\Zed\Twig\Communication\Plugin\Application\TwigApplicationPlugin::SERVICE_TWIG
+     */
+    public const SERVICE_TWIG = 'twig';
+
+    /**
+     * @uses \Spryker\Zed\Form\Communication\Plugin\Application\FormApplicationPlugin::SERVICE_FORM_FACTORY
+     */
+    public const SERVICE_FORM_FACTORY = 'form.factory';
 
     /**
      * Defines delete form name suffix allowing to avoid non-unique attributes (e.g. form name or id) for delete forms on one page.
@@ -178,8 +190,13 @@ abstract class AbstractTable
      */
     protected function getRequest()
     {
-        return (new Pimple())
-            ->getApplication()['request'];
+        $container = $this->getApplicationContainer();
+
+        if ($container->has('request')) {
+            return $container->get('request');
+        }
+
+        return $container->get('request_stack')->getCurrentRequest();
     }
 
     /**
@@ -388,8 +405,7 @@ abstract class AbstractTable
     private function getTwig()
     {
         /** @var \Twig\Environment|null $twig */
-        $twig = (new Pimple())
-            ->getApplication()['twig'];
+        $twig = $this->getApplicationContainer()->get(static::SERVICE_TWIG);
 
         if ($twig === null) {
             throw new LogicException('Twig environment not set up.');
@@ -403,6 +419,14 @@ abstract class AbstractTable
         ));
 
         return $twig;
+    }
+
+    /**
+     * @return \Spryker\Shared\Kernel\Container\GlobalContainerInterface
+     */
+    protected function getApplicationContainer(): GlobalContainerInterface
+    {
+        return new GlobalContainer();
     }
 
     /**
@@ -440,8 +464,7 @@ abstract class AbstractTable
     {
         $defaultSorting = [$this->getDefaultSorting($config)];
 
-        /** @var array|null $orderParameter */
-        $orderParameter = $this->request->query->get('order');
+        $orderParameter = $this->getOrderParameter();
 
         if (!is_array($orderParameter)) {
             return $defaultSorting;
@@ -454,6 +477,34 @@ abstract class AbstractTable
         }
 
         return $sorting;
+    }
+
+    /**
+     * @return array|null
+     */
+    protected function getOrderParameter(): ?array
+    {
+        if ($this->isSymfonyHttpFoundationVersion5OrHigher()) {
+            return $this->request->query->all('order');
+        }
+
+        return $this->request->query->get('order');
+    }
+
+    /**
+     * Retrieving non-string values using InputBag::get() was deprecated in symfony/http-foundation:5.1
+     * Using the InputBag::all() method with an argument was introduced in symfony/http-foundation:5.0
+     *
+     * The method UploadedFile::getClientSize() was removed in symfony/http-foundation:5.0.
+     *
+     * To find which way to use we check for the existence of the UploadedFile::getClientSize(), when the method does
+     * not exist we have symfony/http-foundation:5.0 or higher installed.
+     *
+     * @return bool
+     */
+    protected function isSymfonyHttpFoundationVersion5OrHigher(): bool
+    {
+        return !method_exists(UploadedFile::class, 'getClientSize');
     }
 
     /**
@@ -532,7 +583,23 @@ abstract class AbstractTable
      */
     public function getSearchTerm()
     {
-        return $this->request->query->get('search', null);
+        if (!$this->request->query->has('search')) {
+            return null;
+        }
+
+        return $this->getSearchParameter();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getSearchParameter(): array
+    {
+        if ($this->isSymfonyHttpFoundationVersion5OrHigher()) {
+            return $this->request->query->all('search');
+        }
+
+        return $this->request->query->get('search');
     }
 
     /**
@@ -940,7 +1007,7 @@ abstract class AbstractTable
 
         $options = [
             'fields' => $options,
-            'action' => $url,
+            'action' => (string)$url,
         ];
 
         $form = $this->createForm($formClassName, $name, $options);
@@ -972,7 +1039,7 @@ abstract class AbstractTable
      */
     protected function getFormFactory()
     {
-        return (new Pimple())->getApplication()['form.factory'];
+        return $this->getApplicationContainer()->get(static::SERVICE_FORM_FACTORY);
     }
 
     /**

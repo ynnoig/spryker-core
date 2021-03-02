@@ -8,8 +8,11 @@
 namespace Spryker\Zed\MerchantOms\Persistence;
 
 use Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItemQuery;
+use Orm\Zed\StateMachine\Persistence\SpyStateMachineItemStateHistoryQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
 use Spryker\Zed\MerchantOms\MerchantOmsDependencyProvider;
+use Spryker\Zed\MerchantOms\Persistence\Propel\Mapper\MerchantOmsMapper;
+use Spryker\Zed\MerchantOms\Persistence\Propel\Mapper\StateMachineItemMapper;
 
 /**
  * @method \Spryker\Zed\MerchantOms\MerchantOmsConfig getConfig()
@@ -18,10 +21,38 @@ use Spryker\Zed\MerchantOms\MerchantOmsDependencyProvider;
 class MerchantOmsPersistenceFactory extends AbstractPersistenceFactory
 {
     /**
+     * @phpstan-return \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItemQuery<\Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItem>
+     *
      * @return \Orm\Zed\MerchantSalesOrder\Persistence\SpyMerchantSalesOrderItemQuery
      */
     public function getMerchantSalesOrderItemPropelQuery(): SpyMerchantSalesOrderItemQuery
     {
         return $this->getProvidedDependency(MerchantOmsDependencyProvider::PROPEL_QUERY_MERCHANT_SALES_ORDER_ITEM);
+    }
+
+    /**
+     * @phpstan-return \Orm\Zed\StateMachine\Persistence\SpyStateMachineItemStateHistoryQuery<\Orm\Zed\StateMachine\Persistence\SpyStateMachineItemStateHistory>
+     *
+     * @return \Orm\Zed\StateMachine\Persistence\SpyStateMachineItemStateHistoryQuery
+     */
+    public function getStateMachineItemStateHistoryPropelQuery(): SpyStateMachineItemStateHistoryQuery
+    {
+        return $this->getProvidedDependency(MerchantOmsDependencyProvider::PROPEL_QUERY_STATE_MACHINE_ITEM_STATE_HISTORY);
+    }
+
+    /**
+     * @return \Spryker\Zed\MerchantOms\Persistence\Propel\Mapper\StateMachineItemMapper
+     */
+    public function createStateMachineItemMapper(): StateMachineItemMapper
+    {
+        return new StateMachineItemMapper();
+    }
+
+    /**
+     * @return \Spryker\Zed\MerchantOms\Persistence\Propel\Mapper\MerchantOmsMapper
+     */
+    public function createMerchantOmsMapper(): MerchantOmsMapper
+    {
+        return new MerchantOmsMapper();
     }
 }

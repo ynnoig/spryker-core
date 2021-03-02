@@ -12,7 +12,7 @@ use Spryker\Yves\Kernel\AbstractBundleConfig;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @method \Spryker\Yves\Application\ApplicationConfig getSharedConfig()
+ * @method \Spryker\Shared\Application\ApplicationConfig getSharedConfig()
  */
 class ApplicationConfig extends AbstractBundleConfig
 {
@@ -93,7 +93,10 @@ class ApplicationConfig extends AbstractBundleConfig
      */
     public function getTrustedHeader(): int
     {
-        return $this->get(ApplicationConstants::YVES_TRUSTED_HEADER, Request::HEADER_X_FORWARDED_ALL);
+        return $this->get(
+            ApplicationConstants::YVES_TRUSTED_HEADER,
+            Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_HOST | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO
+        );
     }
 
     /**
@@ -121,5 +124,15 @@ class ApplicationConfig extends AbstractBundleConfig
             'Referrer-Policy' => static::HEADER_REFERRER_POLICY_VALUE,
             'Feature-Policy' => static::HEADER_FEATURE_POLICY_VALUE,
         ];
+    }
+
+    /**
+     * @api
+     *
+     * @return bool
+     */
+    public function isDebugModeEnabled(): bool
+    {
+        return $this->getSharedConfig()->isDebugModeEnabled();
     }
 }

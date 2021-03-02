@@ -69,9 +69,14 @@ class OffersDashboardCardProvider implements OffersDashboardCardProviderInterfac
      */
     public function getDashboardCard(): MerchantDashboardCardTransfer
     {
-        $merchantProductOfferCountsTransfer = $this->productOfferMerchantPortalGuiRepository->getOffersDashboardCardCounts(
-            $this->merchantUserFacade->getCurrentMerchantUser()->getIdMerchant()
-        );
+        /** @var int $idMerchant */
+        $idMerchant = $this->merchantUserFacade
+            ->getCurrentMerchantUser()
+            ->requireIdMerchant()
+            ->getIdMerchant();
+
+        $merchantProductOfferCountsTransfer = $this->productOfferMerchantPortalGuiRepository
+            ->getOffersDashboardCardCounts($idMerchant);
 
         $title = $this->twigEnvironment->render(
             '@ProductOfferMerchantPortalGui/Partials/offers_dashboard_card_title.twig',
@@ -94,10 +99,10 @@ class OffersDashboardCardProvider implements OffersDashboardCardProviderInterfac
             ->setActionButtons(new ArrayObject([
                 (new MerchantDashboardActionButtonTransfer())
                     ->setTitle('Manage Offers')
-                    ->setUrl($this->routerFacade->getRouter()->generate('product-offer-merchant-portal-gui:offers')),
+                    ->setUrl($this->routerFacade->getRouter()->generate('product-offer-merchant-portal-gui:product-offers')),
                 (new MerchantDashboardActionButtonTransfer())
                     ->setTitle('Add Offer')
-                    ->setUrl($this->routerFacade->getRouter()->generate('product-offer-merchant-portal-gui:create-offer')),
+                    ->setUrl($this->routerFacade->getRouter()->generate('product-offer-merchant-portal-gui:product-list')),
             ]));
     }
 }

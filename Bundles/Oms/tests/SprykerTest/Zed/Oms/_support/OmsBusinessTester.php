@@ -33,8 +33,6 @@ use Spryker\Zed\Oms\OmsConfig;
 use Spryker\Zed\Oms\Persistence\OmsQueryContainer;
 
 /**
- * Inherited Methods
- *
  * @method void wantToTest($text)
  * @method void wantTo($text)
  * @method void execute($callable)
@@ -44,7 +42,7 @@ use Spryker\Zed\Oms\Persistence\OmsQueryContainer;
  * @method void am($role)
  * @method void lookForwardTo($achieveValue)
  * @method void comment($description)
- * @method \Codeception\Lib\Friend haveFriend($name, $actorClass = NULL)
+ * @method \Codeception\Lib\Friend haveFriend($name, $actorClass = null)
  * @method \Spryker\Zed\Oms\Business\OmsFacadeInterface getFacade()
  *
  * @SuppressWarnings(PHPMD)
@@ -60,6 +58,17 @@ class OmsBusinessTester extends Actor
     {
         $reflectionResolver = new ReflectionClass(ActiveProcessFetcher::class);
         $reflectionProperty = $reflectionResolver->getProperty('reservedStatesCache');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue([]);
+    }
+
+    /**
+     * @return void
+     */
+    public function resetReservedStateProcessNamesCache(): void
+    {
+        $reflectionResolver = new ReflectionClass(ActiveProcessFetcher::class);
+        $reflectionProperty = $reflectionResolver->getProperty('reservedStateProcessNamesCache');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue([]);
     }
@@ -115,6 +124,7 @@ class OmsBusinessTester extends Actor
      * @param string $eventName
      * @param string $stateName
      * @param int $orderItemsAmount
+     * @param int|null $omsProcessorIdentifier
      *
      * @return \Orm\Zed\Sales\Persistence\SpySalesOrder
      */
@@ -122,14 +132,17 @@ class OmsBusinessTester extends Actor
         string $storeName,
         string $eventName,
         string $stateName,
-        int $orderItemsAmount
+        int $orderItemsAmount,
+        ?int $omsProcessorIdentifier = null
     ): SpySalesOrder {
         $dateTime = new DateTime('now');
         $dateTime->sub(DateInterval::createFromDateString('1 day'));
         $processName = 'DummyPayment01';
         $salesOrderTransferDE = $this->haveOrder([], $processName);
         $salesOrderEntity = SpySalesOrderQuery::create()->findOneByIdSalesOrder($salesOrderTransferDE->getIdSalesOrder());
-        $salesOrderEntity->setStore($storeName)->save();
+        $salesOrderEntity->setStore($storeName)
+            ->setOmsProcessorIdentifier($omsProcessorIdentifier)
+            ->save();
 
         $salesOrderItemDefaults = [
             'state' => $stateName,
@@ -157,6 +170,7 @@ class OmsBusinessTester extends Actor
      * @param string $stateName
      * @param string $processName
      * @param int $orderItemsAmount One spy_sales_order_item is added always by the {@link \SprykerTest\Zed\Oms\_generated\OmsBusinessTesterActions::haveOrder()} method.
+     * @param int|null $omsProcessorIdentifier
      *
      * @return \Orm\Zed\Sales\Persistence\SpySalesOrder
      */
@@ -164,16 +178,23 @@ class OmsBusinessTester extends Actor
         string $storeName,
         string $stateName,
         string $processName,
-        int $orderItemsAmount = 0
+        int $orderItemsAmount = 0,
+        ?int $omsProcessorIdentifier = null
     ): SpySalesOrder {
         $salesOrderTransferDE = $this->haveOrder([], $processName);
         $salesOrderEntity = SpySalesOrderQuery::create()->findOneByIdSalesOrder($salesOrderTransferDE->getIdSalesOrder());
-        $salesOrderEntity->setStore($storeName)->save();
+        $salesOrderEntity->setStore($storeName)
+            ->setOmsProcessorIdentifier($omsProcessorIdentifier)
+            ->save();
+        $omsOrderItemStateEntity = $this->haveOmsOrderItemStateEntity($stateName);
+        $salesOrderEntity->getItems()->getFirst()->setState($omsOrderItemStateEntity)->save();
 
-        for ($i = 0; $i < $orderItemsAmount; $i++) {
-            $salesOrderItemEntity = $this->createSalesOrderItemForOrder($salesOrderTransferDE->getIdSalesOrder(), ['state' => $stateName, 'process' => $processName]);
+        for ($i = 1; $i < $orderItemsAmount; $i++) {
+            $salesOrderItemEntity = $this->createSalesOrderItemForOrder(
+                $salesOrderTransferDE->getIdSalesOrder(),
+                ['state' => $stateName, 'process' => $processName]
+            );
             $salesOrderEntity->addItem($salesOrderItemEntity);
-            $this->haveOmsOrderItemStateEntity($stateName);
         }
 
         return $salesOrderEntity;
@@ -280,7 +301,7 @@ class OmsBusinessTester extends Actor
     }
 
     /**
-     * @return object|\Spryker\Zed\Oms\Business\OrderStateMachine\OrderStateMachineInterface
+     * @return \Spryker\Zed\Oms\Business\OrderStateMachine\OrderStateMachineInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     public function getOrderStatemachineMockForSuccessfulTriggeredEvents()
     {
@@ -292,9 +313,7 @@ class OmsBusinessTester extends Actor
     }
 
     /**
-     * @throws \Exception
-     *
-     * @return object|\Spryker\Zed\Oms\Business\OrderStateMachine\OrderStateMachineInterface
+     * @return \Spryker\Zed\Oms\Business\OrderStateMachine\OrderStateMachineInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     public function getOrderStatemachineMockForFailedTriggeredEvents()
     {

@@ -10,6 +10,7 @@ namespace SprykerTest\Service\Flysystem;
 use Codeception\Configuration;
 use Codeception\Test\Unit;
 use Generated\Shared\Transfer\FlysystemResourceMetadataTransfer;
+use PHPUnit\Framework\Assert;
 use Spryker\Service\FileSystem\Dependency\Exception\FileSystemReadException;
 use Spryker\Service\Flysystem\FlysystemDependencyProvider;
 use Spryker\Service\Flysystem\FlysystemService;
@@ -408,7 +409,7 @@ class FlysystemServiceTest extends Unit
             'foo/bar'
         );
 
-        $this->assertDirectoryNotExists($dir);
+        $this->assertDirectoryDoesNotExist($dir);
     }
 
     /**
@@ -426,7 +427,7 @@ class FlysystemServiceTest extends Unit
             $stream
         );
 
-        if (is_resource($stream)) {
+        if ($stream !== false) {
             fclose($stream);
         }
 
@@ -450,7 +451,7 @@ class FlysystemServiceTest extends Unit
         );
 
         $content = stream_get_contents($stream);
-        if (is_resource($stream)) {
+        if ($stream !== false) {
             fclose($stream);
         }
 
@@ -474,7 +475,7 @@ class FlysystemServiceTest extends Unit
             $stream
         );
 
-        if (is_resource($stream)) {
+        if ($stream !== false) {
             fclose($stream);
         }
 
@@ -500,7 +501,7 @@ class FlysystemServiceTest extends Unit
             $stream
         );
 
-        if (is_resource($stream)) {
+        if ($stream !== false) {
             fclose($stream);
         }
 
@@ -525,6 +526,25 @@ class FlysystemServiceTest extends Unit
         );
 
         $this->assertGreaterThan(0, count($content));
+    }
+
+    /**
+     * @deprecated Will be removed once PHPUnit 8 support is dropped.
+     *
+     * @param string $directory
+     * @param string $message
+     *
+     * @return void
+     */
+    public static function assertDirectoryDoesNotExist(string $directory, string $message = ''): void
+    {
+        if (method_exists(Assert::class, 'assertDirectoryDoesNotExist')) {
+            parent::assertDirectoryDoesNotExist($directory, $message);
+
+            return;
+        }
+
+        static::assertDirectoryNotExists($directory, $message);
     }
 
     /**

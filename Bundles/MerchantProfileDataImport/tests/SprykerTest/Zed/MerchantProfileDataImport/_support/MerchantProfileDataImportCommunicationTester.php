@@ -8,12 +8,11 @@
 namespace SprykerTest\Zed\MerchantProfileDataImport;
 
 use Codeception\Actor;
+use Orm\Zed\Merchant\Persistence\SpyMerchant;
 use Orm\Zed\Merchant\Persistence\SpyMerchantQuery;
 use Orm\Zed\MerchantProfile\Persistence\SpyMerchantProfileAddressQuery;
 
 /**
- * Inherited Methods
- *
  * @method void wantToTest($text)
  * @method void wantTo($text)
  * @method void execute($callable)
@@ -30,10 +29,6 @@ use Orm\Zed\MerchantProfile\Persistence\SpyMerchantProfileAddressQuery;
 class MerchantProfileDataImportCommunicationTester extends Actor
 {
     use _generated\MerchantProfileDataImportCommunicationTesterActions;
-
-   /**
-    * Define custom actions here
-    */
 
     /**
      * @return void
@@ -65,5 +60,15 @@ class MerchantProfileDataImportCommunicationTester extends Actor
     protected function getMerchantProfileAddressQuery(): SpyMerchantProfileAddressQuery
     {
         return SpyMerchantProfileAddressQuery::create();
+    }
+
+    /**
+     * @param string $reference
+     *
+     * @return \Orm\Zed\Merchant\Persistence\SpyMerchant|null
+     */
+    public function findMerchantByReference(string $reference): ?SpyMerchant
+    {
+        return $this->getMerchantQuery()->filterByMerchantReference($reference)->findOne();
     }
 }
